@@ -2,8 +2,6 @@ import dj_database_url
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DATABASES['default'] =  dj_database_url.config()
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -25,6 +23,8 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+
+DATABASES['default'] =  dj_database_url.config()
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -164,10 +164,25 @@ LOGGING = {
 
 
 
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Allow all host headers
+ALLOWED_HOSTS = ['quiet-hamlet-5822.herokuapp.com/']
+
 # Static asset configuration
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = 'staticfiles'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 
 
