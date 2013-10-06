@@ -1,4 +1,4 @@
-*~
+0;95;c*~
 .DS_Store
 *.py[cod]
 
@@ -40,3 +40,6 @@ nosetests.xml
 venv
 db.db
 staticfiles
+
+
+toilet_mapper/localsettings.py
