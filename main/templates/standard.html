@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/standard.css" type="text/css" />
+{% endblock %}
+
+
+
+{% block body %}
+<div id="header">{% block header %}{% endblock %}</div>
+
+<div id="content">{% block content %}{% endblock %}</div>
+
+<div id="footer">{% block footer %}{% endblock %}</div>
+{% endblock %}
