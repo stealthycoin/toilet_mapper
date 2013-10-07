@@ -17,6 +17,9 @@ $ virtualenv venv --distribute
    	$ cp toliet_mapper/settings.py toliet_mapper/localsettings.py 
 	You must then edit the localsettings.py file.  First on line 15 there is an DATABSES object.  Add sqlite3 to the end of the Engine path.  After this choose a location for your local database and enter it in the NAME field.   Above the object there are admins list, make yourself one.  At the end of the file Around line 165 (import dj_database_url)  there is some stuff, remove it all as it is not necessary for a function local database using Django. 
 
+5.5. Create database structure
+        $python localmanage.py syncdb
+
 6. Test Django app
    	$python localmannage.py runserver
 
