@@ -1,7 +1,7 @@
 How to set up Application Development and Workflow
 
 1.  Clone Project from github
-    	  $git clone git@github.com:stealthycoin/toliet_mapper.git
+    	  $git clone git@github.com:stealthycoin/toilet_mapper.git
 
 2. Install and run Virtualenv
 $ sudo apt-get install virtualenv
@@ -14,7 +14,7 @@ $ virtualenv venv --distribute
    	   $ pip install -r requirements.txt 
 
 5. Copy Django settings to local settings, when using Django use localmanage.py instead of manage.py (this is to allow us to change the Database settings when running localling and on Heroku).
-   	$ cp toliet_mapper/settings.py toliet_mapper/localsettings.py 
+   	$ cp toilet_mapper/settings.py toilet_mapper/localsettings.py 
 	You must then edit the localsettings.py file.  First on line 15 there is an DATABSES object.  Add sqlite3 to the end of the Engine path.  After this choose a location for your local database and enter it in the NAME field.   Above the object there are admins list, make yourself one.  At the end of the file Around line 165 (import dj_database_url)  there is some stuff, remove it all as it is not necessary for a function local database using Django. 
 
 5.5. Create database structure
