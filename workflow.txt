@@ -1,0 +1,43 @@
+How to set up Application Development and Workflow
+
+1.  Clone Project from github
+    	  $git clone git@github.com:stealthycoin/toliet_mapper.git
+
+2. Install and run Virtualenv
+$ sudo apt-get install virtualenv
+$ virtualenv venv --distribute 
+
+3. Source the virtual environment.  This needs to be rn every time you open a new instance of the project (opening in a terminal).
+   	  $ source venv/bin/activate 
+
+4. Install Djangon and other stuff
+   	   $ pip install -r requirements.txt 
+
+5. Copy Django settings to local settings, when using Django use localmanage.py instead of manage.py (this is to allow us to change the Database settings when running localling and on Heroku).
+   	$ cp toliet_mapper/settings.py toliet_mapper/localsettings.py 
+	You must then edit the localsettings.py file.  First on line 15 there is an DATABSES object.  Add sqlite3 to the end of the Engine path.  After this choose a location for your local database and enter it in the NAME field.   Above the object there are admins list, make yourself one.  At the end of the file Around line 165 (import dj_database_url)  there is some stuff, remove it all as it is not necessary for a function local database using Django. 
+
+6. Test Django app
+   	$python localmannage.py runserver
+
+Workflow:
+We will discuss this at the next meeting.  
+- every user story is its own branch 
+- teams of 2 (partner programming mcDowell style)
+- code review everytime we push to master.
+       - a pair that didnt write the code does code review.
+       - push the new branch to git repo and do a git diff.
+- report bugs to programming teams and dont fix it.
+      - blame people.
+      -  if you do fix something. be very careful. stash commits first. 
+      - maybe make a new branch
+
+
+
+
+
+
+
+
+      	
+
