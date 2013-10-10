@@ -1,3 +1,17 @@
 body {
     background-color: #DCDCDC;
 }
+
+li.listing {
+    padding: 5px; 
+}
+.listing a {
+    color: #333333; 
+    overflow: hidden; 
+    padding: 0px; 
+}
+
+.nav-pills > li.listing > a {
+    padding: 0px; 
+
+}
