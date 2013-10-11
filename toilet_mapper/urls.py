@@ -6,8 +6,10 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                        url(r'^$', 'main.views.home', name='home'),
-                       url(r'^query/get/$', 'middletier.views.get', name='middletier'),
+                       url(r'^query/get/$', 'middletier.views.get', name='middletierget'),
+                       url(r'^query/put/$', 'middletier.views.put', name='middletierput'),
                        url(r'^toilet/(\d+)$', 'main.views.single_toilet_view', name='single_toilet_view'),
+
     # Examples:
     # url(r'^$', 'toilet_mapper.views.home', name='home'),
     # url(r'^toilet_mapper/', include('toilet_mapper.foo.urls')),
