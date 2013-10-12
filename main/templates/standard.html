@@ -4,18 +4,20 @@
 {% block head %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/standard.css" type="text/css" />
 
+<!-- jquery js -->
 <script src='http://code.jquery.com/jquery-2.0.3.min.js'></script>
+
 <!-- bootstrap css and js -->
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 
-<!-- Optional theme -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- end bootstrap css and js -->
 
 <!-- fontawesome css and js -->
@@ -24,6 +26,19 @@
 
 <!-- handlebars js -->
 <script src='//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.min.js'></script>
+
+<!-- jquery cookies plugin -->
+<script src='//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js'></script>
+
+<!-- django csrf code -->
+<script src='/static/js/django_csrf.js'></script>
+<script type='text/javascript'>
+  //Calling it here on every page for now. Don't see any
+  // security holes or real inefficiency in doing so.
+  setup_django_csrf();
+</script>
+
+
 {% endblock %}
 
 
