@@ -35,22 +35,27 @@ def put (request):
         
 def get (request):
     req_dict = request.GET
-    response = ""
+    filter_objects = {}
     if (req_dict['table'] == "toilet"):
+        filter_objects = Toilet.objects 
         #table=toilet&pk=(/d+)
         if req_dict.__contains__('pk'):
             pk = req_dict['pk']
-            response = serializers.serialize('json', Toilet.objects.filter(pk = pk))
+            filter_objects = filter_objects.filter(pk = pk)
         #table=toilet&user=(/d+) 
-        elif req_dict.__contains__('user'):
+        if req_dict.__contains__('user'):
             user = req_dict['user']
-            response = serializers.serialize('json', Toilet.objects.filter(creator=user))   
         #elif google maps API shit for location, add during sprint 2
     elif  (req_dict['table'] == "review"):
         #table=review&toilet_id=(/d+)
+        filter_objects = Review.objects
         if req_dict.__contains__('toilet_id'):
             toilet_id = req_dict['toilet_id']
-            response = serializers.serialize('json', Review.objects.filter(toilet = toilet_id))
+            filter_objects = filter_objects.filter(toilet = toilet_id)
+        if req_dict.__contains__('user'):
+            user_id = req_dict['user']
+            filter_objects = filter_objects.filter(user = user_id)
+    response = serializers.serialize('json', filter_objects)
     return HttpResponse(response)
 
 #removes the json characters from the strings in the data from request
