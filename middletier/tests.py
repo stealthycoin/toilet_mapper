@@ -76,15 +76,19 @@ class putNewReview(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, "Missing pk attribute")
 
-    def test_edit_no_content(self): 
+    def test_edit_no_content_or_rank(self):  
+        request = postReview(self.factory, 1, "Old Connent")
+        request.user = self.user
+        response = put(request) 
+        responsePK = getPkFromResponse(response)
         request = self.factory.post('/query/put/',
                                   {'table' : 'review', 
                                     'update' : 'True',
-                                    'pk': 1})
+                                    'pk': responsePK})
         request.user = self.user
         response = put(request)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, "Missing content attribute")
+        self.assertEqual(response.content, "Missing more than one attribute")
 
     def test_post_wrong_type_pk(self):
         request = postReview(self.factory, "not a number", "Old Connent")

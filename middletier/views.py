@@ -96,11 +96,18 @@ def addReview(model_attributes, request):
     return serializers.serialize('json', [r]) 
 
 def updateReview(model_attributes):
-    response = ""
+    response = ""  
     pk = model_attributes['pk']
-    newcontent = model_attributes['content']
     review = Review.objects.get(pk=pk)
-    review.content = newcontent
+    noUpdate = True
+    if 'content' in model_attributes:
+        review.content = model_attributes['content'] 
+        noUpdate = False
+    if 'rank' in model_attributes: 
+        review.rank = model_attributes['rank']
+        noUpdate = False
+    if noUpdate:
+        raise KeyError("more than one")
     review.save()
     return serializers.serialize('json', [review])
 
