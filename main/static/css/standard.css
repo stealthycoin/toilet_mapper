@@ -2,6 +2,8 @@ body {
     background-color: #DCDCDC;
 }
 
+
+/* Toilet Listings CSS */
 li.listing {
     padding: 5px; 
 }
@@ -15,3 +17,31 @@ li.listing {
     padding: 0px; 
 
 }
+
+/* Reviews CSS */
+.review {
+    margin-bottom: 10px; 
+    padding-bottom: 10px; 
+    border-bottom: 1px dashed #aeaeae; 
+}
+.star-ratings {
+    text-align: left;
+    color: #FF9900;
+}
+.panel-button { 
+    font-weight: bold;  
+    color: black;
+    display: block; 
+    text-align: center; 
+}
+.panel-button:hover { text-decoration: none; }
+#leaveReview {
+    clear: both;
+    overflow: hidden; 
+    margin-top: 5px; 
+}
+.leaveReview label {
+    font-size: 1.2em;
+}
+
+.leaveReview .rateit { margin-top: 9px; }
