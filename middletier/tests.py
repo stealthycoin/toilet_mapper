@@ -39,14 +39,14 @@ class putNewReview(TestCase):
         request.user = self.user
         response = put(request)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.content, "Toilet does not exist")
+        self.assertEqual(response.content, "Toilet matching query does not exist.")
 
     def test_missing_attributes(self):
         request = self.factory.post('/query/put/', {'table' : 'review'});
         request.user = self.user
         response = put(request)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, "Missing Attributes")
+        self.assertEqual(response.content, "Missing toilet attribute")
 
     def test_edit_review(self):
         request = postReview(self.factory, 1, "Old Connent")
@@ -64,18 +64,63 @@ class putNewReview(TestCase):
         request.user = self.user
         response = put(request)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.content, "Review does not exist")
+        self.assertEqual(response.content, "Review matching query does not exist.")
 
     def test_edit_no_pk(self):
-        request = request = self.factory.post('/query/put/',
+        request = self.factory.post('/query/put/',
                                   {'table' : 'review', 
                                     'update' : 'True',
                                     'content': "Foo bar"})
         request.user = self.user
         response = put(request)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, "Missing Attributes")
-         
+        self.assertEqual(response.content, "Missing pk attribute")
+
+    def test_edit_no_content(self): 
+        request = self.factory.post('/query/put/',
+                                  {'table' : 'review', 
+                                    'update' : 'True',
+                                    'pk': 1})
+        request.user = self.user
+        response = put(request)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, "Missing content attribute")
+
+    def test_post_wrong_type_pk(self):
+        request = postReview(self.factory, "not a number", "Old Connent")
+        request.user = self.user
+        response = put(request) 
+        self.assertEqual(response.status_code, 400)
+  
+    def test_post_wrong_type_content(self):
+        request = postReview(self.factory, 1, 666)
+        request.user = self.user
+        response = put(request) 
+        self.assertEqual(response.status_code, 201)
+
+
+        
+
+class testPutToilet(TestCase):
+    def setUp(self):
+       self.factory = RequestFactory()
+       self.user = User.objects.create_user('test_foo', 'foo@bar.com','bqz_qux')
+       self.user.save()
+    
+    def test_post_toielt(self):
+       request = postToilet(self.factory, "Test Toilet")
+       request.user = self.user
+       response = put(request)
+       toiletPK = getPkFromResponse(response)
+       toilet = Toilet.objects.get(name="Test Toilet")
+       self.assertEqual(toiletPK,toilet.pk)
+
+    def test_no_table(self): 
+       request = self.factory.post('/query/put', {'pk' : 1})
+       request.user = self.user
+       response = put(request)
+       self.assertEqual(response.status_code, 400)
+ 
 
 def getPkFromResponse(response):
     return int(re.search(r'\"pk\": (\d+)', response.content).group(1))
@@ -94,7 +139,18 @@ def postReview(factory, toilet, content, update=False, reviewPK=0):
                                     'toilet' : toilet,
                                     'content': content})
     return request
- 
+
+def postToilet(factory,name, update=False, pk=0):
+   request = 0
+   if update:
+      x = 1
+      #nothing yet 
+   else :
+      request = factory.post('/query/put/',
+                              {'table' : 'toilet',
+                                'name' : name})
+   return request
+
 class SimpleTest(TestCase):
     def test_basic_addition(self):
         """

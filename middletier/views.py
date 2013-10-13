@@ -15,70 +15,34 @@ def put (request):
     response = ""
     status = 201
     update = False
-    if 'update' in req_post_dict and req_post_dict['update']:
-        update = True 
-    if ('table' in req_post_dict and req_post_dict['table'] == "toilet"):
-        t = Toilet()
-        model_attributes['date'] = datetime.datetime.now()
-        model_attributes['creator'] = request.user
-        t.setattrs(model_attributes)
-        t.save()
-        response = serializers.serialize('json', [t])
-    #the only field we need from the POST is the toliet id and the content 
-    elif( 'table' in req_post_dict and req_post_dict['table'] == "review"):
-        if update:
-            status, response = updateReview(model_attributes)
+    try: 
+        if 'update' in req_post_dict and req_post_dict['update']:
+            update = True 
+        if req_post_dict['table'] == "toilet":
+           if update:
+              response = updateToilet(model_attributes, request)
+           else:
+              response = addToilet(model_attributes, request) 
+        elif req_post_dict['table'] == "review":
+            if update:
+                response = updateReview(model_attributes)
+            else:
+                response = addReview(model_attributes, request)
+           #No table specified
         else:
-            status,response = addReview(model_attributes, request)
-       #No table specified
-    else:
+            status = 400
+            response = "no table found"
+    except KeyError as e:
         status = 400
-        response = "no table found"
+        response = "Missing " + str(e).replace('\'',"") + " attribute" 
+    except ValueError as e:
+        status = 400
+        response = str(e).replace('\'',"")
+    except ObjectDoesNotExist as e:
+        status = 404
+        response = str(e).replace('\'',"")
     #201 for new resource created
     return HttpResponse(response,status=status)
-
-
-def addReview(model_attributes, request):
-    status = 201
-    response = ""
-    try:
-        toilet_pk = model_attributes['toilet']
-        model_attributes['toilet'] = Toilet.objects.get(pk=toilet_pk)
-        model_attributes['user'] = request.user;
-        model_attributes['date'] = datetime.datetime.now()
-        #when writing new review, ranks should always start at zero
-        model_attributes['rank'] = 0
-        r = Review()
-        r.setattrs(model_attributes)
-        r.save()
-        response = serializers.serialize('json', [r])
-    except KeyError: 
-        status = 400
-        response = "Missing Attributes"
-    except ObjectDoesNotExist:
-        status = 404
-        response = "Toilet does not exist" 
-    return (status, response)
-
-def updateReview(model_attributes):
-    status = 201
-    response = ""
-    try:
-        pk = model_attributes['pk']
-        newcontent = model_attributes['content']
-        review = Review.objects.get(pk=pk)
-        review.content = newcontent
-        review.save()
-        status = 201
-        response = serializers.serialize('json', [review])
-    except KeyError: 
-        status = 400
-        response = "Missing Attributes"
-    except ObjectDoesNotExist:
-        status = 404
-        response = "Review does not exist"
-    return (status, response)
-   
         
 def get (request):
     req_dict = request.GET
@@ -104,6 +68,41 @@ def get (request):
             filter_objects = filter_objects.filter(user = user_id)
     response = serializers.serialize('json', filter_objects)
     return HttpResponse(response)
+
+def addToilet(model_attributes, request):
+     t = Toilet()
+     model_attributes['date'] = datetime.datetime.now()
+     model_attributes['creator'] = request.user
+     t.setattrs(model_attributes)
+     t.save()
+     return serializers.serialize('json', [t])
+
+def updateToilet(model_attributes, request):
+     #doesn't do anything at the moment because there is nothing to update
+     t = Toilet.objects.get(pk = mode_attrbites['pk'])
+     return serializers.serialize('json', [t])
+
+def addReview(model_attributes, request):
+    response = ""
+    toilet_pk = model_attributes['toilet']
+    model_attributes['toilet'] = Toilet.objects.get(pk=toilet_pk)
+    model_attributes['user'] = request.user;
+    model_attributes['date'] = datetime.datetime.now()
+    #when writing new review, ranks should always start at zero
+    model_attributes['rank'] = 0
+    r = Review()
+    r.setattrs(model_attributes)
+    r.save()
+    return serializers.serialize('json', [r]) 
+
+def updateReview(model_attributes):
+    response = ""
+    pk = model_attributes['pk']
+    newcontent = model_attributes['content']
+    review = Review.objects.get(pk=pk)
+    review.content = newcontent
+    review.save()
+    return serializers.serialize('json', [review])
 
 #removes the json characters from the strings in the data from request
 def remove_json_characters(dictionary):
