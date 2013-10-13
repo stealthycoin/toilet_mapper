@@ -6,13 +6,18 @@ from review.models import Review
 from django.core import serializers
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 @login_required
 def put (request):
     req_post_dict = request.POST
     model_attributes = remove_json_characters(dict(req_post_dict))
-    repsponse = ""
-    if (req_post_dict['table'] == "toilet"):
+    response = ""
+    status = 201
+    update = False
+    if 'update' in req_post_dict and req_post_dict['update']:
+        update = True 
+    if ('table' in req_post_dict and req_post_dict['table'] == "toilet"):
         t = Toilet()
         model_attributes['date'] = datetime.datetime.now()
         model_attributes['creator'] = request.user
@@ -20,8 +25,24 @@ def put (request):
         t.save()
         response = serializers.serialize('json', [t])
     #the only field we need from the POST is the toliet id and the content 
-    elif(req_post_dict['table'] == "review"):
-        toilet_pk = model_attributes['toilet'][0]
+    elif( 'table' in req_post_dict and req_post_dict['table'] == "review"):
+        if update:
+            status, response = updateReview(model_attributes)
+        else:
+            status,response = addReview(model_attributes, request)
+       #No table specified
+    else:
+        status = 400
+        response = "no table found"
+    #201 for new resource created
+    return HttpResponse(response,status=status)
+
+
+def addReview(model_attributes, request):
+    status = 201
+    response = ""
+    try:
+        toilet_pk = model_attributes['toilet']
         model_attributes['toilet'] = Toilet.objects.get(pk=toilet_pk)
         model_attributes['user'] = request.user;
         model_attributes['date'] = datetime.datetime.now()
@@ -31,7 +52,33 @@ def put (request):
         r.setattrs(model_attributes)
         r.save()
         response = serializers.serialize('json', [r])
-    return HttpResponse(response)
+    except KeyError: 
+        status = 400
+        response = "Missing Attributes"
+    except ObjectDoesNotExist:
+        status = 404
+        response = "Toilet does not exist" 
+    return (status, response)
+
+def updateReview(model_attributes):
+    status = 201
+    response = ""
+    try:
+        pk = model_attributes['pk']
+        newcontent = model_attributes['content']
+        review = Review.objects.get(pk=pk)
+        review.content = newcontent
+        review.save()
+        status = 201
+        response = serializers.serialize('json', [review])
+    except KeyError: 
+        status = 400
+        response = "Missing Attributes"
+    except ObjectDoesNotExist:
+        status = 404
+        response = "Review does not exist"
+    return (status, response)
+   
         
 def get (request):
     req_dict = request.GET
