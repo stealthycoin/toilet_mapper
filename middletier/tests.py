@@ -101,9 +101,20 @@ class putNewReview(TestCase):
         request.user = self.user
         response = put(request) 
         self.assertEqual(response.status_code, 201)
-
-
-        
+   
+    def test_post_review_twice(self):
+        request = postToilet(self.factory, "Toilet 1") 
+        request.user = self.user
+        response = put(request)
+        toilet_pk = json.loads(response.content)[0]['pk']
+        request = postReview(self.factory, toilet_pk, "First Review") 
+        request.user = self.user
+        response = put(request)
+        request = postReview(self.factory, toilet_pk, "Review Again")
+        request.user = self.user
+        response = put(request)
+        #can't submit multiple reviews
+        self.assertEqual(response.status_code, 415, "Database allows posting more than one review to the same toilet") 
 
 class testPutToilet(TestCase):
     def setUp(self):
@@ -125,6 +136,138 @@ class testPutToilet(TestCase):
        response = put(request)
        self.assertEqual(response.status_code, 400)
  
+
+class getReview(TestCase):
+    def setUp(self):
+      self.factory = RequestFactory()
+      self.user = User.objects.create_user("test_foo", "foo@bar.com", "password")
+      self.user.save()
+      
+    def test_get_review_by_toilet(self):
+      toilet = Toilet()
+      toilet.name = "New Toilet"
+      toilet.date = datetime.datetime.now()
+      toilet.creator = self.user 
+      toilet.save()
+      review = Review()
+      review.toilet = toilet
+      review.content = "This is a test review"
+      review.rank = 0
+      review.user = self.user
+      review.date = datetime.datetime.now()
+      review.save()
+      request = getReviewByToilet(self.factory, toilet.pk)
+      request.user = self.user
+      response = get(request)
+      response_list = json.loads(response.content)
+      self.assertEqual(response_list[0]['pk'], review.pk)
+   
+    def test_get_review_by_user(self):
+      toilet = Toilet()
+      toilet.name = "New toilet"
+      toilet.date = datetime.datetime.now()
+      toilet.creator = self.user
+      toilet.save()
+      second_toilet = Toilet()
+      second_toilet.name = "Second Toilet"
+      second_toilet.date = datetime.datetime.now()
+      second_toilet.creator = self.user
+      second_toilet.save()
+      review = Review()
+      review.toilet = toilet
+      review.content = "First toilet content"
+      review.rank = 0
+      review.user = self.user
+      review.date = toilet.date
+      review.save()
+      second_review = Review()
+      second_review.toilet = second_toilet
+      second_review.user = self.user
+      second_review.date = second_toilet.date
+      second_review.rank = 0
+      second_review.content = "Second toilet content"
+      second_review.save()
+      request = getReviewByUser(self.factory, self.user.pk)
+      response = get(request)
+      response_list = json.loads(response.content)
+      pk_list = [pk_elm for pk_elm in [ elm_list['pk']
+                                      for elm_list in response_list]]
+      self.assertEqual(len(pk_list), 2)
+      self.assertIn(review.pk, pk_list)
+      self.assertIn(second_review.pk, pk_list)
+
+    def test_get_review_no_table(self):
+      request = self.factory.get('query/get/')
+      request.user = self.user  
+      response = get(request)
+      self.assertEqual(response.status_code, 400)
+
+    #doesnt do anything at the moment 
+    def test_get_review_no_query(self):
+      request = self.factory.get('query/get/?table=review') 
+      request.user = self.user
+      response = get(request)
+      #this test is just here, we should discuss what do when this happens
+      #self.assertEqual(response.status_code, 400)
+    
+    def test_get_bad_table(self):
+      request = self.factory.get('query/get/?table=foo') 
+      request.user = self.user
+      response = get(request)
+      self.assertEqual(response.status_code, 400)
+
+class getToilet(TestCase):
+    def setUp(self):
+      self.factory = RequestFactory()
+      self.user = User.objects.create_user("test_foo", "foo@bar.com", "password")
+      self.user.save()
+    
+    def get_toilet_by_id(self):
+      toilet = Toilet()
+      toilet.name = "New toilet"
+      toilet.date = datetime.datetime.now()
+      toilet.creator = self.user
+      toilet.save()
+      request = getToiletById(self.factory, toilet.pk)
+      request.user = self.user
+      response = get(request)
+      toilet_pk = json.loads(response.content)[0]['pk']
+      self.assertEqual(toilet_pk, toilet.pk)
+    
+    def get_toilet_by_user(self):
+      toilet = Toilet()
+      toilet.name = "New toilet"
+      toilet.date = datetime.datetime.now()
+      toilet.creator = self.user
+      toilet.save()
+      second_toilet = Toilet()
+      second_toilet.name = "Second Toilet"
+      second_toilet.date = datetime.datetime.now()
+      second_toilet.creator = self.user
+      second_toilet.save()
+      request = getToiletByUser(self.factory, self.user.pk)
+      request.user = self.user
+      response = get(request)
+      response_list = json.loads(response.content)
+      pk_list = [pk_elm for pk_elm in [ elm_list['pk']
+                                      for elm_list in response_list]]
+      self.assertEqual(len(pk_list), 2)
+      self.assertIn(toilet.pk, pk_list)
+      self.assertIn(second_toilet.pk, pk_list)
+
+
+
+def getToiletById(factory, toilet):
+    return factory.get('/query/get/?table=toilet&pk=' + str(toilet) )
+
+def getToiletByUser(factory, user):
+    return factory.get('/query/get/?table=toilet&user=' + str(user) )
+
+def getReviewByToilet(factory,toilet):
+    return factory.get('/query/get/?table=review&toilet=' + str(toilet) )
+
+def getReviewByUser(factory, user):
+    return factory.get('/query/get/?table=review&user=' + str(user) )
 
 def getPkFromResponse(response):
     return int(re.search(r'\"pk\": (\d+)', response.content).group(1))
@@ -154,11 +297,4 @@ def postToilet(factory,name, update=False, pk=0):
                               {'table' : 'toilet',
                                 'name' : name})
    return request
-
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
 

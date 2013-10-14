@@ -8,6 +8,12 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 
+class InvalidPostError(Exception):
+    def __init__(self,value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 @login_required
 def put (request):
     req_post_dict = request.POST
@@ -32,6 +38,9 @@ def put (request):
         else:
             status = 400
             response = "no table found"
+    except InvalidPostError as e:
+        status = 415
+        response = e.value 
     except KeyError as e:
         status = 400
         response = "Missing " + str(e).replace('\'',"") + " attribute" 
@@ -45,29 +54,54 @@ def put (request):
     return HttpResponse(response,status=status)
         
 def get (request):
-    req_dict = request.GET
-    filter_objects = {}
-    if (req_dict['table'] == "toilet"):
-        filter_objects = Toilet.objects 
-        #table=toilet&pk=(/d+)
-        if req_dict.__contains__('pk'):
-            pk = req_dict['pk']
-            filter_objects = filter_objects.filter(pk = pk)
-        #table=toilet&user=(/d+) 
-        if req_dict.__contains__('user'):
-            user = req_dict['user']
-        #elif google maps API shit for location, add during sprint 2
-    elif  (req_dict['table'] == "review"):
-        #table=review&toilet_id=(/d+)
-        filter_objects = Review.objects
-        if req_dict.__contains__('toilet_id'):
-            toilet_id = req_dict['toilet_id']
-            filter_objects = filter_objects.filter(toilet = toilet_id)
-        if req_dict.__contains__('user'):
-            user_id = req_dict['user']
-            filter_objects = filter_objects.filter(user = user_id)
+    try:
+      status = 201
+      req_dict = request.GET
+      filter_objects = []
+      if (req_dict['table'] == "toilet"):
+          filter_objects = getToilet(req_dict)
+      elif  (req_dict['table'] == "review"):
+          filter_objects = getReview(req_dict)
+      else:
+        status = 400
+        response = "no table found"
+    except KeyError as e:
+        status = 400
+        response = "Missing " + str(e).replace('\'',"") + " attribute" 
+    except ValueError as e:
+        status = 400
+        response = str(e).replace('\'',"")
+    except ObjectDoesNotExist as e:
+        status = 404
+        response = str(e).replace('\'',"")
     response = serializers.serialize('json', filter_objects)
-    return HttpResponse(response)
+    return HttpResponse(response,status =status)
+
+def getReview(request):
+     filter_objects = Review.objects.all()
+     #table=review&toilet_id=(/d+)
+     if request.__contains__('toilet_id'):
+         toilet_id = request['toilet_id']
+         filter_objects = filter_objects.filter(toilet = toilet_id)
+     if request.__contains__('user'):
+         user_id = request['user']
+         filter_objects = filter_objects.filter(user = user_id)
+     return filter_objects
+
+
+def getToilet(request):
+    filter_objects = Toilet.objects.all()
+    #table=toilet&pk=(/d+)
+    if request.__contains__('pk'):
+        pk = request['pk']
+        filter_objects = filter_objects.filter(pk = pk)
+    #table=toilet&user=(/d+) 
+    if request.__contains__('user'):
+        user = request['user']
+        filter_objects = filter_ojbects.filter(creator=user)
+    #elif google maps API shit for location, add during sprint 2
+    return filter_objects
+
 
 def addToilet(model_attributes, request):
      t = Toilet()
@@ -85,6 +119,10 @@ def updateToilet(model_attributes, request):
 def addReview(model_attributes, request):
     response = ""
     toilet_pk = model_attributes['toilet']
+    
+    if len(Review.objects.filter(user=request.user,toilet=toilet_pk)) > 0:
+       raise InvalidPostError("Cannot post multiple reviews for one restroom")
+
     model_attributes['toilet'] = Toilet.objects.get(pk=toilet_pk)
     model_attributes['user'] = request.user;
     model_attributes['date'] = datetime.datetime.now()
