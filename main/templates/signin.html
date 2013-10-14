@@ -1,31 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-  <!--  <link rel="shortcut icon" href="http://getbootstrap.com/assets/ico/favicon.png"> -->
+{% extends "standard.html" %}
 
-    <title>Signin Page for Toilet Mapper</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Custom styles for this template maybe have to change this???-->
-    <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="../../assets/js/html5shiv.js"></script>
-      <script src="../../assets/js/respond.min.js"></script>
-    <![endif]-->
-  <style type="text/css"></style></head>
-
-  <body>
+{% block content %}
 
     <div class="container">
 
-      <form class="form-signin">
+      <form class="form-signin col-lg-4 col-md-5 col-lg-offset-4 col-md-offset-3 col-sm-6 col-sm-offset-3">
         <h2 class="form-signin-heading">Toilet Mapper Sign In</h2>
         <input type="text" class="form-control" placeholder="Username" autofocus="">
         <input type="password" class="form-control" placeholder="Password">
@@ -36,13 +16,12 @@
         <br>
 	<br>
 	<br>
-	<a href="/create" class="btn btn-inverse btn-xs btn-block">No Account? Create An Account</a>
+	<a href="/create">No Account? Create An Account</a>
       </form>
     </div> <!-- /container -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-  
 
-</body></html>
+{% endblock %}
