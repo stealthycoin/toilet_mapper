@@ -9,8 +9,9 @@ urlpatterns = patterns('',
                        url(r'^query/get/$', 'middletier.views.get', name='middletierget'),
                        url(r'^query/put/$', 'middletier.views.put', name='middletierput'),
                        url(r'^toilet/(\d+)$', 'main.views.single_toilet_view', name='single_toilet_view'),
-		       url(r'^signin$', 'main.views.signin', name='signin'),
+		       url(r'^signin$', 'main.views.signin', name='signin'), 
 		       url(r'^create$', 'main.views.create', name='create'),
+		       url(r'^addrestroom$', 'main.views.add_restroom', name='add_restroom'),
 
 
     # Examples:
