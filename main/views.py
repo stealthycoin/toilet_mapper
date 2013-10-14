@@ -9,3 +9,10 @@ def home(request):
 def single_toilet_view(req, pk):
     return render(req, "toilet.html", { "toilet": stv ( pk ) })
 
+def signin(request):
+    return render(request, 'signin.html')
+
+def create(request):
+    return render(request, 'create.html')
+
+
