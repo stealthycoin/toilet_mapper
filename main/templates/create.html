@@ -11,7 +11,8 @@
     <!-- Bootstrap core CSS -->
     <link href="http://getbootstrap.com/dist/css/bootstrap.css" rel="stylesheet">
 
-    <!-- Custom styles for this template maybe have to change this???-->
+    <!-- Custom styles for this template 
+    NOTE: OUR TEAM MAY NEED TO CHANGE THIS???-->
     <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -22,53 +23,68 @@
   <style type="text/css"></style></head>
 
   <body>
-    <form class="form-horizontal">
-<fieldset>
 
-<!-- Form Name -->
-<legend>Create An Account</legend>
+    <div class="container">
 
-<!-- Text input-->
-<div class="control-group">
-<label class="control-label" for="usernameIn">Username</label>
-<div class="controls">
-<input id="usernameIn" name="usernameIn" type="text" placeholder="ex. toiletPro91" class="input-xlarge" required="">
+      <form class="form-horizontal">
+        <h2 class="form-signin-heading">Create A User Account</h2>
 
-</div>
-</div>
+          <!-- First Name input-->
+          <div class="control-group">
+            <label class="control-label" for="firstnameIn">First Name</label>
+            <div class="controls">
+              <input id="firstnameIn" name="firstnameIn" type="text" placeholder="Jeremy" class="form-control input-xlarge" required="">
+            </div>
+	  <div>
 
-<!-- Text input-->
-<div class="control-group">
-<label class="control-label" for="emailinput">Email</label>
-<div class="controls">
-<input id="emailinput" name="emailinput" type="text" placeholder="ex. toiletPro@gmail.com" class="input-xlarge" required="">
+          <!-- Last Name input-->
+          <div class="control-group">
+            <label class="control-label" for="lastnameIn">Last Name</label>
+            <div class="controls">
+              <input id="lastnameIn" name="lastnameIn" type="text" placeholder="Pooper" class="form-control input-xlarge" required="">
+            </div>
+	  <div>
 
-</div>
-</div>
 
-<!-- Password input-->
-<div class="control-group">
-<label class="control-label" for="passwordinput">Password</label>
-<div class="controls">
-<input id="passwordinput" name="passwordinput" type="password" placeholder="" class="input-xlarge" required="">
 
-</div>
-</div>
+	  <!-- Username input-->
+          <div class="control-group">
+            <label class="control-label" for="usernameIn">Username</label>
+            <div class="controls">
+              <input id="usernameIn" name="usernameIn" type="text" placeholder="ex. toiletPro91" class="form-control input-xlarge" required="">
+            </div>
+	  <div>
 
-<!-- Button -->
-<div class="control-group">
-<label class="control-label" for="singlebutton"></label>
-<div class="controls">
-<button id="singlebutton" name="singlebutton" class="btn btn-info">Submit</button>
-</div>
-</div>
+          <!-- Email Address input-->
+          <div class="control-group">
+            <label class="control-label" for="emailinput">Email</label>
+            <div class="controls">
+              <input id="emailinput" name="emailinput" type="text" placeholder="ex. toiletPro@gmail.com" class="form-control input-xlarge" required="">
+            </div>
+	  </div>
 
-</fieldset>
-</form>
+          <!-- Password input-->
+          <div class="control-group">
+            <label class="control-label" for="passwordinput">Password</label>
+            <div class="controls">
+              <input id="passwordinput" name="passwordinput" type="password" placeholder="" class="form-control input-xlarge" required="">
+            </div>
+	  </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-  
+          <!-- Button -->
+          <div class="control-group">
+          <label class="control-label" for="singlebutton"></label>
+          <div class="controls">
+          <button id="singlebutton" name="singlebutton" class="btn btn-primary">Create Account</button>
+          </div></div>
 
-</body></html>
+          <br>
+          <br>
+	  <br>
+	  <a href="/signin" class="btn btn-inverse btn-xs btn-block">Already a user? Sign In</a>
+      </form>
+    </div> <!-- /container -->
+
+
+  </body>
+</html>
