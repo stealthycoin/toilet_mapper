@@ -8,19 +8,23 @@
 </form>
 
 <script type='text/javascript'>
-/*
-$('#test_add').submit(function(e){
-  e.preventDefault();
-  var j = tapi
 
-});
-*/
+  function create_form_complete(j){
+    j.done(function(data){
+      console.log("It worked!");
+    });
+    j.fail(function(data){
+      console.log("It failed!");
+    });
+  }
+  
+  var j = tapi_auto_form('test_add', {noun: "toilet", verb: "create"}
+    , create_form_complete);
 
 </script>
 
 
 <form action="/api/toilet/create/" method="post" id="test_add">
-  {% csrf_token %}
   <label>Name</label><input type="text" name="name" id="name" />
   <input type="submit" value="Submit" />
 </form>
