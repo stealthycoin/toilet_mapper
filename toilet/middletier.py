@@ -11,10 +11,11 @@ def add(request):
     status = 201
 
     if request.method == 'POST':
+        print request.user
         data = post_to_dict(request.POST)
         t = Toilet()
         data['date'] = datetime.datetime.now()
-        data['user'] = request.user
+        data['creator'] = request.user
         t.setattrs(data)
         t.save()
 
