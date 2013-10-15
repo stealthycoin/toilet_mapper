@@ -1,4 +1,5 @@
-from models import Review 
+from models import Review
+from toilet.models import Toilet
 import json
 from common.middletier import post_to_dict, seralize
 from django.http import HttpResponse
@@ -15,6 +16,7 @@ def add(request):
         r = Review()
         data['date'] = datetime.datetime.now()
         data['creator'] = request.user
+        data['toilet'] = Toilet.objects.get(pk=data['toilet'])
         r.setattrs(data)
         r.save()
 
