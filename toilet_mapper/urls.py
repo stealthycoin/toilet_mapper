@@ -9,6 +9,7 @@ urlpatterns = patterns('',
                        url(r'^query/get/$', 'middletier.views.get', name='middletierget'),
                        url(r'^query/put/$', 'middletier.views.put', name='middletierput'),
                        url(r'^toilet/(\d+)$', 'main.views.single_toilet_view', name='single_toilet_view'),
+                       url(r'^gmap$', 'main.views.gmap', name='gmap test'),
 
     # Examples:
     # url(r'^$', 'toilet_mapper.views.home', name='home'),

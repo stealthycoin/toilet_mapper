@@ -9,3 +9,6 @@ def home(request):
 def single_toilet_view(req, pk):
     return render(req, "toilet.html", { "toilet": stv ( pk ) })
 
+def gmap(request):
+    return render(request, 'gmap.html')
+
