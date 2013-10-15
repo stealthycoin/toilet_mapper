@@ -15,7 +15,7 @@ def add(request):
         data = post_to_dict(request.POST)
         r = Review()
         data['date'] = datetime.datetime.now()
-        data['creator'] = request.user
+        data['user'] = request.user
         data['toilet'] = Toilet.objects.get(pk=data['toilet'])
         r.setattrs(data)
         r.save()
