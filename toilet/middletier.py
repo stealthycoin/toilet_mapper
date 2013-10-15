@@ -28,5 +28,6 @@ def add(request):
     if error != '':
         response = error + '\n' + response
 
-        
+
+    print response
     return HttpResponse(response, status=status)
