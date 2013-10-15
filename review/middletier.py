@@ -1,10 +1,10 @@
-from models import Toilet
+from models import Review 
 import json
 from common.middletier import post_to_dict, seralize
 from django.http import HttpResponse
 import datetime
 
-#this adds a toilet using the post data
+#this adds a review using the post data
 def add(request):
     error = ''
     response = ''
@@ -12,11 +12,11 @@ def add(request):
 
     if request.method == 'POST':
         data = post_to_dict(request.POST)
-        t = Toilet()
+        r = Review()
         data['date'] = datetime.datetime.now()
         data['creator'] = request.user
-        t.setattrs(data)
-        t.save()
+        r.setattrs(data)
+        r.save()
 
         response = seralize(t)
                 
@@ -26,6 +26,5 @@ def add(request):
 
     if error != '':
         response = error + '\n' + response
-
 
     return HttpResponse(response, status=status)
