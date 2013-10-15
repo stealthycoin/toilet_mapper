@@ -8,7 +8,7 @@ function setup_django_csrf(){
     var csrftoken = $.cookie('csrftoken'); //requires jQuery cookie plugin
 
     $.ajaxSetup({
-	crossDomain: true, // obviates need for sameOrigin test
+	crossDomain: false, // obviates need for sameOrigin test
 	beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type)) {
 		xhr.setRequestHeader("X-CSRFToken", csrftoken);
