@@ -102,10 +102,13 @@ function tapi_auto_form(form_id, tapi_params, jqxhr_f){
 
             
             tapi_params.data = {};
-            $('#form_id [name]').each(function(){
+            $('#'+form_id+' [name]').each(function(){
                 tapi_params.data[$(this).attr('name')] = $(this).val();
             });
+
             
+            console.log("TAPI params");
+            console.log(tapi_params);
             var t = tapi(tapi_params);
             if(jqxhr_f !== undefined) jqxhr_f(t);
         });
