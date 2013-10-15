@@ -7,4 +7,22 @@
 <input type="submit" value="Submit" />
 </form>
 
+<script type='text/javascript'>
+/*
+$('#test_add').submit(function(e){
+  e.preventDefault();
+  var j = tapi
+
+});
+*/
+
+</script>
+
+
+<form action="/api/toilet/create/" method="post" id="test_add">
+  {% csrf_token %}
+  <label>Name</label><input type="text" name="name" id="name" />
+  <input type="submit" value="Submit" />
+</form>
+
 {% endblock %}

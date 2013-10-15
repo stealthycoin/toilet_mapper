@@ -13,6 +13,7 @@ urlpatterns = patterns('',
 		       url(r'^create$', 'main.views.create', name='create'),
                        url(r'^gmap$', 'main.views.gmap', name='gmap test'),
 		       url(r'^addrestroom$', 'main.views.add_restroom', name='add_restroom'),
+                       url(r'^api/toilet/create/$', 'toilet.middletier.add', name='api_toilet_create'),
 
 
     # Examples:
