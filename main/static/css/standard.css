@@ -3,13 +3,26 @@ body {
 }
 
 
+/* Form Errors */
+ul.parsley-error-list { margin: 0px; list-style: none; padding: 0px; }
+ul.parsley-error-list li { 
+    margin-top: 5px; 
+    padding: 5px; 
+    font-size: 0.8em; 
+    background-color: #F2DEDE;
+    color: #B94A48; 
+    border-radius: 5px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+}
+
 /* Toilet Listings CSS */
 li.listing {
     padding: 5px; 
 }
 .listing a {
     color: #333333; 
-    overflow: hidden; 
+    overflow: hidden;
     padding: 0px; 
 }
 
@@ -34,12 +47,15 @@ li.listing {
     display: block; 
     text-align: center; 
 }
+
 .panel-button:hover { text-decoration: none; }
+
 #leaveReview {
     clear: both;
     overflow: hidden; 
     margin-top: 5px; 
 }
+
 .leaveReview label {
     font-size: 1.2em;
 }
