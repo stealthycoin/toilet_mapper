@@ -47,7 +47,7 @@
 **/
 
 function simple_post(url, data){
-    return $.ajax({ url: url, type: 'POST', data: data});
+    return $.ajax({ url: url, type: 'POST', data: data, dataType: 'json'});
 }
 
 function simple_handler(url){
@@ -99,16 +99,12 @@ function tapi_auto_form(form_id, tapi_params, jqxhr_f){
             e.preventDefault();
             if($('#'+form_id).attr('data-validate') === "parsley"
                && !$('#'+form_id).parsley('isValid')) return;
-
             
             tapi_params.data = {};
             $('#'+form_id+' [name]').each(function(){
                 tapi_params.data[$(this).attr('name')] = $(this).val();
             });
 
-            
-            console.log("TAPI params");
-            console.log(tapi_params);
             var t = tapi(tapi_params);
             if(jqxhr_f !== undefined) jqxhr_f(t);
         });

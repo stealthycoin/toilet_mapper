@@ -2,31 +2,38 @@
 
 {% block content %}
 
-<form action="/query/put/" method="post">{% csrf_token %}
+<!--<form action="/query/put/" method="post">{% csrf_token %}
 {{ forms.as_p }}
 <input type="submit" value="Submit" />
-</form>
+</form>-->
 
 <script type='text/javascript'>
 
   function create_form_complete(j){
     j.done(function(data){
-      console.log("It worked!");
+      window.location = "/toilet/"+data[0].pk;
     });
     j.fail(function(data){
       console.log("It failed!");
     });
   }
   
-  var j = tapi_auto_form('test_add', {noun: "toilet", verb: "create"}
+  tapi_auto_form('test_add', {noun: "toilet", verb: "create"}
     , create_form_complete);
 
 </script>
 
 
-<form action="/api/toilet/create/" method="post" id="test_add">
-  <label>Name</label><input type="text" name="name" id="name" />
-  <input type="submit" value="Submit" />
+<form action="/api/toilet/create/" method="post" id="test_add" class="col-lg-8">
+  
+  <div class="form-group">
+    <label for="inputName" class="col-lg-2 col-sm-2 control-label">Name</label>
+    <div class="col-lg-5 col-sm-7">
+      <input id="inputName" name="name" class="form-control" rows="3" data-required="true" data-minlength="5" data-validation-minlength="1" ></input>
+    </div>
+  </div><!-- form-group -->
+  <div class='clearfix'></div>
+  <button type="submit" class="btn btn-default">Add Restroom</button>
 </form>
 
 {% endblock %}
