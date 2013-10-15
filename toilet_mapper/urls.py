@@ -11,6 +11,7 @@ urlpatterns = patterns('',
                        url(r'^toilet/(\d+)$', 'main.views.single_toilet_view', name='single_toilet_view'),
 		       url(r'^signin$', 'main.views.signin', name='signin'),
 		       url(r'^create$', 'main.views.create', name='create'),
+                       url(r'^gmap$', 'main.views.gmap', name='gmap test'),
 
 
     # Examples:

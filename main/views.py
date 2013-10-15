@@ -15,3 +15,6 @@ def create(request):
     return render(request, 'create.html')
 
 
+def gmap(request):
+    return render(request, 'gmap.html')
+
