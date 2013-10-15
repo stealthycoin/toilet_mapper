@@ -1,3 +1,11 @@
+
+{% extends "standard.html" %}
+
+
+{% block content %}
+
+
+
 <div class='container'>
 <h1>{{ t.name }}</h1>
 
@@ -103,7 +111,7 @@
 	<div style='text-align: center;'><small>
 	    {% templatetag openvariable %}username{% templatetag closevariable %}</small></div>
       </div>
-      <div class='col-md-10 col-sm-9 col-xs-7'>
+      <div class='col-md-10 col-sm-9 col-xs-8'>
 	<div class='row'>
 	  <div class='col-lg-4 col-md-3 col-sm-4 star-ratings' style='text-align: left;' >
 	    <span style='color:#FF9900;' class='icon-star'></span>
@@ -119,7 +127,7 @@
 
 	</div>
       </div>
-	<div class='col-md-10 col-sm-9 col-xs-7'>
+	<div class='col-md-10 col-sm-9 col-xs-12'>
 	  <p class='review_content'></p>
 	  {% templatetag openvariable %} content {% templatetag closevariable %}
 	</div>
@@ -153,3 +161,6 @@
 
 
 </div>
+
+
+{% endblock %}
