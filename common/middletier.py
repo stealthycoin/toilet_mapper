@@ -12,6 +12,7 @@ def remove_json_characters(dictionary):
 
 
 
-#
+#seralize a thing(s)
 def seralize(obj):
-    seralizers.serialize('json', [t])
+    serializers.serialize('json', [obj])
+    
