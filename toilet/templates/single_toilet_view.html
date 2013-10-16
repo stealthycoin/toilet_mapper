@@ -142,7 +142,7 @@
 
   //Loads or reloads the reviews from the server
   function loadReviews(){
-    tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id},
+    tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
       callback: function(d){
         $('#reviews').html('');
         $('.num_reviews').html(d.count+' Reviews');

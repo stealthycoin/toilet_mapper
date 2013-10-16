@@ -1,9 +1,9 @@
 from models import Review
 from toilet.models import Toilet
 import json
-from common.middletier import post_to_dict, serialize
+from common.middletier import post_to_dict, serialize, currentTime
 from django.http import HttpResponse
-import datetime
+
 
 #this adds a review using the post data
 def add(request):
@@ -14,7 +14,7 @@ def add(request):
     if request.method == 'POST':
         data = post_to_dict(request.POST)
         r = Review()
-        data['date'] = datetime.datetime.now()
+        data['date'] = currentTime()
         data['user'] = request.user
         data['toilet'] = Toilet.objects.get(pk=data['toilet'])
         r.setattrs(data)
@@ -41,13 +41,17 @@ def get(request):
         review_set = Review.objects.filter(toilet=data['toilet_id'])
         count = len(list(review_set))
 
+
         total = 0.0
-        for review in review_set:
-            total += review.rank
+        if count != 0:
+            for review in review_set:
+                total += review.rank
 
+            total /= count
+        else:
+            total = -1
 
-        total /= count
-
+        review_set = review_set[int(data['start']):int(data['end'])] #cut out the part requested  wanted            
         d = {'count' : count, 'total' : total, 'review_set' : json.loads(serialize(review_set)) }
         response = json.dumps(d)
 

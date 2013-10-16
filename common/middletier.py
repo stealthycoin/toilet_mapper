@@ -1,5 +1,8 @@
 import json
 from django.core import serializers
+from django.utils.timezone import utc
+import datetime
+
 #turns post data into a json object
 def post_to_dict(post):
     return remove_json_characters(dict(post))
@@ -10,6 +13,10 @@ def remove_json_characters(dictionary):
         dictionary[elm] = json.dumps(dictionary[elm]).replace("]","").replace("[","").replace("\"", "")
     return dictionary
 
+
+#returns the time in a django timezone frinedly way
+def currentTime():
+   return  datetime.datetime.utcnow().replace(tzinfo=utc)
 
 
 #serialize a thing(s)

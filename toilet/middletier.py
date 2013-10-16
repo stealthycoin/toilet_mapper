@@ -1,8 +1,8 @@
 from models import Toilet
 import json
-from common.middletier import post_to_dict, serialize
+from common.middletier import post_to_dict, serialize, currentTime
 from django.http import HttpResponse
-import datetime
+
 
 #this adds a toilet using the post data
 def add(request):
@@ -13,7 +13,7 @@ def add(request):
     if request.method == 'POST':
         data = post_to_dict(request.POST)
         t = Toilet()
-        data['date'] = datetime.datetime.now()
+        data['date'] = currentTime()
         data['creator'] = request.user
         t.setattrs(data)
         t.save()
