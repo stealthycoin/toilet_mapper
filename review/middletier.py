@@ -48,7 +48,7 @@ def get(request):
 
         total /= count
 
-        d = {'count' : count, 'total' : total, 'review_set' : serialize(review_set) }
+        d = {'count' : count, 'total' : total, 'review_set' : json.loads(serialize(review_set)) }
         response = json.dumps(d)
 
         
