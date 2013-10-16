@@ -32,12 +32,12 @@ def get(request):
     error = ''
     response = ''
     status = 200
-
-     request.method == 'POST':
+    
+    if request.method == 'POST':
         data = post_to_dict(request.POST)
         review_set = Review.objects.filter(toilet=data['toilet_id'])
         count = len(list(review_set))
-
+        
 
         total = 0.0
         if count != 0:
