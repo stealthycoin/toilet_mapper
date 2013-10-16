@@ -44,7 +44,7 @@
   </div><!-- row -->
   <div class='row'>
     <div class='col-md-12 col-sm-12 col-xs-12 visible-lg visible-md visible-sm'>
-      <p>"I never much liked pooping, but when I stumbled upon this gem of a ..."</p>
+      <p id='review-top-comment'></p>
     </div>
     </div> <!-- row -->
 </div>
@@ -146,12 +146,17 @@
 
         var data = d.review_set; 
         console.log(data);
+        var topReview = {rank: 0, content: ''};
         for(o in data){
+          if(topReview.rank < data[o].fields.rank){
+            topReview = data[o].fields;
+          }
           console.log(data[o]);
           data[o].fields.stars = generateStars(data[o].fields.rank);
           data[o].fields.date = data[o].fields.date.slice(0, 10);
           $('#reviews').append(template(data[o].fields));
         }
+        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');
     }});
   }
 
