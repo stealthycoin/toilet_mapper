@@ -18,7 +18,7 @@ def add(request):
         t.setattrs(data)
         t.save()
 
-        response = serialize(t)
+        response = serialize([t])
                 
     else:
         error += 'No POST data in request.\n'
