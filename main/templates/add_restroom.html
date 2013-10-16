@@ -13,8 +13,8 @@
     j.done(function(data){
       window.location = "/toilet/"+data[0].pk;
     });
-    j.fail(function(data){
-      console.log("It failed!");
+    j.fail(function(data, d1, d2){
+      form_error('test_add', JSON.parse(data.responseText).error);
     });
   }
   

@@ -8,6 +8,11 @@ $(document).ready(function(){
 });
 
 
+function form_error(form_id, message){
+    $('#'+form_id+" .error").remove();
+    $('#'+form_id).append("<div class='error'>"+message+"</div>");
+}
+
 /* Stars for reviews */
 function generateStars(i){
     i = Math.round(i * 2) / 2

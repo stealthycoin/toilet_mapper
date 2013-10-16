@@ -1,0 +1,80 @@
+
+{% extends "standard.html" %}
+
+
+{% block content %}
+
+
+
+<div class='container'>
+<h1>Nearby Toilets</h1>
+
+<script id="toilet-template" type="text/x-handlebars-template">
+  <li class='listing'>
+    <a href='somepage'>
+      <div class='col-md-1 col-sm-2 col-xs-3'>
+	<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAAEnElEQVR4Xu3X2ytscRyG8e+UcqOQU0IKF1JIyA1X/nBu5JRISDmXksipnE+736rRGIpnz96m0TO122XeaU3P+rTWmtzZ2dlr+LLANwvkBPPNUs6yAoIRAiogGJTLsWA0gAoIBuVyLBgNoAKCQbkcC0YDqIBgUC7HgtEAKiAYlMuxYDSACggG5XIsGA2gAoJBuRwLRgOogGBQLseC0QAqIBiUy7FgNIAKCAblciwYDaACgkG5HAtGA6iAYFAux4LRACogGJTLsWA0gAoIBuVyLBgNoAKCQbkcC0YDqIBgUC7HgtEAKiAYlMuxYDSACggG5XIsGA2gAoJBuRwLRgOogGBQLseC0QAqIBiUy7FgNIAKCAblciwYDaACgkG5HAtGA6iAYFAux4LRACogGJTLsWA0gAoIBuVyLBgNoAKCQbkcC0YDqIBgUC7HgtEAKiAYlMuxYDSACggG5XIsGA2gAoJBuRwLRgOogGBQLscVD+bx8THm5uaitrY2BgYGPpzR/f392N7ejqGhoWhoaMjePzk5ia2trbi/v8/+1tfXF1VVVd/S8NPH+9aX+sFRRYM5Pz+Pzc3NuL6+jubm5g9gLi4uYmlpKV5fX9/AJCQzMzNRV1cXLS0t2efb2tqit7f3y+w/fbwvv1AZBhUL5unpKaanp6O1tTWOj4+jsbHxHZiHh4eYn5+P6urquLq6egNzdHQU6+vrMTg4GE1NTbG4uBh3d3cxMTERe3t7sbOzE93d3dHR0RGzs7ORy+VibGws+/9fH68M57vkQ1YsmJeXl7i5uYmampqYmprKbi2Ft6Tl5eVIqDo7O2N1dfUNTB7FyMhIdpVZWVmJ09PTmJyczGKmz6UrU3ovXVHSLt3u/sfxEsJKe1UsmMLQxWAODg5id3c3hoeHM1Rra2vR39+fXVHSe+kq8hmYdALTLStdmdIVqqurK/tX/PqXxxNMGQoUn8B0m7m8vPzwTRKa5+fn2NjYeHdLSkjGx8ezfXoeWlhYyHYJWLp1fQWmlOOVIVdJh/yVV5iEJd2O0is9v6QrSk9PT/a8kx6A00NvfX39h4fehCSd/HR1SQ/Rh4eH2cNwe3v7u8jFQP/2eCWduTJ9+FeCKWyZnk/Sc0rxz+r0Uzs97Bb+rE6/mBKS/O0rXWlub29jdHQ0e1bKvz57Zsq/R45XpnNe0mF/BZiSCvhhVEAwKJdjwWgAFRAMyuVYMBpABQSDcjkWjAZQAcGgXI4FowFUQDAol2PBaAAVEAzK5VgwGkAFBINyORaMBlABwaBcjgWjAVRAMCiXY8FoABUQDMrlWDAaQAUEg3I5FowGUAHBoFyOBaMBVEAwKJdjwWgAFRAMyuVYMBpABQSDcjkWjAZQAcGgXI4FowFUQDAol2PBaAAVEAzK5VgwGkAFBINyORaMBlABwaBcjgWjAVRAMCiXY8FoABUQDMrlWDAaQAUEg3I5FowGUAHBoFyOBaMBVEAwKJdjwWgAFRAMyuVYMBpABQSDcjkWjAZQAcGgXI4FowFUQDAol2PBaAAVEAzK5VgwGkAFBINyORaMBlABwaBcjgWjAVRAMCiX4z8rrNemOx9CfwAAAABJRU5ErkJggg==" class="img-responsive img-rounded foobar">
+
+      </div>
+      <div class='col-md-11 col-sm-10 col-xs-9'>
+	<div class='row'>
+	  <div id="review-rating" class='col-md-4 col-sm-4 col-xs-12 star-ratings' >
+	    {% templatetag openvariable %}stars{% templatetag closevariable %}
+	  </div>
+	  <div class='col-md-2 col-sm-3 col-xs-12 num_reviews'>
+	    {% templatetag openvariable %}num_reviews{% templatetag closevariable %}
+	  </div>
+	  <div class='col-md-2 visible-lg visible-md visible-sm'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos</div>
+	</div><!--row-->
+	<div class='row'>
+	  <div class='col-md-6 col-sm-7 col-xs-12'>
+	    {% templatetag openvariable %}address{% templatetag closevariable %}
+	  </div>
+	  <div class='col-md-2 col-sm-3 col-xs-4'>
+	    <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span>1.2 miles</span>
+	  </div>
+	</div><!-- row -->
+	<div class='row'>
+	  <div class='col-md-12 col-sm-12 col-xs-12 visible-lg visible-md visible-sm'>
+	    <p id='review-top-comment'>
+	      {% templatetag openvariable %}top_comment{% templatetag closevariable %}
+	    </p>
+	  </div>
+	</div> <!-- row -->
+      </div>
+  </a></li>
+
+</script>
+
+<ul id="toilet-listings" class="nav nav-pills nav-stacked">
+
+</ul>
+
+<script>
+  var template = Handlebars.compile($('#toilet-template').html());
+
+  var numLoaded = 0; 
+  var loading = false;
+  //Loads or reloads the reviews from the server
+  function loadReviews(i){
+    if(loading) return;
+    loading = true;
+    tapi({noun: "toilet", verb: "retrieve", data: {start : numLoaded, end : numLoaded + i },
+      callback: function(data){
+        for(o in data){
+          console.log(data[o]);
+          data[o].fields.stars = generateStars(data[o].fields.rank);
+          data[o].fields.date = data[o].fields.date.slice(0, 10);
+          $('#toilet-listings').append(template(data[o].fields));
+        }
+        loading = false;
+        numLoaded += i;
+    }});
+  }
+
+  loadReviews(10);
+
+</script>
+
+
+{% endblock %}

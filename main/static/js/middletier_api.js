@@ -60,7 +60,7 @@ function simple_handler(url){
 
 var internal_mapping = {
     "toilet": {
-        "retrieve": function (){}
+        "retrieve": simple_handler("/api/toilet/retrieve/")
         ,"create": simple_handler("/api/toilet/create/")
     }
     ,"review": {
@@ -69,7 +69,9 @@ var internal_mapping = {
         ,"vote": function (){}
     }
     ,"user": {
-        "retrieve": function(data){}
+	"login": simple_handler("/api/user/login")
+	,"logout": simple_handler("/api/user/logout")
+        ,"retrieve": function(data){}
         ,"create": function(){}
         ,"vote": function(){}
     }
@@ -93,6 +95,11 @@ function tapi(params){
     if(params.data === undefined){ params.data = {}; }
     var jqxhr = internal_mapping[params.noun][params.verb](params.data); 
     if(params.callback !== undefined){ jqxhr.done(params.callback); }
+
+    jqxhr.fail(function(e, z, errorThrown){
+	var err = JSON.parse(e.responseText);
+	if(errorThrown === "UNAUTHORIZED"){  window.location = "/signin?error="+encodeURI(err.error);  }
+    });
     
     return jqxhr;
 }

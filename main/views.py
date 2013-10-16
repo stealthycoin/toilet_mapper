@@ -1,5 +1,6 @@
 from toilet.models import Toilet
 from django.shortcuts import render
+from django.template import Context
 from toilet.views import single_toilet_view as stv
 from main.forms import AddRestroomForm
 
@@ -7,10 +8,10 @@ from main.forms import AddRestroomForm
 def home(request):
     return render(request, 'home.html')
 
-def single_toilet_view(req, pk): return stv(req, pk)
-
 def signin(request):
-    return render(request, 'signin.html')
+    print request.GET;
+    c = Context({ "GET": request.GET });
+    return render(request, 'signin.html', c)
 
 def create(request):
     return render(request, 'create.html')

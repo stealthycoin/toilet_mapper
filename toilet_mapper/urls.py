@@ -8,7 +8,8 @@ urlpatterns = patterns('',
                        url(r'^$', 'main.views.home', name='home'),
                        url(r'^query/get/$', 'middletier.views.get', name='middletierget'),
                        url(r'^query/put/$', 'middletier.views.put', name='middletierput'),
-                       url(r'^toilet/(\d+)$', 'main.views.single_toilet_view', name='single_toilet_view'),
+                       url(r'^toilet/(\d+)$', 'toilet.views.single_toilet_view', name='single_toilet_view'),
+		       url(r'^nearby$', 'toilet.views.list_toilet_view', name='list_restroom'),
 		       url(r'^signin$', 'main.views.signin', name='signin'), 
 		       url(r'^create$', 'main.views.create', name='create'),
                        url(r'^gmap$', 'main.views.gmap', name='gmap test'),
@@ -16,6 +17,8 @@ urlpatterns = patterns('',
                        url(r'^api/toilet/create/$', 'toilet.middletier.add', name='api_toilet_create'),
                        url(r'^api/review/create/$', 'review.middletier.add', name='api_toilet_create'),
                        url(r'^api/review/retrieve/$', 'review.middletier.get', name='api_toilet_create'),
+		       url(r'^api/user/login$', 'common.middletier.login', name='signin'), 
+		       url(r'^api/user/logout$', 'common.middletier.logout', name='signin'), 
 
 
     # Examples:
