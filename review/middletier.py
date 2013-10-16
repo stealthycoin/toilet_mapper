@@ -1,7 +1,7 @@
 from models import Review
 from toilet.models import Toilet
 import json
-from common.middletier import post_to_dict, serialize, currentTime
+from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
 
 
@@ -24,13 +24,10 @@ def add(request):
         error += 'No POST data in request.\n'
         status = 415
 
-    if error != '':
-        response = error + '\n' + response
-
-    return HttpResponse(response, status=status)
+    return HttpResponse(package_error(response,error), status=status)
 
 
-
+#thingies for getting reviews
 def get(request):
     error = ''
     response = ''
@@ -60,8 +57,5 @@ def get(request):
         error += 'No POST data in request\n'
         status = 415
         
-    if error != '':
-        response = error + '\n' + response
- 
-    return HttpResponse(response,status=status)
+    return HttpResponse(package_error(response,error),status=status)
     

@@ -23,3 +23,9 @@ def currentTime():
 def serialize(obj):
     return serializers.serialize('json', obj)
     
+
+#adds error to beginning of response if required
+def package_error(response, error):
+    if error != '':
+        return json.dumps({ 'error' : error })
+    return response
