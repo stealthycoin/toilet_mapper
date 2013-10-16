@@ -8,6 +8,26 @@ $(document).ready(function(){
 });
 
 
+/* Stars for reviews */
+function generateStars(i){
+    console.log("Generating "+i+" stars");
+    var a = '';
+    var j; 
+    for(j = 0; j < Math.floor(i); j++){
+        a += "<span class='icon-star'></span>";
+    }
+    console.log(j);
+    console.log(i);
+    if(j - i > 0){
+        a += "<span class='icon-star-half-full'></span>";
+        i = j + 1; 
+    }
+    for(j = i; j < 5; j++){
+        a += "<span class='icon-star-empty'></span>";
+    }
+    return a;
+}
+
 
 /** Inline toilet reviews **/
 
