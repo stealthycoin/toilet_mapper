@@ -50,7 +50,7 @@ def create_user(request):
         data = post_to_dict(request.POST)
         try:
             user = data['username']
-            User.objects.get(user=user)#try to find someone with that name
+            User.objects.get(username=user)#try to find someone with that name
             error = 'A user with that name already exists.'
             status = 200
         except ObjectDoesNotExist:#if it fails, we can create that user
