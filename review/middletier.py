@@ -1,7 +1,7 @@
 from models import Review
 from toilet.models import Toilet
 import json
-from common.middletier import post_to_dict, seralize
+from common.middletier import post_to_dict, serialize
 from django.http import HttpResponse
 import datetime
 
@@ -19,7 +19,7 @@ def add(request):
         data['toilet'] = Toilet.objects.get(pk=data['toilet'])
         r.setattrs(data)
         r.save()
-        response = seralize(t)
+        response = serialize([t])
     else:
         error += 'No POST data in request.\n'
         status = 415
@@ -38,7 +38,7 @@ def get(request):
 
     if request.method == 'POST':
         data = post_to_dict()
-        response = seralize(Review.objects.filter(toilet=data['toilet_id']))
+        response = serialize(Review.objects.filter(toilet=data['toilet_id']))
     else:
         error += 'No POST data in request\n'
         status = 415
