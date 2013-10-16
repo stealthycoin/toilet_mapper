@@ -48,7 +48,7 @@ def login(request):
         if user is not None:
             if user.is_active:
                 django_login(request, user)
-                response = 'Success\n'
+                response = '\"Success\"'
             else:
                 error = 'Your account has been disabled\n'
         else:
