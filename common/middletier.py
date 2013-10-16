@@ -63,6 +63,6 @@ def login(request):
 #its this simple
 def logout(request):
     django_logout(request)
-    response = '"Logged out"
-'
+    response = '"Logged out"'
+
     return HttpResponse(package_error(response,''),status=200)
