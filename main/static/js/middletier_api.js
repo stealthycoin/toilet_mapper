@@ -21,6 +21,10 @@
            , verb: "create"
            , callback : function(data){ console.log("Automatically submitted"); }
           });
+
+      Then when you submit the form, it will automatically call 
+      the python middletier and perform whatever action you’ve
+      specified.  
    
    - Note that tapi returns the "jqXHR object" in case you need to use it
      (http://api.jquery.com/jQuery.ajax/#jqXHR):

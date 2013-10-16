@@ -136,10 +136,6 @@
   var toilet_id = {{ t.pk }};
   var template = Handlebars.compile($('#review-template').html());
 
-
-  
-
-
   //Loads or reloads the reviews from the server
   function loadReviews(){
     tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id},
