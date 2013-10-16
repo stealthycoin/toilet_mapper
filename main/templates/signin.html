@@ -7,10 +7,10 @@
 
   function login_response(j){
     j.done(function(data){
-      window.location = "/nearby";
+     if(data.hasOwnProperty("error")) form_error('login-form', data.error);
+     else window.location = "/nearby";
     });
     j.fail(function(data, d1, d2){
-      form_error('test_add', JSON.parse(data.responseText).error);
     });
   }
   
@@ -18,9 +18,9 @@
 
 </script>
 
-    <div class="container">
+    <div class="container col-lg-4 col-md-5 col-lg-offset-4 col-md-offset-3 col-sm-6 col-sm-offset-3">
       <h2 style="text-align:center" class="form-signin-heading">Toilet Mapper Sign In</h2>
-      <form id="login-form" class="form-signin col-lg-4 col-md-5 col-lg-offset-4 col-md-offset-3 col-sm-6 col-sm-offset-3">
+      <form id="login-form" class="form-signin">
 	{% if GET.error  %}
 	<div class='error'>
 	  {{ GET.error }}
@@ -33,13 +33,10 @@
           <input type="checkbox" value="remember-me"> Remember me
         </label>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <br>
-	<br>
-	<br>
-	<div style="text-align:center">
+      </form>
+	<div style="text-align:center; margin-top: 25px; ">
 	<a href="/create">No Account? Create An Account</a>
 	</div>
-      </form>
     </div> <!-- /container -->
 
     <!-- Bootstrap core JavaScript

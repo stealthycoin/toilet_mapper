@@ -46,6 +46,20 @@
 <!-- our API code -->
 <script src='/static/js/middletier_api.js'></script>
 
+{% if user.is_authenticated %}
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#logout').click(function(){
+    var j = tapi({
+        noun: "user"
+        ,verb: "logout"
+      });
+      j.done(function(d){ console.log(d); window.location = "/"; });
+    });
+  });
+</script>
+{% endif %}
+
 {% endblock %}
 
 
@@ -67,13 +81,17 @@
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
       <li class="active"><a href="/nearby"><span class= 'icon-large icon-map-marker' style='margin-right: 5px'></span>Nearby</a></li>
-      <li class="active"><a href="/addbathroom"><span class= 'icon-large icon-plus' style='margin-right: 5px'></span>Add</a></li>
+      <li class="active"><a href="/addrestroom"><span class= 'icon-large icon-plus' style='margin-right: 5px'></span>Add</a></li>
     </ul>
     <div class="navbar-right">
      <div class="span12 paginated-centered">
        {% if not user.is_authenticated %}
-         <a href="/create" class="btn btn-default navbar-btn">Create An Account</a>
+         <a href="/signup" class="btn btn-default navbar-btn">Create An Account</a>
          <a href="/signin" class="btn btn-default navbar-btn">Sign In</a>
+       {% endif %}
+
+       {% if user.is_authenticated %}
+	 <a id="logout" href="#" class="btn btn-default navbar-btn">Logout</a>
        {% endif %}
      </div>
     </div>
