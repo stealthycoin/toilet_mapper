@@ -19,7 +19,7 @@ def add(request):
         data['toilet'] = Toilet.objects.get(pk=data['toilet'])
         r.setattrs(data)
         r.save()
-        response = serialize([t])
+        response = serialize([r])
     else:
         error += 'No POST data in request.\n'
         status = 415
