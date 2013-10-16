@@ -19,9 +19,7 @@ def add(request):
         data['toilet'] = Toilet.objects.get(pk=data['toilet'])
         r.setattrs(data)
         r.save()
-
         response = seralize(t)
-                
     else:
         error += 'No POST data in request.\n'
         status = 415
@@ -30,3 +28,23 @@ def add(request):
         response = error + '\n' + response
 
     return HttpResponse(response, status=status)
+
+
+
+def get(request):
+    error = ''
+    response = ''
+    status = 201
+
+    if request.method == 'POST':
+        data = post_to_dict()
+        response = seralize(Review.objects.filter(toilet=data['toilet_id']))
+    else:
+        error += 'No POST data in request\n'
+        status = 415
+
+    if error != '':
+        response = error + '\n' + response
+    
+    return HttpResponse(response,status=status)
+    
