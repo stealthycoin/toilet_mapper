@@ -31,9 +31,9 @@ def add(request):
 def get(request):
     error = ''
     response = ''
-    status = 20o0
+    status = 200
 
-    if request.method == 'POST':
+     request.method == 'POST':
         data = post_to_dict(request.POST)
         review_set = Review.objects.filter(toilet=data['toilet_id'])
         count = len(list(review_set))
