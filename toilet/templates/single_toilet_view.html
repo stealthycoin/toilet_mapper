@@ -51,6 +51,8 @@
 
 <div class='clearfix visible-xs'></div>
 
+{% if has_reviewed == False %}
+
   <div id='leaveReview' class='col-lg-offset-1 col-lg-7 col-md-8 col-sm-10 col-xs-12 row'>
     <link rel='stylesheet' href='/static/css/rateit.css'>
     <script src='/static/js/jquery.rateit.min.js'></script>
@@ -89,6 +91,8 @@
       </div><!-- panel-body -->
     </div> <!-- panel -->
   </div> <!-- #leaveReview -->
+
+  {% endif %}
   <div class='clearfix '></div>
 
 
