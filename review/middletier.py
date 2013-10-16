@@ -38,11 +38,25 @@ def get(request):
 
     if request.method == 'POST':
         data = post_to_dict(request.POST)
-        response = serialize(Review.objects.filter(toilet=data['toilet_id']))
+        review_set = Review.objects.filter(toilet=data['toilet_id'])
+        count = len(list(review_set))
+
+        total = 0
+        for review in review_set:
+            total += review.rank
+
+
+        total /= count
+
+        d = {'count' : count, 'total' : total, 'review_set' : serialize(review_set) }
+        print d
+        response = json.dumps(d)
+        print response
+        
     else:
         error += 'No POST data in request\n'
         status = 415
-
+        
     if error != '':
         response = error + '\n' + response
     
