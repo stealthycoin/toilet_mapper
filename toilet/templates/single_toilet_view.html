@@ -30,13 +30,8 @@
 <div class='col-md-11 col-sm-10 col-xs-9'>
   <div class='row'>
     <div id="review-rating" class='col-md-4 col-sm-4 col-xs-12 star-ratings' >
-      <span class='icon-star'></span>
-      <span class='icon-star'></span>
-      <span class='icon-star-half-full'>  </span>
-      <span class='icon-star-empty'></span>
-      <span class='icon-star-empty'></span>
     </div>
-    <div class='col-md-2 col-sm-3 col-xs-12 num_reviews'>14 Reviews</div>
+    <div class='col-md-2 col-sm-3 col-xs-12 num_reviews'></div>
     <div class='col-md-2 visible-lg visible-md visible-sm'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos</div>
   </div><!--row-->
   <div class='row'>
@@ -118,11 +113,7 @@
       <div class='col-md-10 col-sm-9 col-xs-8'>
 	<div class='row'>
 	  <div class='col-lg-4 col-md-3 col-sm-4 star-ratings' style='text-align: left;' >
-	    <span style='color:#FF9900;' class='icon-star'></span>
-	    <span class='icon-star'></span>
-	    <span class='icon-star-half-full'></span>
-	    <span class='icon-star-empty'></span>
-	    <span class='icon-star-empty'></span>
+	    {% templatetag openvariable %}{ stars }{% templatetag closevariable %}
 	  </div>
 	  <div class='col-lg-4 col-md-3 col-sm-3'>
 	    {% templatetag openvariable %} date {% templatetag closevariable %}
@@ -145,18 +136,23 @@
   var toilet_id = {{ t.pk }};
   var template = Handlebars.compile($('#review-template').html());
 
+
   
-  function generateStars(i){
-  
-  }
+
 
   //Loads or reloads the reviews from the server
   function loadReviews(){
     tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id},
-      callback: function(data){
+      callback: function(d){
         $('#reviews').html('');
-        $('.num_reviews').html(data.length+' Reviews');
+        $('.num_reviews').html(d.count+' Reviews');
+        $('#review-rating').html(generateStars(d.total));
+
+        var data = d.review_set; 
+        console.log(data);
         for(o in data){
+          console.log(data[o]);
+          data[o].fields.stars = generateStars(data[o].fields.rank);
           data[o].fields.date = data[o].fields.date.slice(0, 10);
           $('#reviews').append(template(data[o].fields));
         }
