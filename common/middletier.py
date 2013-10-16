@@ -35,7 +35,7 @@ def package_error(response, error):
 #login stuff
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout, authenticate
-from django.http import HttpResponseg
+from django.http import HttpResponse
 
 def login(request):
     error = ''
