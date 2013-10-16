@@ -14,6 +14,8 @@ urlpatterns = patterns('',
                        url(r'^gmap$', 'main.views.gmap', name='gmap test'),
 		       url(r'^addrestroom$', 'main.views.add_restroom', name='add_restroom'),
                        url(r'^api/toilet/create/$', 'toilet.middletier.add', name='api_toilet_create'),
+                       url(r'^api/review/create/$', 'review.middletier.add', name='api_toilet_create'),
+                       url(r'^api/review/retrieve/$', 'review.middletier.get', name='api_toilet_create'),
 
 
     # Examples:

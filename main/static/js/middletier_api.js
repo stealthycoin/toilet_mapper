@@ -56,12 +56,12 @@ function simple_handler(url){
 
 var internal_mapping = {
     "toilet": {
-        "retrieve": simple_handler("/api/toilet/retrieve/")
+        "retrieve": function (){}
         ,"create": simple_handler("/api/toilet/create/")
     }
     ,"review": {
-        "retrieve": function(data){}
-        ,"create": function (){}
+        "retrieve": simple_handler("/api/review/retrieve/")
+        ,"create": simple_handler("/api/review/create/")
         ,"vote": function (){}
     }
     ,"user": {
