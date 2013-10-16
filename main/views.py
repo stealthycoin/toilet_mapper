@@ -13,8 +13,8 @@ def signin(request):
     c = Context({ "GET": request.GET });
     return render(request, 'signin.html', c)
 
-def create(request):
-    return render(request, 'create.html')
+def create_user(request):
+    return render(request, 'create_user.html')
 
 def add_restroom(request):
     return render(request, 'add_restroom.html', { 'forms' : AddRestroomForm() })

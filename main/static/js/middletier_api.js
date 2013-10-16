@@ -69,8 +69,8 @@ var internal_mapping = {
         ,"vote": function (){}
     }
     ,"user": {
-	"login": simple_handler("/api/user/login")
-	,"logout": simple_handler("/api/user/logout")
+	"login": simple_handler("/api/user/login/")
+	,"logout": simple_handler("/api/user/logout/")
         ,"retrieve": function(data){}
         ,"create": function(){}
         ,"vote": function(){}
@@ -79,6 +79,8 @@ var internal_mapping = {
 
 
 function tapi_error(e){ throw ("tAPI error: " + e); }
+
+function server_error(responseText, errorThrown){ alert("Server error: "+errorThrown); }
 
 function tapi(params){
     if(!params.noun){ tapi_error("Request made with no noun."); }
@@ -97,8 +99,11 @@ function tapi(params){
     if(params.callback !== undefined){ jqxhr.done(params.callback); }
 
     jqxhr.fail(function(e, z, errorThrown){
-	var err = JSON.parse(e.responseText);
-	if(errorThrown === "UNAUTHORIZED"){  window.location = "/signin?error="+encodeURI(err.error);  }
+	if(errorThrown === "UNAUTHORIZED"){  
+	    var err = JSON.parse(e.responseText);
+	    window.location = "/signin?error="+encodeURI(err.error);  
+	}
+	else { server_error(e.responseText, errorThrown); }
     });
     
     return jqxhr;
