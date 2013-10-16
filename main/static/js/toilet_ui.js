@@ -16,9 +16,7 @@ function generateStars(i){
     for(j = 0; j < Math.floor(i); j++){
         a += "<span class='icon-star'></span>";
     }
-    console.log(j);
-    console.log(i);
-    if(j - i > 0){
+    if(j - i > 0 || i - j > 0){
         a += "<span class='icon-star-half-full'></span>";
         i = j + 1; 
     }
