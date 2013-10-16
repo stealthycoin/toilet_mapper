@@ -1,6 +1,6 @@
 from models import Toilet
 import json
-from common.middletier import post_to_dict, seralize
+from common.middletier import post_to_dict, serialize
 from django.http import HttpResponse
 import datetime
 
