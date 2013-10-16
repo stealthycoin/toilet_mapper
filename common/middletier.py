@@ -33,7 +33,9 @@ def package_error(response, error):
 
 
 #login stuff
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout, authenticate
+from django.http import HttpResponse
 
 def login(request):
     error = ''
@@ -42,10 +44,10 @@ def login(request):
     
     if request.method == 'POST':
         data = post_to_dict(request.POST)
-        user = authenticate(data['username'], data['password'])
+        user = authenticate(username=data['username'],password=data['password'])
         if user is not None:
             if user.is_active:
-                login(request, user)
+                django_login(request, user)
                 #success
             else:
                 pass
