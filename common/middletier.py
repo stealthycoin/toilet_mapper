@@ -37,7 +37,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.core.exceptions import DoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
 #creates a new user
@@ -52,7 +52,7 @@ def create_user(request):
             User.objects.get(user=user)#try to find someone with that name
             error = 'A user with that name already exists.'
             status = 200
-        except DoesNotExist:#if it fails, we can create that user
+        except ObjectDoesNotExist:#if it fails, we can create that user
             user = User.objects.create_user(data['username'],data['email'],data['password']) 
             user.save()
             response = '"' + data['username'] + ' created."'
