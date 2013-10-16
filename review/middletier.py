@@ -37,7 +37,7 @@ def get(request):
     status = 201
 
     if request.method == 'POST':
-        data = post_to_dict()
+        data = post_to_dict(request.post)
         response = serialize(Review.objects.filter(toilet=data['toilet_id']))
     else:
         error += 'No POST data in request\n'
