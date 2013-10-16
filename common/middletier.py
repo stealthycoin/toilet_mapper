@@ -34,7 +34,8 @@ def package_error(response, error):
 
 #login stuff
 from django.contrib.auth import login as django_login
-from django.contrib.auth import logout, authenticate
+from django.contrib.auth import logout as django_logout
+from django.contrib.auth import authenticate
 from django.http import HttpResponse
 
 def login(request):
@@ -61,6 +62,7 @@ def login(request):
 
 #its this simple
 def logout(request):
-    logout(request)
-    response = '"Logged out"'
+    django_logout(request)
+    response = '"Logged out"
+'
     return HttpResponse(package_error(response,''),status=200)
