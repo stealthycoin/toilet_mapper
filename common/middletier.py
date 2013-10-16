@@ -35,7 +35,7 @@ def package_error(response, error):
 #login stuff
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout, authenticate
-from django.http import HttpResponse
+from django.http import HttpResponseg
 
 def login(request):
     error = ''
@@ -48,12 +48,10 @@ def login(request):
         if user is not None:
             if user.is_active:
                 django_login(request, user)
-                #success
+                response = 'Success\n'
             else:
-                pass
-                #disabled account
+                error = 'Your account has been disabled\n'
         else:
-            #invalid login
             error += 'Invalid Login\n'
     else:
         error += 'No POST data in request.\n'
