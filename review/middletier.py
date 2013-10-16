@@ -31,7 +31,7 @@ def add(request):
 def get(request):
     error = ''
     response = ''
-    status = 201
+    status = 20o0
 
     if request.method == 'POST':
         data = post_to_dict(request.POST)

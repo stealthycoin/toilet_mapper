@@ -29,3 +29,37 @@ def package_error(response, error):
     if error != '':
         return json.dumps({ 'error' : error })
     return response
+
+
+
+#login stuff
+from django.contrib.auth import login, logout, authenticate
+
+def login(request):
+    error = ''
+    response = ''
+    status = 200
+    
+    if request.method == 'POST':
+        data = post_to_dict(request.POST)
+        user = authenticate(data['username'], data['password'])
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                #success
+            else:
+                #disabled account
+        else:
+            #invalid login
+            error += 'Invalid Login\n'
+    else:
+        error += 'No POST data in request.\n'
+        status = 415
+    return HttpResponse(package_error(response,error),status=status)
+
+
+#its this simple
+def logout(request):
+    logout(request)
+    response = 'Logged out\n'
+    return HttpResponse(package_error(response,''),status=200)
