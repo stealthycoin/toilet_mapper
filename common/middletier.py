@@ -37,6 +37,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import DoesNotExist
 from django.http import HttpResponse
 
 #creates a new user
