@@ -12,10 +12,16 @@ class Review (models.Model):
     content = models.TextField()
     rank = models.SmallIntegerField()
     up_down_rank = models.SmallIntegerField(null=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='review_creator')
     date = models.DateTimeField()
 
+class Vote (models.Model):
+    review = models.ForeignKey(Review)
+    user = models.ForeignKey(User)
+    vote = models.SmallIntegerField()
+
 admin.site.register(Review)
+admin.site.register(Vote)
     
 
 # Create your models here.

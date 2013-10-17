@@ -1,9 +1,9 @@
-from models import Review
+from models import Review, Vote
 from toilet.models import Toilet
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
-
+from django.core.exceptions import ObjectDoesNotExist
 
 #this adds a review using the post data
 def add(request):
@@ -39,11 +39,10 @@ def get(request):
         review_set = Review.objects.filter(toilet=data['toilet_id'])
         count = len(list(review_set))
         
-
         total = 0.0
         if count != 0:
             for review in review_set:
-                total += review.rank
+                total += review.rank #need to change this
 
             total /= count
         else:
@@ -62,14 +61,27 @@ def get(request):
     
 
 #upvote downvote system
-def upvote(request):
+def vote(request, new_vote):
     error = ''
     status = 201
     if request.method == 'POST':
         data = post_to_dict(request.POST)
         r = Review.objects.get(pk=data['review_pk'])
-        r.up_down_rank +=1
-        r.setattrs(data)
+        try:
+            prev_vote_obj = Vote.objects.get(review=r.pk, user = request.user)
+            prev_vote = prev_vote_obj.vote
+            
+            if prev_vote == 0:
+                prev_vote_obj.vote = new_vote
+            elif new_vote != prev_vote:
+                prev_vote_obj.vote = 0
+            if new_vote != prev_vote:
+                prev_vote_obj.save()
+                r.up_down_rank += new_vote
+        except ObjectDoesNotExist:
+            r.up_down_rank += new_vote
+            v = Vote(user = request.user, review = r, vote = new_vote)
+            v.save()
         r.save()
         response = serialize([r])
     else:
@@ -77,17 +89,6 @@ def upvote(request):
         status = 415
     return HttpResponse(package_error(response,error), status=status)
 
-def downvote(request):
-    error = ''
-    status = 201
-    if request.method == 'POST':
-        data = post_to_dict(request.POST)
-        r = Review.objects.get(pk=data['review_pk'])
-        r.up_down_rank -=1
-        r.setattrs(data)
-        r.save()
-        response = serialize([r])
-    else:
-        error += 'No POST data in request.\n'
-        status = 415
-    return HttpResponse(package_error(response,error), status=status)
+def upvote(request): return vote(request, 1)
+
+def downvote(request): return vote(request, -1)
