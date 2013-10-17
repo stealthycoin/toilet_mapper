@@ -55,7 +55,7 @@ def listing(request):
                 total += r.rank
             total /= count
         
-        l.append({"t" : json.loads(serialize([t])[0]), "ranking" : total, "count" : count})
+        l.append({"t" : json.loads(serialize([t])), "ranking" : total, "count" : count})
         
     response = json.dumps(l)
     return HttpResponse(response,status=status)
