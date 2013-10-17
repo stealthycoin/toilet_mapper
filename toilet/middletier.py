@@ -39,6 +39,6 @@ def listing(request):
     status = 201
 
     ts = Toilet.objects.all()
-    response = seralize(ts)
+    response = serialize(ts)
 
     return HttpResponse(response,status=status)
