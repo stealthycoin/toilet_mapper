@@ -1,0 +1,22 @@
+
+{% extends "listing-page.html" %}
+
+
+{% block content %}
+
+
+
+<div class='container'>
+<h1>Nearby Toilets</h1>
+
+
+<ul id="toilet-listings" class="nav nav-pills nav-stacked">
+
+</ul>
+
+<script>
+  loadListings('toilet-listings');
+</script>
+
+
+{% endblock %}

@@ -11,6 +11,7 @@ class Review (models.Model):
     toilet = models.ForeignKey(Toilet)
     content = models.TextField()
     rank = models.SmallIntegerField()
+    up_down_rank = models.SmallIntegerField(null=True)
     user = models.ForeignKey(User)
     date = models.DateTimeField()
 

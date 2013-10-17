@@ -5,8 +5,9 @@ body {
 
 /* Form Errors */
 ul.parsley-error-list { margin: 0px; list-style: none; padding: 0px; }
-ul.parsley-error-list li { 
+ul.parsley-error-list li, .error { 
     margin-top: 5px; 
+    margin-bottom: 5px; 
     padding: 5px; 
     font-size: 0.8em; 
     background-color: #F2DEDE;

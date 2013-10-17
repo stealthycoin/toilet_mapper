@@ -1,6 +1,64 @@
 
 {% extends "standard.html" %}
+{% block endhead %}
 
+<script>
+  $(document).ready(function(){
+  var toilet_id = {{ t.pk }};
+  var template = Handlebars.compile($('#review-template').html());
+
+  //Loads or reloads the reviews from the server
+  window.loadReviews = function(){
+    tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
+      callback: function(d){
+        $('#reviews').html('');
+        $('.num_reviews').html(d.count+' Reviews');
+        $('#review-rating').html(generateStars(d.total));
+
+        var data = d.review_set; 
+        console.log(data);
+        var topReview = {rank: 0, content: ''};
+        for(o in data){
+          if(topReview.rank < data[o].fields.rank){
+            topReview = data[o].fields;
+          }
+          console.log(data[o]);
+          data[o].fields.stars = generateStars(data[o].fields.rank);
+          data[o].fields.date = data[o].fields.date.slice(0, 10);
+          data[o].fields.pk = data[o].pk;
+          $('#reviews').append(template(data[o].fields));
+        }
+        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
+        bind_vote_buttons();
+     }});
+  }
+  loadReviews();
+  window.tempfunction = loadReviews
+  tapi_auto_form('rate-bathroom-form', 
+    {  noun: "review"
+     , verb: "create"
+     , callback :function(data){
+          $('#leaveReview').slideUp();
+          loadReviews();
+    }});
+    
+  });
+  
+function bind_vote_buttons () {
+    $('.upvote_button').click(function (e){
+        e.preventDefault(); 
+        tapi({noun:"review", verb:"upvote", data:{review_pk: $(this).attr("data-pk")}, callback: loadReviews}); 
+        return false;
+    });
+    $('.downvote_button').click(function (e){
+        e.preventDefault(); 
+        tapi({noun:"review", verb:"downvote", data:{review_pk: $(this).attr("data-pk")}, callback: loadReviews}); 
+        return false;
+    });
+}
+</script>
+
+{% endblock %}
 
 {% block content %}
 
@@ -29,14 +87,9 @@
 </div>
 <div class='col-md-11 col-sm-10 col-xs-9'>
   <div class='row'>
-    <div class='col-md-4 col-sm-4 col-xs-12 star-ratings' >
-      <span class='icon-star'></span>
-      <span class='icon-star'></span>
-      <span class='icon-star-half-full'>  </span>
-      <span class='icon-star-empty'></span>
-      <span class='icon-star-empty'></span>
+    <div id="review-rating" class='col-md-4 col-sm-4 col-xs-12 star-ratings' >
     </div>
-    <div class='col-md-2 col-sm-3 col-xs-12 num_reviews'>14 Reviews</div>
+    <div class='col-md-2 col-sm-3 col-xs-12 num_reviews'></div>
     <div class='col-md-2 visible-lg visible-md visible-sm'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos</div>
   </div><!--row-->
   <div class='row'>
@@ -49,12 +102,14 @@
   </div><!-- row -->
   <div class='row'>
     <div class='col-md-12 col-sm-12 col-xs-12 visible-lg visible-md visible-sm'>
-      <p>"I never much liked pooping, but when I stumbled upon this gem of a ..."</p>
+      <p id='review-top-comment'></p>
     </div>
     </div> <!-- row -->
 </div>
 
 <div class='clearfix visible-xs'></div>
+
+{% if has_reviewed == False %}
 
   <div id='leaveReview' class='col-lg-offset-1 col-lg-7 col-md-8 col-sm-10 col-xs-12 row'>
     <link rel='stylesheet' href='/static/css/rateit.css'>
@@ -66,11 +121,13 @@
       <div class="panel-body" id="reviewForm" style='display: none;'>
 	<form id="rate-bathroom-form" class="form-horizontal" role="form" 
               data-validate="parsley">
+          <input type="hidden" name="toilet" value="{{ t.pk }}" />
 	  <div class="form-group">
 	    <label for="inputRating" class="col-lg-2 col-sm-2 control-label">Rating</label>
 	    <div class="col-lg-10 col-sm-10">
-	      <input name="rating" type="range" value="0" step="0.5" 
-                     id="inputRating" data-required="true" data-min="1">
+              
+	      <input name="rank" type="range" value="3" step="1" 
+                     id="inputRating" data-required="true">
 	      <div class="rateit" data-rateit-backingfld="#inputRating" data-rateit-resetable="false"  data-rateit-ispreset="true"
 		   data-rateit-min="0" data-rateit-max="5">
 	      </div>
@@ -79,19 +136,21 @@
 	  <div class="form-group">
 	    <label for="inputReview" class="col-lg-2 col-sm-2 control-label">Review</label>
 	    <div class="col-lg-5 col-sm-7">
-	      <textarea id="inputReview" name="review" class="form-control" rows="3" data-required="true" data-minlength="20" data-validation-minlength="1" ></textarea>
+	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-minlength="20" data-validation-minlength="1" ></textarea>
 	    </div>
 	  </div><!-- form-group -->
 
 	  <div class="form-group">
 	    <div class="col-lg-offset-2 col-lg-10">
-	      <button type="submit" class="btn btn-default">Submit Review</button>
+	      <button type="submit" class="col-lg-4 col-xs-12 col-sm-4 btn btn-default">Submit Review</button>
 	    </div>
 	  </div>
 	</form>
       </div><!-- panel-body -->
     </div> <!-- panel -->
   </div> <!-- #leaveReview -->
+
+  {% endif %}
   <div class='clearfix '></div>
 
 
@@ -103,10 +162,10 @@
   <div class='review col-lg-8 col-md-8 col-sm-10 col-xs-12'>
     <div style='clear: both; overflow: hidden;'>
       <div class='col-xs-2 col-sm-1 col-md-1'>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-up'></a></div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-up upvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
 	<div style='text-align: center; font-weight: bold; color: #aaaaaa;' class='review_rank'>
-	  {% templatetag openvariable %}rank{% templatetag closevariable %}</div>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa;'  class='icon-arrow-down'></a></div>
+	  {% templatetag openvariable %}up_down_rank{% templatetag closevariable %}</div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-down downvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
       </div>
       <div class='col-xs-2 col-sm-1 col-md-1' style='margin-left: 0px;'>
 	<div style='text-align: center;'><span class='icon-user icon-3x'></span></div>
@@ -116,11 +175,7 @@
       <div class='col-md-10 col-sm-9 col-xs-8'>
 	<div class='row'>
 	  <div class='col-lg-4 col-md-3 col-sm-4 star-ratings' style='text-align: left;' >
-	    <span style='color:#FF9900;' class='icon-star'></span>
-	    <span class='icon-star'></span>
-	    <span class='icon-star-half-full'></span>
-	    <span class='icon-star-empty'></span>
-	    <span class='icon-star-empty'></span>
+	    {% templatetag openvariable %}{ stars }{% templatetag closevariable %}
 	  </div>
 	  <div class='col-lg-4 col-md-3 col-sm-3'>
 	    {% templatetag openvariable %} date {% templatetag closevariable %}
@@ -136,23 +191,6 @@
       </div>
 
   </div>
-</script>
-
-<script>
-  var toilet_id = {{ t.pk }};
-  var template = Handlebars.compile($('#review-template').html());
-
-  $.ajax({
-    url: "/query/get/?table=review&toilet_id="+toilet_id
-    , dataType: "json"
-  }).done(function(data){
-    for(o in data){
-      data[o].fields.date = data[o].fields.date.slice(0, 10);
-      $('#reviews').append(template(data[o].fields));
-    }
-  });
-
-
 </script>
 
 

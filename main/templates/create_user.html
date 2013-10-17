@@ -1,0 +1,63 @@
+{% extends "standard.html" %}
+
+{% block endhead %}
+
+<script type='text/javascript'>
+  function signup_response(j){
+    j.done(function(data){
+     if(data.hasOwnProperty("error")) form_error('signup', data.error);
+     else {
+        var j = tapi({noun: "user", verb: "login", data: 
+          {"username": $("[name=username]").val(), "password":  $("[name=username]").val()}});
+        j.done(function(){ window.location = "/signed-up"; });
+    }
+    });
+  }
+  
+  tapi_auto_form('signup', {noun: "user", verb: "create"}, signup_response);
+</script>
+{% endblock %}
+
+{% block content %}
+  <div class="container col-lg-5 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    <form id='signup' class="form-horizontal " method="post">
+      <h2 style="text-align:center" class="form-heading">Create A User Account</h2>
+      <!-- Username input-->
+      <div class="control-group">
+        <label class="control-label" for="usernameIn">Username</label>
+        <div class="controls">
+          <input id="usernameIn" data-required="true" data-minlength="6" name="username" type="text" placeholder="ex. toiletPro91" class="form-control input-xlarge" required="">
+        </div>
+      </div>
+
+	  <!-- Email Address input-->
+	  <div class="control-group">
+            <label class="control-label" for="emailinput">Email</label>
+            <div class="controls">
+              <input id="emailinput" type="email" data-required="true" data-minlength="6" name="email" type="text" placeholder="ex. toiletPro@gmail.com" class="form-control input-xlarge" required="">
+            </div>
+	  </div>
+
+	  <!-- Password input-->
+	  <div class="control-group">
+            <label class="control-label" for="passwordinput">Password</label>
+            <div class="controls">
+              <input id="passwordinput" data-required="true" data-minlength="6" name="password" type="password" placeholder="" class="form-control input-xlarge" required="">
+            </div>
+	  </div>
+
+	  <!-- Button -->
+	  <div class="control-group">
+            <label class="control-label" for="singlebutton"></label>
+            <div class="controls">
+              <button style="text-align:center" id="singlebutton" name="singlebutton" class="btn btn-primary">Create Account</button>
+            </div>
+	  </div>
+    </form>
+    <br>
+    <br>
+    <br>
+    <a href="/signin" class="btn btn-inverse btn-xs btn-block">Already a user? Sign In</a>
+  </div> <!-- /container -->
+
+{% endblock %}
