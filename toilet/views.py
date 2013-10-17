@@ -7,7 +7,10 @@ from django.template.loader import get_template
 
 def single_toilet_view(req, pk):
     t = Toilet.objects.get(pk=pk)
-    reviewed = True if len(Review.objects.filter(toilet=t).filter(user=req.user)) > 0 else False
+    if req.user.is_authenticated() == False:
+        reviewed = False
+    else:
+        reviewed = True if len(Review.objects.filter(toilet=t).filter(user=req.user)) > 0 else False
     c = Context({ "t": t, 'has_reviewed' : reviewed })    
     return render(req, "single_toilet_view.html", c)
 
