@@ -59,3 +59,10 @@ def get(request):
         
     return HttpResponse(package_error(response,error),status=status)
     
+
+#upvote downvote system
+def upvote(request):
+    pass
+
+def downvote(request):
+    pass
