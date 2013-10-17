@@ -12,13 +12,17 @@ urlpatterns = patterns('',
 		       url(r'^nearby$', 'toilet.views.list_toilet_view', name='list_restroom'),
 		       url(r'^signin$', 'main.views.signin', name='signin'), 
 		       url(r'^signup$', 'main.views.create_user', name='create'),
+		       url(r'^signed-up$', 'main.views.signed_up', name='create'),
                        url(r'^gmap$', 'main.views.gmap', name='gmap test'),
 		       url(r'^addrestroom$', 'main.views.add_restroom', name='add_restroom'),
+                       # API Section
                        url(r'^api/toilet/create/$', 'toilet.middletier.add', name='api_toilet_create'),
-                       url(r'^api/review/create/$', 'review.middletier.add', name='api_toilet_create'),
-                       url(r'^api/review/retrieve/$', 'review.middletier.get', name='api_toilet_create'),
+                       url(r'^api/toilet/retrieve/$', 'toilet.middletier.listing', name='api_toilet_retrieve'),
+                       url(r'^api/review/create/$', 'review.middletier.add', name='api_review_create'),
+                       url(r'^api/review/retrieve/$', 'review.middletier.get', name='api_review_retrieve'),
 		       url(r'^api/user/login/$', 'common.middletier.login', name='signin'), 
 		       url(r'^api/user/logout/$', 'common.middletier.logout', name='signin'), 
+		       url(r'^api/user/create/$', 'common.middletier.create_user', name='signin'), 
 
 
     # Examples:

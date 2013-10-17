@@ -1,6 +1,48 @@
 
 {% extends "standard.html" %}
+{% block endhead %}
 
+<script>
+  $(document).ready(function(){
+  var toilet_id = {{ t.pk }};
+  var template = Handlebars.compile($('#review-template').html());
+
+  //Loads or reloads the reviews from the server
+  function loadReviews(){
+    tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
+      callback: function(d){
+        $('#reviews').html('');
+        $('.num_reviews').html(d.count+' Reviews');
+        $('#review-rating').html(generateStars(d.total));
+
+        var data = d.review_set; 
+        console.log(data);
+        var topReview = {rank: 0, content: ''};
+        for(o in data){
+          if(topReview.rank < data[o].fields.rank){
+            topReview = data[o].fields;
+          }
+          console.log(data[o]);
+          data[o].fields.stars = generateStars(data[o].fields.rank);
+          data[o].fields.date = data[o].fields.date.slice(0, 10);
+          $('#reviews').append(template(data[o].fields));
+        }
+        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		      
+     }});
+  }
+  loadReviews();
+
+  tapi_auto_form('rate-bathroom-form', 
+    {  noun: "review"
+     , verb: "create"
+     , callback :function(data){
+          $('#leaveReview').slideUp();
+          loadReviews();
+    }});
+  });
+</script>
+
+{% endblock %}
 
 {% block content %}
 
@@ -135,45 +177,6 @@
   </div>
 </script>
 
-
-<script>
-  var toilet_id = {{ t.pk }};
-  var template = Handlebars.compile($('#review-template').html());
-
-  //Loads or reloads the reviews from the server
-  function loadReviews(){
-    tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
-      callback: function(d){
-        $('#reviews').html('');
-        $('.num_reviews').html(d.count+' Reviews');
-        $('#review-rating').html(generateStars(d.total));
-
-        var data = d.review_set; 
-        console.log(data);
-        var topReview = {rank: 0, content: ''};
-        for(o in data){
-          if(topReview.rank < data[o].fields.rank){
-            topReview = data[o].fields;
-          }
-          console.log(data[o]);
-          data[o].fields.stars = generateStars(data[o].fields.rank);
-          data[o].fields.date = data[o].fields.date.slice(0, 10);
-          $('#reviews').append(template(data[o].fields));
-        }
-        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');
-    }});
-  }
-
-  loadReviews();
-
-  tapi_auto_form('rate-bathroom-form', 
-    {  noun: "review"
-     , verb: "create"
-     , callback :function(data){
-          $('#leaveReview').slideUp();
-          loadReviews();
-  }});
-</script>
 
 
 

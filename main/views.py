@@ -19,6 +19,8 @@ def create_user(request):
 def add_restroom(request):
     return render(request, 'add_restroom.html', { 'forms' : AddRestroomForm() })
 
+def signed_up(request):
+    return render(request, 'signed-up.html')
 
 def gmap(request):
     return render(request, 'gmap.html')

@@ -66,14 +66,12 @@ var internal_mapping = {
     ,"review": {
         "retrieve": simple_handler("/api/review/retrieve/")
         ,"create": simple_handler("/api/review/create/")
-        ,"vote": function (){}
+        ,"vote": function (){ throw "Vote not implemented"; }
     }
     ,"user": {
 	"login": simple_handler("/api/user/login/")
 	,"logout": simple_handler("/api/user/logout/")
-        ,"retrieve": function(data){}
-        ,"create": function(){}
-        ,"vote": function(){}
+        ,"create": simple_handler("/api/user/create/")
     }
 }
 
