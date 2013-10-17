@@ -66,7 +66,8 @@ var internal_mapping = {
     ,"review": {
         "retrieve": simple_handler("/api/review/retrieve/")
         ,"create": simple_handler("/api/review/create/")
-        ,"vote": function (){ throw "Vote not implemented"; }
+        ,"upvote": simple_handler("/api/review/upvote/")
+        ,"downvote": simple_handler("/api/review/downvote/")
     }
     ,"user": {
 	"login": simple_handler("/api/user/login/")

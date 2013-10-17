@@ -8,7 +8,7 @@
   var template = Handlebars.compile($('#review-template').html());
 
   //Loads or reloads the reviews from the server
-  function loadReviews(){
+  window.loadReviews = function(){
     tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
       callback: function(d){
         $('#reviews').html('');
@@ -25,13 +25,15 @@
           console.log(data[o]);
           data[o].fields.stars = generateStars(data[o].fields.rank);
           data[o].fields.date = data[o].fields.date.slice(0, 10);
+          data[o].fields.pk = data[o].pk;
           $('#reviews').append(template(data[o].fields));
         }
-        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		      
+        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
+        bind_vote_buttons();
      }});
   }
   loadReviews();
-
+  window.tempfunction = loadReviews
   tapi_auto_form('rate-bathroom-form', 
     {  noun: "review"
      , verb: "create"
@@ -39,7 +41,21 @@
           $('#leaveReview').slideUp();
           loadReviews();
     }});
+    
   });
+  
+function bind_vote_buttons () {
+    $('.upvote_button').click(function (e){
+        e.preventDefault(); 
+        tapi({noun:"review", verb:"upvote", data:{review_pk: $(this).attr("data-pk")}, callback: loadReviews}); 
+        return false;
+    });
+    $('.downvote_button').click(function (e){
+        e.preventDefault(); 
+        tapi({noun:"review", verb:"downvote", data:{review_pk: $(this).attr("data-pk")}, callback: loadReviews}); 
+        return false;
+    });
+}
 </script>
 
 {% endblock %}
@@ -146,10 +162,10 @@
   <div class='review col-lg-8 col-md-8 col-sm-10 col-xs-12'>
     <div style='clear: both; overflow: hidden;'>
       <div class='col-xs-2 col-sm-1 col-md-1'>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-up'></a></div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-up upvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
 	<div style='text-align: center; font-weight: bold; color: #aaaaaa;' class='review_rank'>
-	  {% templatetag openvariable %}rank{% templatetag closevariable %}</div>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa;'  class='icon-arrow-down'></a></div>
+	  {% templatetag openvariable %}up_down_rank{% templatetag closevariable %}</div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-down downvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
       </div>
       <div class='col-xs-2 col-sm-1 col-md-1' style='margin-left: 0px;'>
 	<div style='text-align: center;'><span class='icon-user icon-3x'></span></div>

@@ -17,6 +17,7 @@ def add(request):
         data['date'] = currentTime()
         data['user'] = request.user
         data['toilet'] = Toilet.objects.get(pk=data['toilet'])
+        data['up_down_rank'] = 0;
         r.setattrs(data)
         r.save()
         response = serialize([r])
@@ -62,7 +63,31 @@ def get(request):
 
 #upvote downvote system
 def upvote(request):
-    pass
+    error = ''
+    status = 201
+    if request.method == 'POST':
+        data = post_to_dict(request.POST)
+        r = Review.objects.get(pk=data['review_pk'])
+        r.up_down_rank +=1
+        r.setattrs(data)
+        r.save()
+        response = serialize([r])
+    else:
+        error += 'No POST data in request.\n'
+        status = 415
+    return HttpResponse(package_error(response,error), status=status)
 
 def downvote(request):
-    pass
+    error = ''
+    status = 201
+    if request.method == 'POST':
+        data = post_to_dict(request.POST)
+        r = Review.objects.get(pk=data['review_pk'])
+        r.up_down_rank -=1
+        r.setattrs(data)
+        r.save()
+        response = serialize([r])
+    else:
+        error += 'No POST data in request.\n'
+        status = 415
+    return HttpResponse(package_error(response,error), status=status)
