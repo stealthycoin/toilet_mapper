@@ -30,3 +30,15 @@ def add(request):
         status = 415
 
     return HttpResponse(package_error(response,error), status=status)
+
+
+
+def listing(request):
+    response = ''
+    error = ''
+    status = 201
+
+    ts = Toilet.objects.all()
+    response = seralize(ts)
+
+    return HttpResponse(response,status=status)
