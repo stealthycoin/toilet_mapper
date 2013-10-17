@@ -1,4 +1,5 @@
 from models import Toilet
+from review.models import Review
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
@@ -38,7 +39,23 @@ def listing(request):
     error = ''
     status = 201
 
-    ts = Toilet.objects.all()
-    response = serialize(ts)
+    toilet_set = Toilet.objects.all()
+    review_set = Review.objects.all()
 
+    l = []
+
+    for t in toilet_set:
+        t_rs = review_set.filter(toilet=t)
+        total = 0.0
+        count = len(list(t_rs))
+        if count == 0:
+            total = -1
+        else:
+            for r in t_rs:
+                total += r.rank
+            total /= count
+        
+        l.append({"t" : serialize([t]), "ranking" : total, "count" : count})
+        
+    response = json.dumps(l)
     return HttpResponse(response,status=status)
