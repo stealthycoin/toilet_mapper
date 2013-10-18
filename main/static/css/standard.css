@@ -49,6 +49,16 @@ li.listing {
     text-align: center; 
 }
 
+.upvote_button:hover, .downvote_button:hover
+ {
+    display: block;
+    background-color:#dddddd; 
+    text-decoration: none; 
+    border-radius: 5px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+}
+
 .panel-button:hover { text-decoration: none; }
 
 #leaveReview {
