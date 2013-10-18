@@ -94,7 +94,6 @@ function bind_vote_buttons () {
   </div><!--row-->
   <div class='row'>
     <div class='col-md-6 col-sm-7 col-xs-12'>
-      1106 Escalona Dr. Santa Cruz, CA
     </div>
     <div class='col-md-2 col-sm-3 col-xs-4'>
       <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span>1.2 miles</span>
@@ -109,7 +108,7 @@ function bind_vote_buttons () {
 
 <div class='clearfix visible-xs'></div>
 
-{% if has_reviewed == False %}
+{% if has_reviewed == False and user.is_authenticated %}
 
   <div id='leaveReview' class='col-lg-offset-1 col-lg-7 col-md-8 col-sm-10 col-xs-12 row'>
     <link rel='stylesheet' href='/static/css/rateit.css'>
@@ -162,10 +161,10 @@ function bind_vote_buttons () {
   <div class='review col-lg-8 col-md-8 col-sm-10 col-xs-12'>
     <div style='clear: both; overflow: hidden;'>
       <div class='col-xs-2 col-sm-1 col-md-1'>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-up upvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-up upvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
 	<div style='text-align: center; font-weight: bold; color: #aaaaaa;' class='review_rank'>
 	  {% templatetag openvariable %}up_down_rank{% templatetag closevariable %}</div>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa;' class='icon-arrow-down downvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-down downvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
       </div>
       <div class='col-xs-2 col-sm-1 col-md-1' style='margin-left: 0px;'>
 	<div style='text-align: center;'><span class='icon-user icon-3x'></span></div>

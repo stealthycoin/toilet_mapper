@@ -111,7 +111,11 @@ function tapi(params){
 function tapi_auto_form(form_id, tapi_params, jqxhr_f){
     $(document).ready(function(){
         $('#'+form_id).submit(function(e){
+            $('#'+form_id+" button").attr('disabled', true);
             e.preventDefault();
+
+            if($('#'+form_id).data('submit_in_process') === true) return;
+            $('#'+form_id).data('submit_in_process', true);
             if($('#'+form_id).attr('data-validate') === "parsley"
                && !$('#'+form_id).parsley('isValid')) return;
             
@@ -121,6 +125,10 @@ function tapi_auto_form(form_id, tapi_params, jqxhr_f){
             });
 
             var t = tapi(tapi_params);
+            t.done(function(){ 
+                $('#'+form_id).data('submit_in_process', false); 
+                $('#'+form_id+" button").attr('disabled', false);
+            });
             if(jqxhr_f !== undefined) jqxhr_f(t);
         });
     });
