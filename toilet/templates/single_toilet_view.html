@@ -45,15 +45,26 @@
   });
   
 function bind_vote_buttons () {
-    $('.upvote_button').click(function (e){
-        e.preventDefault(); 
-        tapi({noun:"review", verb:"upvote", data:{review_pk: $(this).attr("data-pk")}, callback: loadReviews}); 
+    var in_progress = false;
+    
+    function vote(clicked_node, current_vote){
+        if(in_progress === true){ return; }
+        in_progress = true;
+        var i = parseInt(clicked_node.parents('.review').find('.review_up_down_rank').html());
+        clicked_node.parents('.review').find('.review_up_down_rank').html(i + current_vote);
+        var str = "up";
+        if(current_vote === -1){ str = "down"; }
+        tapi({noun:"review", verb:str+"vote", data:{review_pk: clicked_node.attr("data-pk")}
+              , callback: function(){ loadReviews(); in_progress = false; }}); 
         return false;
+    }
+    $('.upvote_button').click(function (e){
+        e.preventDefault();
+        vote($(this), 1);
     });
     $('.downvote_button').click(function (e){
         e.preventDefault(); 
-        tapi({noun:"review", verb:"downvote", data:{review_pk: $(this).attr("data-pk")}, callback: loadReviews}); 
-        return false;
+        vote($(this), -1);
     });
 }
 </script>
@@ -156,13 +167,12 @@ function bind_vote_buttons () {
 
 
 
-
 <script id="review-template" type="text/x-handlebars-template">
   <div class='review col-lg-8 col-md-8 col-sm-10 col-xs-12'>
     <div style='clear: both; overflow: hidden;'>
       <div class='col-xs-2 col-sm-1 col-md-1'>
 	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-up upvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
-	<div style='text-align: center; font-weight: bold; color: #aaaaaa;' class='review_rank'>
+	<div style='text-align: center; font-weight: bold; color: #aaaaaa;' class='review_up_down_rank'>
 	  {% templatetag openvariable %}up_down_rank{% templatetag closevariable %}</div>
 	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-down downvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
       </div>
