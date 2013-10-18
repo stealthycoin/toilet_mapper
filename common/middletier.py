@@ -47,7 +47,7 @@ def create_user(request):
     status = 201
 
     if request.method == 'POST':
-        data = post_to_dict(request.POST)
+        data = request.POST
         try:
             User.objects.get(username=data['username'])#try to find someone with that name
             error = 'A user with that name already exists.'
@@ -69,7 +69,7 @@ def login(request):
     status = 200
     
     if request.method == 'POST':
-        data = post_to_dict(request.POST)
+        data = request.POST
         user = authenticate(username=data['username'],password=data['password'])
         if user is not None:
             if user.is_active:

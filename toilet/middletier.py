@@ -12,7 +12,7 @@ def add(request):
     status = 201
 
     if request.method == 'POST':
-        data = post_to_dict(request.POST)
+        data = request.POST.copy()
         print request.user.is_authenticated()
         if not request.user.is_authenticated():
             status = 401

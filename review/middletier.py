@@ -12,7 +12,8 @@ def add(request):
     status = 201
 
     if request.method == 'POST':
-        data = post_to_dict(request.POST)
+        data = request.POST.copy()
+        
         r = Review()
         data['date'] = currentTime()
         data['user'] = request.user
@@ -35,7 +36,8 @@ def get(request):
     status = 200
     
     if request.method == 'POST':
-        data = post_to_dict(request.POST)
+        print request
+        data = request.POST
         review_set = Review.objects.filter(toilet=data['toilet_id'])
         count = len(list(review_set))
         
@@ -65,18 +67,13 @@ def vote(request, new_vote):
     error = ''
     status = 201
     if request.method == 'POST':
-        data = post_to_dict(request.POST)
+        data = request.POST
         r = Review.objects.get(pk=data['review_pk'])
         try:
             prev_vote_obj = Vote.objects.get(review=r.pk, user = request.user)
             prev_vote = prev_vote_obj.vote
-            
-            if prev_vote == 0:
-                prev_vote_obj.vote = new_vote
-            elif new_vote != prev_vote:
-                prev_vote_obj.vote = 0
             if new_vote != prev_vote:
-                prev_vote_obj.save()
+                prev_vote_obj.delete()
                 r.up_down_rank += new_vote
         except ObjectDoesNotExist:
             r.up_down_rank += new_vote
