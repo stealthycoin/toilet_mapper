@@ -2,7 +2,7 @@ import dj_database_url
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -114,6 +114,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    BASE_DIR+"/main/templates",
+    BASE_DIR+"/toilet/templates"
 )
 
 INSTALLED_APPS = (
@@ -129,6 +131,10 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'main',
+    'toilet',
+    'review',
+    'middletier',
+    'common',
     'django.contrib.admin',
 )
 

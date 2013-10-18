@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'toilet',
     'review',
     'middletier',
+    'common',
     'django.contrib.admin',
 )
 
