@@ -1,5 +1,6 @@
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = '/home/toilet/toilet_mapper/'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -64,7 +65,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = BASE_DIR + 'static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -72,7 +73,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    BASE_DIR + '/main/static/',
 )
 
 # List of finder classes that know how to find static files in
@@ -113,7 +114,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     BASE_DIR+"/main/templates",
-    BASE_DIR+"/toilet/templates"
+    BASE_DIR+"/toilet/templates",
 )
 
 INSTALLED_APPS = (
