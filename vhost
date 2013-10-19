@@ -1,7 +1,7 @@
 <VirtualHost *:80>
         ServerAlias toilet.brilliantsquid.com
 
-        WSGIScriptAlias / /home/toilet/toilet_mapper/wsgi.py
+        WSGIScriptAlias / /home/toilet/toilet_mapper/toilet_mapper/wsgi.py
 
         Alias /static/ /home/toilet/toilet_mapper/static/
         <Directory "/home/toilet/toilet_mapper/static/">
