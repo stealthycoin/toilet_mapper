@@ -25,3 +25,6 @@ def signed_up(request):
 def gmap(request):
     return render(request, 'gmap.html')
 
+def profile(request):
+    return render(request, 'profile.html')
+
