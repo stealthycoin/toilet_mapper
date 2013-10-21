@@ -57,6 +57,7 @@ loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i){
     if(toiletsLoading) return; 
     if(!isTemplateLoaded("toilet")){
+
 	setTimeout("loadToiletListings('"+div_id+"', '"+i+"' );", 50);
 	return;
     }

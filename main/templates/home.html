@@ -1,5 +1,8 @@
-{% extends "listing-page.html" %}
+{% extends "standard.html" %}
 
+{% block endhead %}
+  <script> loadToiletListings('toilet-listings'); </script>
+{% endblock %}
 
 {% block content %}
 
@@ -10,10 +13,6 @@
 
   </ul>
 
-
-  <script>
-    loadListings('toilet-listings');
-  </script>
 </div>
 
 {% endblock %}
