@@ -1,0 +1,41 @@
+
+{% extends "listing-page.html" %}
+
+
+{% block content %}
+
+<div class='container'>
+  <h1>Profile</h1>
+
+
+
+<div class='row'>
+    <div class='col-md-1 col-sm-2 col-xs-3'>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAAEnElEQVR4Xu3X2ytscRyG8e+UcqOQU0IKF1JIyA1X/nBu5JRISDmXksipnE+736rRGIpnz96m0TO122XeaU3P+rTWmtzZ2dlr+LLANwvkBPPNUs6yAoIRAiogGJTLsWA0gAoIBuVyLBgNoAKCQbkcC0YDqIBgUC7HgtEAKiAYlMuxYDSACggG5XIsGA2gAoJBuRwLRgOogGBQLseC0QAqIBiUy7FgNIAKCAblciwYDaACgkG5HAtGA6iAYFAux4LRACogGJTLsWA0gAoIBuVyLBgNoAKCQbkcC0YDqIBgUC7HgtEAKiAYlMuxYDSACggG5XIsGA2gAoJBuRwLRgOogGBQLseC0QAqIBiUy7FgNIAKCAblciwYDaACgkG5HAtGA6iAYFAux4LRACogGJTLsWA0gAoIBuVyLBgNoAKCQbkcC0YDqIBgUC7HgtEAKiAYlMuxYDSACggG5XIsGA2gAoJBuRwLRgOogGBQLscVD+bx8THm5uaitrY2BgYGPpzR/f392N7ejqGhoWhoaMjePzk5ia2trbi/v8/+1tfXF1VVVd/S8NPH+9aX+sFRRYM5Pz+Pzc3NuL6+jubm5g9gLi4uYmlpKV5fX9/AJCQzMzNRV1cXLS0t2efb2tqit7f3y+w/fbwvv1AZBhUL5unpKaanp6O1tTWOj4+jsbHxHZiHh4eYn5+P6urquLq6egNzdHQU6+vrMTg4GE1NTbG4uBh3d3cxMTERe3t7sbOzE93d3dHR0RGzs7ORy+VibGws+/9fH68M57vkQ1YsmJeXl7i5uYmampqYmprKbi2Ft6Tl5eVIqDo7O2N1dfUNTB7FyMhIdpVZWVmJ09PTmJyczGKmz6UrU3ovXVHSLt3u/sfxEsJKe1UsmMLQxWAODg5id3c3hoeHM1Rra2vR39+fXVHSe+kq8hmYdALTLStdmdIVqqurK/tX/PqXxxNMGQoUn8B0m7m8vPzwTRKa5+fn2NjYeHdLSkjGx8ezfXoeWlhYyHYJWLp1fQWmlOOVIVdJh/yVV5iEJd2O0is9v6QrSk9PT/a8kx6A00NvfX39h4fehCSd/HR1SQ/Rh4eH2cNwe3v7u8jFQP/2eCWduTJ9+FeCKWyZnk/Sc0rxz+r0Uzs97Bb+rE6/mBKS/O0rXWlub29jdHQ0e1bKvz57Zsq/R45XpnNe0mF/BZiSCvhhVEAwKJdjwWgAFRAMyuVYMBpABQSDcjkWjAZQAcGgXI4FowFUQDAol2PBaAAVEAzK5VgwGkAFBINyORaMBlABwaBcjgWjAVRAMCiXY8FoABUQDMrlWDAaQAUEg3I5FowGUAHBoFyOBaMBVEAwKJdjwWgAFRAMyuVYMBpABQSDcjkWjAZQAcGgXI4FowFUQDAol2PBaAAVEAzK5VgwGkAFBINyORaMBlABwaBcjgWjAVRAMCiXY8FoABUQDMrlWDAaQAUEg3I5FowGUAHBoFyOBaMBVEAwKJdjwWgAFRAMyuVYMBpABQSDcjkWjAZQAcGgXI4FowFUQDAol2PBaAAVEAzK5VgwGkAFBINyORaMBlABwaBcjgWjAVRAMCiX4z8rrNemOx9CfwAAAABJRU5ErkJggg==" class="img-responsive img-rounded foobar">
+    </div>
+
+
+
+        <div class='col-md-2 col-sm-2 col-xs-3'><h4>NAME</h4></div>
+    </div>
+    <br><br>
+    
+
+    <div class='col-xl-1'><ul id='toilet-listings' class='nav nav-pills nav-stacked'>
+
+    </ul>
+</div>
+
+  <script>
+    loadListings('toilet-listings');
+  </script>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
