@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+        ServerAlias toilet.brilliantsquid.com
+
+        WSGIScriptAlias / /home/toilet/toilet_mapper/toilet_mapper/wsgi.py
+
+        Alias /static/ /home/toilet/toilet_mapper/static/
+        <Directory "/home/toilet/toilet_mapper/static/">
+               Order deny,allow
+               Allow from all
+        </Directory>
+
+
+        Alias /favicon.ico "/home/toilet/toilet_mapper/static/images/favicon.ico"
+
+</VirtualHost>
