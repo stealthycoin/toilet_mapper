@@ -9,7 +9,7 @@
 
   //Loads or reloads the reviews from the server
   window.loadReviews = function(){
-    tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
+   tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
       callback: function(d){
         $('#reviews').html('');
         $('.num_reviews').html(d.count+' Reviews');
@@ -91,6 +91,7 @@ function bind_vote_buttons () {
   </span>
 
   <span class='icon-stack icon-2x visible-s'>
+
     <i class="icon-sign-blank icon-stack-base"></i>
     <i class="icon-leaf icon-light"></i>
   </span>
@@ -146,7 +147,7 @@ function bind_vote_buttons () {
 	  <div class="form-group">
 	    <label for="inputReview" class="col-lg-2 col-sm-2 control-label">Review</label>
 	    <div class="col-lg-5 col-sm-7">
-	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-minlength="20" data-validation-minlength="1" ></textarea>
+	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-regexp="^\s*([a-zA-Z]+\s*){5,}" data-error-message="Your review must be at least 5 words long."></textarea>
 	    </div>
 	  </div><!-- form-group -->
 

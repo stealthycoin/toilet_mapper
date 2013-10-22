@@ -8,9 +8,9 @@
      if(data.hasOwnProperty("error")) form_error('signup', data.error);
      else {
         var j = tapi({noun: "user", verb: "login", data: 
-          {"username": $("[name=username]").val(), "password":  $("[name=username]").val()}});
-        j.done(function(){ window.location = "/"; });
-    }
+          {"username": $("[name=username]").val(), "password":  $("[name=password]").val()}});
+        j.done(function(){setTimeout('window.location = "/"', 500); });
+     }
     });
   }
   
@@ -54,8 +54,6 @@
             </div>
 	  </div>
     </form>
-    <br>
-    <br>
     <br>
     <a href="/signin" class="btn btn-inverse btn-xs btn-block">Already a user? Sign In</a>
   </div> <!-- /container -->
