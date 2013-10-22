@@ -5,6 +5,7 @@
 <script>
   $(document).ready(function(){
   var toilet_id = {{ t.pk }};
+  var creator = t.creator;
   var template = Handlebars.compile($('#review-template').html());
 
   //Loads or reloads the reviews from the server
@@ -104,9 +105,11 @@ function bind_vote_buttons () {
     <div class='col-md-2 visible-lg visible-md visible-sm'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos</div>
   </div><!--row-->
   <div class='row'>
-    <div class='col-md-6 col-sm-7 col-xs-12'>
+    <div class='col-md-6 col-sm-7 col-xs-12 creator_name'>
     </div>
     <div class='col-md-2 col-sm-3 col-xs-4'>
+        
+    
       <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span>1.2 miles</span>
     </div>
   </div><!-- row -->

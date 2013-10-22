@@ -18,8 +18,12 @@
     </div>
 
 
-
-        <div class='col-md-2 col-sm-2 col-xs-3'><h4>NAME</h4></div>
+        <!--
+          -- This is incredibly ugly, I know.
+          -- We may not want to display the email yet.
+          -- Still need to factor in toilets added by user.
+        //-->
+        <div class='col-md-2 col-sm-2 col-xs-3'><h4>User:{{p.username}}<br>Email: {{p.email}}</h4></div>
     </div>
     <br><br>
     
@@ -29,9 +33,6 @@
     </ul>
 </div>
 
-  <script>
-    loadListings('toilet-listings');
-  </script>
 </div>
 
 {% endblock %}
