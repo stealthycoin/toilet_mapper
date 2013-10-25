@@ -1,7 +1,10 @@
 {% extends "standard.html" %}
 
 {% block endhead %}
-  <script> loadToiletListings('toilet-listings'); </script>
+  <script> 
+    var name = "{{p.username}}";
+    loadToiletListings('toilet-listings', 10); 
+  </script>
 {% endblock %}
 
 
