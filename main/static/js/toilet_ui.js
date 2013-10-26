@@ -64,13 +64,6 @@ function loadToiletListings(div_id, i, filters){
     }
     template = getTemplate("toilet");
     toiletsLoading = true;
-   // data: {start : numToiletsLoaded, end : numToiletsLoaded + i };
-   var test = {start: 1, end: 2};
-   test.name = "bob";
-   for (var elem in test){
-       console.log(elem + ": " + test[elem]);
-   }
-
 
    //Appendable parameters to send to tapi
    var params = {
@@ -91,6 +84,8 @@ function loadToiletListings(div_id, i, filters){
          loading = false;
          numToiletsLoaded += i;
    }};
+   
+   params.data.creator = 1;
    
    tapi(params);
 }
