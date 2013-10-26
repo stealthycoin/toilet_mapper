@@ -54,12 +54,14 @@ function generateStars(i){
 var numToiletsLoaded = 0; 
 var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
-function loadToiletListings(div_id, i, filters){
-    console.log(name);
+function loadToiletListings(div_id, i, filter){
     if(name === undefined) console.log("undef name");
     if(toiletsLoading) return; 
     if(!isTemplateLoaded("toilet")){
-	setTimeout("loadToiletListings('"+div_id+"', '"+i+"' );", 50);
+    //Having trouble here. Filter is getting screwed up when this timeout calls
+    //the loadToiletListings function.
+    //When this is fixed the user filtering should work
+	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', '"+filter+"' );", 50);
 	return;
     }
     template = getTemplate("toilet");
@@ -84,8 +86,12 @@ function loadToiletListings(div_id, i, filters){
          loading = false;
          numToiletsLoaded += i;
    }};
-   
-   params.data.creator = 1;
+   //append filter arguments to params.data
+   if(filter !== undefined){
+      jQuery.extend(params.data, filter);
+      console.log(params.data + "  woop");
+   }
+   console.log(params.data);
    
    tapi(params);
 }

@@ -1,7 +1,9 @@
 {% extends "standard.html" %}
 
 {% block endhead %}
-  <script> loadToiletListings('toilet-listings'); </script>
+  <script> 
+  loadToiletListings('toilet-listings',10, {creator:'{{p.pk}}'}); 
+  </script>
 {% endblock %}
 
 

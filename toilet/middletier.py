@@ -47,7 +47,6 @@ def listing(request):
     
     if 'creator' in post_dict:
       nameFilter = True
-      print >>sys.stderr, post_dict['creator']
     
 
     toilet_set = Toilet.objects.all()
