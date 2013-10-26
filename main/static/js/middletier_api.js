@@ -70,9 +70,9 @@ var internal_mapping = {
         ,"downvote": simple_handler("/api/review/downvote/")
     }
     ,"user": {
-	"login": simple_handler("/api/user/login/")
-	,"logout": simple_handler("/api/user/logout/")
-        ,"create": simple_handler("/api/user/create/")
+	   "login": simple_handler("/api/user/login/")
+	   ,"logout": simple_handler("/api/user/logout/")
+      ,"create": simple_handler("/api/user/create/")
     }
 }
 
@@ -81,7 +81,7 @@ function tapi_error(e){ throw ("tAPI error: " + e); }
 
 function server_error(responseText, errorThrown){ alert("Server error: "+errorThrown); }
 
-function tapi(params){
+function tapi(params, callback){
     if(!params.noun){ tapi_error("Request made with no noun."); }
     if(!params.verb){ tapi_error("Request made with no verb."); }
     if(!internal_mapping.hasOwnProperty(params.noun)){
