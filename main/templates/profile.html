@@ -2,7 +2,12 @@
 
 {% block endhead %}
   <script> 
+<<<<<<< HEAD
   loadToiletListings('toilet-listings',10, {creator:'{{p.pk}}'}); 
+=======
+    var name = "{{p.username}}";
+    loadToiletListings('toilet-listings', 10); 
+>>>>>>> caeb1e0ec5bf218285382113d0656cd5bee94b43
   </script>
 {% endblock %}
 
