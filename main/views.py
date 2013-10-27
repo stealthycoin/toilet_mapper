@@ -27,8 +27,8 @@ def gmap(request):
     return render(request, 'gmap.html')
 
 def profile(request, user):
-    print User.objects.get(username__exact= user)
-    p = User.objects.get(username__exact = user)
+    print User.objects.get(username__exact=user)
+    p = User.objects.get(username__exact=user)
     c = Context({ "p": p})
     return render(request, 'profile.html', c)
     

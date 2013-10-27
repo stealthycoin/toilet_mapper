@@ -55,13 +55,15 @@ var numToiletsLoaded = 0;
 var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i, filter){
+    
+    console.log(filter);
     if(name === undefined) console.log("undef name");
     if(toiletsLoading) return; 
     if(!isTemplateLoaded("toilet")){
     //Having trouble here. Filter is getting screwed up when this timeout calls
     //the loadToiletListings function.
     //When this is fixed the user filtering should work
-	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', '"+filter+"' );", 50);
+	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', "+JSON.stringify(filter)+" );", 50);
 	return;
     }
     template = getTemplate("toilet");
