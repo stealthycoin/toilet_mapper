@@ -1,4 +1,23 @@
+/** Template helper functions **/
+window.templateStatus = {};
 
+function loadTemplate(url, varname){
+    $.ajax({
+	url: url
+	,success: function(data){ window.templateStatus[varname] = Handlebars.compile(data); }
+    });
+}
+
+function isTemplateLoaded(varname){
+    return window.templateStatus[varname] !== undefined;
+}
+
+function getTemplate(varname){
+    if(window.templateStatus[varname] === undefined){ throw "Template "+varname+" has not been loaded"; }
+    return window.templateStatus[varname];
+}
+
+/** Panelly UI stuff */
 $(document).ready(function(){
     $('.panel-button').on('click', function(){
 	$(this).next().toggle();
@@ -7,7 +26,7 @@ $(document).ready(function(){
     });
 });
 
-
+/** Form stuff **/
 function form_error(form_id, message){
     $('#'+form_id+" .error").remove();
     $('#'+form_id).append("<div class='error'>"+message+"</div>");
@@ -31,7 +50,50 @@ function generateStars(i){
     return a;
 }
 
+/** Toilet Listings **/
+var numToiletsLoaded = 0; 
+var toiletsLoading = false;
+loadTemplate("/static/handlebars/toilet.html", "toilet");
+function loadToiletListings(div_id, i, filter){
+    
+    console.log(filter);
+    if(name === undefined) console.log("undef name");
+    if(toiletsLoading) return; 
+    if(!isTemplateLoaded("toilet")){
+    //Having trouble here. Filter is getting screwed up when this timeout calls
+    //the loadToiletListings function.
+    //When this is fixed the user filtering should work
+	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', "+JSON.stringify(filter)+" );", 50);
+	return;
+    }
+    template = getTemplate("toilet");
+    toiletsLoading = true;
 
-/** Inline toilet reviews **/
-
-/** Toilet review listings **/
+   //Appendable parameters to send to tapi
+   var params = {
+      // This is not correct right now, keep this FAULT in mind. numToiletsLoaded + i = "0+undefined"
+      noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
+	   callback: function(data){
+	      console.log("Callbaaaack");
+         for(o in data){
+		      console.log(data[o]);
+		      var params = {};
+		      params.pk = data[o].t[0].pk;
+		      params.stars = generateStars(data[o].ranking);
+		      params.date = data[o].t[0].fields.date.slice(0, 10);
+		      params.name = data[o].t[0].fields.name;
+		      params.num_reviews = data[o].count;
+		      $('#'+div_id).append(template(params));
+         }
+         loading = false;
+         numToiletsLoaded += i;
+   }};
+   //append filter arguments to params.data
+   if(filter !== undefined){
+      jQuery.extend(params.data, filter);
+      console.log(params.data + "  woop");
+   }
+   console.log(params.data);
+   
+   tapi(params);
+}

@@ -4,6 +4,9 @@ import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
 
+#just using for debugging
+import sys
+
 
 #this adds a toilet using the post data
 def add(request):
@@ -38,12 +41,22 @@ def listing(request):
     response = ''
     error = ''
     status = 201
+    nameFilter = False
+    
+    post_dict = request.POST
+    
+    if 'creator' in post_dict:
+      nameFilter = True
+    
 
     toilet_set = Toilet.objects.all()
     review_set = Review.objects.all()
 
     l = []
-
+    
+    #I'm using this to filter toilets by user. Probably a better way.
+    if nameFilter == True:
+      toilet_set = toilet_set.filter(creator=post_dict['creator'])
     for t in toilet_set:
         t_rs = review_set.filter(toilet=t)
         total = 0.0

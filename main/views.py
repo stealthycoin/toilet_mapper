@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.template import Context
 from toilet.views import single_toilet_view as stv
 from main.forms import AddRestroomForm
+from django.contrib.auth.models import User
 
 
 def home(request):
@@ -24,4 +25,11 @@ def signed_up(request):
 
 def gmap(request):
     return render(request, 'gmap.html')
+
+def profile(request, user):
+    print User.objects.get(username__exact=user)
+    p = User.objects.get(username__exact=user)
+    c = Context({ "p": p})
+    return render(request, 'profile.html', c)
+    
 
