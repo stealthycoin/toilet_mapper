@@ -70,9 +70,15 @@ var internal_mapping = {
         ,"downvote": simple_handler("/api/review/downvote/")
     }
     ,"user": {
-	   "login": simple_handler("/api/user/login/")
-	   ,"logout": simple_handler("/api/user/logout/")
-      ,"create": simple_handler("/api/user/create/")
+	"login": simple_handler("/api/user/login/")
+	,"logout": simple_handler("/api/user/logout/")
+	,"create": simple_handler("/api/user/create/")
+    }
+    ,"flag": {
+	"retrieve_rankings": simple_handler("/api/flag/retrieve_rankings/")
+	,"retrieve_flags": simple_handler("/api/flag/retrieve_flags/")
+	,"upvote": simple_handler("/api/flag/upvote/")
+	,"downvote": simple_handler("/api/flag/downvote/")
     }
 }
 

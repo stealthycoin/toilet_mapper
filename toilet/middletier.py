@@ -73,11 +73,32 @@ def listing(request):
     response = json.dumps(l)
     return HttpResponse(response,status=status)
 
-def flag_retrieve(request):
+def flag_retrieve_rankings(request):
+    response = ''
+    error = ''
+    status = 201
     if request.method == 'POST':
         data = request.POST
-        f = Flag.objects.get(pk=data['flag_pk'])
         t = Toilet.objects.get(pk=data['toilet_pk'])        
+        try:
+            r = FlagRanking.objects.get(toilet = t.pk)
+            response = serialize([r])
+        except FlagRanking.DoesNotExist:
+            response = serialize([])
+
+    return HttpResponse(package_error(response,error), status=status)
+
+def flag_retrieve_flags(request):
+    response = ''
+    error = ''
+    status = 201
+    f = Flag.objects.get()
+    try:
+        response = serialize([Flag.objects.get()])
+    except ObjectDoesNotExist:
+        response = serialize([])
+    return HttpResponse(package_error(response,error), status=status)
+
 
 #upvote downvote system
 def flag_vote(request, new_vote):
@@ -98,7 +119,7 @@ def flag_vote(request, new_vote):
         except FlagRanking.DoesNotExist:
             r = FlagRanking(flag = f, toilet = t, up_down_vote = 0)
         try:
-            prev_vote_obj = FlagVote.objects.get(flag=f.pk, toilet = t.pk, user = request.user)
+            prev_vote_obj = FlagVote.objects.get(flag=f, toilet = t, user = request.user)
             prev_vote = prev_vote_obj.vote
             if new_vote != prev_vote:
                 prev_vote_obj.delete()

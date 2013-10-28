@@ -15,7 +15,6 @@
         $('.num_reviews').html(d.count+' Reviews');
         $('#review-rating').html(generateStars(d.total));
 
-
         var data = d.review_set; 
         console.log(data);
         var topReview = {rank: 0, content: ''};
@@ -42,7 +41,25 @@
           $('#leaveReview').slideUp();
           loadReviews();
     }});
-    
+			      
+    /** Load Flags **/
+    tapi(
+			      {
+			      noun: "flag"
+			      , verb: "retrieve_rankings"
+			      , data : { toilet_pk: toilet_id }
+			      ,callback: function(data){ console.log("Flag rankings retrieve"); console.log(data); }
+			      }
+			      );
+
+    tapi(
+			      {
+			      noun: "flag"
+			      , verb: "retrieve_flags"
+			      , data : { }
+			      ,callback: function(data){ console.log("Flags retrieve"); console.log(data); }
+			      }
+			      );
   });
   
 function bind_vote_buttons () {
@@ -166,6 +183,9 @@ function bind_vote_buttons () {
   {% endif %}
   <div class='clearfix '></div>
 
+<div class='col-lg-12' id='flags'>
+
+</div>
 
 
 
