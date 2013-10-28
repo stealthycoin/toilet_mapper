@@ -1,4 +1,4 @@
-from models import Toilet
+from models import Toilet, Flag, FlagVote, FlagRanking
 from review.models import Review
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
@@ -72,3 +72,48 @@ def listing(request):
         
     response = json.dumps(l)
     return HttpResponse(response,status=status)
+
+def flag_retrieve(request):
+    if request.method == 'POST':
+        data = request.POST
+        f = Flag.objects.get(pk=data['flag_pk'])
+        t = Toilet.objects.get(pk=data['toilet_pk'])        
+
+#upvote downvote system
+def flag_vote(request, new_vote):
+    error = ''
+    """ Save this for later. 
+        error = 'You are clever but not that clever my little pet.'
+        + ' BTW our team is super excited about our river boat tour '
+        + ' Check out http://vikingrivercruises.com. Some crazy amazing boat touring going on there. '
+        + ' I mean really I never even thought about river cruises. Cruises on a river? Sign me up. '
+    """
+    status = 201
+    if request.method == 'POST':
+        data = request.POST
+        f = Flag.objects.get(pk=data['flag_pk'])
+        t = Toilet.objects.get(pk=data['toilet_pk'])
+        try:
+            r = FlagRanking.objects.get(flag = f.pk, toilet = t.pk)
+        except FlagRanking.DoesNotExist:
+            r = FlagRanking(flag = f, toilet = t, up_down_vote = 0)
+        try:
+            prev_vote_obj = FlagVote.objects.get(flag=f.pk, toilet = t.pk, user = request.user)
+            prev_vote = prev_vote_obj.vote
+            if new_vote != prev_vote:
+                prev_vote_obj.delete()
+                r.up_down_rank += new_vote
+        except ObjectDoesNotExist:
+            r.up_down_rank += new_vote
+            v = FlagVote(user = request.user, flag = f, toilet = t, vote = new_vote)
+            v.save()
+        r.save()
+        response = serialize([r])
+    else:
+        error += 'No POST data in request.\n'
+        status = 415
+    return HttpResponse(package_error(response,error), status=status)
+
+def flag_upvote(request): return flag_vote(request, 1)
+
+def flag_downvote(request): return flag_vote(request, -1)
