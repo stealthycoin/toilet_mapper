@@ -7,7 +7,15 @@
 
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
 </script>
-
+<style type="text/css">
+    #gMap {
+       height:100%; 
+       width:100%;
+    }
+    #content {
+       height:100%;
+    }
+</style>
 <script>
 function initialize()
 {
@@ -23,7 +31,7 @@ function initialize()
 google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 
-<div id="gMap" style="width:500px;height:380px;"></div>
+<div id="gMap"></div>
 
 
 
