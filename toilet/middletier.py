@@ -42,18 +42,13 @@ def listing(request):
     error = ''
     status = 201
     nameFilter = False
-    
     post_dict = request.POST
-    
     if 'creator' in post_dict:
       nameFilter = True
-    
 
     toilet_set = Toilet.objects.all()
     review_set = Review.objects.all()
-
     l = []
-    
     #I'm using this to filter toilets by user. Probably a better way.
     if nameFilter == True:
       toilet_set = toilet_set.filter(creator=post_dict['creator'])
@@ -67,9 +62,7 @@ def listing(request):
             for r in t_rs:
                 total += r.rank
             total /= count
-        
         l.append({"t" : json.loads(serialize([t])), "ranking" : total, "count" : count})
-        
     response = json.dumps(l)
     return HttpResponse(response,status=status)
 
@@ -81,21 +74,21 @@ def flag_retrieve_rankings(request):
         data = request.POST
         t = Toilet.objects.get(pk=data['toilet_pk'])        
         try:
-            r = FlagRanking.objects.get(toilet = t.pk)
-            response = serialize([r])
+            r = FlagRanking.objects.filter(toilet = t.pk)
+            response = serialize(r)
         except FlagRanking.DoesNotExist:
             response = serialize([])
 
     return HttpResponse(package_error(response,error), status=status)
 
+
 def flag_retrieve_flags(request):
     response = ''
     error = ''
     status = 201
-    f = Flag.objects.get()
     try:
-        response = serialize([Flag.objects.get()])
-    except ObjectDoesNotExist:
+        response = serialize(Flag.objects.all())
+    except Flag.DoesNotExist:
         response = serialize([])
     return HttpResponse(package_error(response,error), status=status)
 
@@ -112,10 +105,12 @@ def flag_vote(request, new_vote):
     status = 201
     if request.method == 'POST':
         data = request.POST
-        f = Flag.objects.get(pk=data['flag_pk'])
-        t = Toilet.objects.get(pk=data['toilet_pk'])
         try:
-            r = FlagRanking.objects.get(flag = f.pk, toilet = t.pk)
+            t = Toilet.objects.get(pk=data['toilet_pk'])
+            f = Flag.objects.get(pk=data['flag_pk'])
+            r = FlagRanking.objects.get(toilet = t, flag = f)
+        except Toilet.DoesNotExist:
+            error = "Toilet DNE"
         except FlagRanking.DoesNotExist:
             r = FlagRanking(flag = f, toilet = t, up_down_vote = 0)
         try:
@@ -123,9 +118,9 @@ def flag_vote(request, new_vote):
             prev_vote = prev_vote_obj.vote
             if new_vote != prev_vote:
                 prev_vote_obj.delete()
-                r.up_down_rank += new_vote
-        except ObjectDoesNotExist:
-            r.up_down_rank += new_vote
+                r.up_down_vote += new_vote
+        except FlagVote.DoesNotExist:
+            r.up_down_vote += new_vote
             v = FlagVote(user = request.user, flag = f, toilet = t, vote = new_vote)
             v.save()
         r.save()

@@ -18,12 +18,26 @@ function getTemplate(varname){
 }
 
 /** Panelly UI stuff */
-$(document).ready(function(){
-    $('.panel-button').on('click', function(){
-	$(this).next().toggle();
-	$(this).find('.panel-button-icon').toggleClass("icon-chevron-down");
-	$(this).find('.panel-button-icon').toggleClass("icon-chevron-up");
+function bind_panels(){
+    $('.panel-button').each(function(){
+        if(!$(this).data('panelbound')){
+            $(this).on('click', function(){
+                if(!$(this).next().is(":visible")){
+                    $('html, body').animate({
+	                scrollTop: $(this).offset().top - 100
+                    }, 500);
+                }
+                $(this).next().toggle();
+                $(this).find('.panel-button-icon').toggleClass("icon-chevron-down");
+                $(this).find('.panel-button-icon').toggleClass("icon-chevron-up");
+            });
+            $(this).data('panelbound', true);
+        }
     });
+}
+
+$(document).ready(function(){
+    bind_panels();
 });
 
 /** Form stuff **/
@@ -55,45 +69,42 @@ var numToiletsLoaded = 0;
 var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i, filter){
-    
-    console.log(filter);
-    if(name === undefined) console.log("undef name");
     if(toiletsLoading) return; 
     if(!isTemplateLoaded("toilet")){
-    //Having trouble here. Filter is getting screwed up when this timeout calls
-    //the loadToiletListings function.
-    //When this is fixed the user filtering should work
 	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', "+JSON.stringify(filter)+" );", 50);
 	return;
     }
     template = getTemplate("toilet");
     toiletsLoading = true;
 
-   //Appendable parameters to send to tapi
-   var params = {
-      // This is not correct right now, keep this FAULT in mind. numToiletsLoaded + i = "0+undefined"
-      noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
-	   callback: function(data){
-	      console.log("Callbaaaack");
-         for(o in data){
-		      console.log(data[o]);
-		      var params = {};
-		      params.pk = data[o].t[0].pk;
-		      params.stars = generateStars(data[o].ranking);
-		      params.date = data[o].t[0].fields.date.slice(0, 10);
-		      params.name = data[o].t[0].fields.name;
-		      params.num_reviews = data[o].count;
-		      $('#'+div_id).append(template(params));
-         }
-         loading = false;
-         numToiletsLoaded += i;
-   }};
-   //append filter arguments to params.data
-   if(filter !== undefined){
-      jQuery.extend(params.data, filter);
-      console.log(params.data + "  woop");
-   }
-   console.log(params.data);
-   
-   tapi(params);
+    i = i || 10;
+
+    //Appendable parameters to send to tapi
+    var params = {
+        noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
+	callback: function(data){
+	    console.log("Callbaaaack");
+            for(o in data){
+		console.log(data[o]);
+		var params = {};
+		params.pk = data[o].t[0].pk;
+		params.stars = generateStars(data[o].ranking);
+		params.date = data[o].t[0].fields.date.slice(0, 10);
+		params.name = data[o].t[0].fields.name;
+		params.num_reviews = data[o].count;
+		$('#'+div_id).append(template(params));
+            }
+            loading = false;
+            numToiletsLoaded += i;
+        }};
+
+    //append filter arguments to params.data
+    if(filter !== undefined){
+        jQuery.extend(params.data, filter);
+        console.log(params.data + "  woop");
+    }
+    console.log(params.data);
+    
+    tapi(params);
 }
+
