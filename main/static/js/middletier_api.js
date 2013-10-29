@@ -70,9 +70,15 @@ var internal_mapping = {
         ,"downvote": simple_handler("/api/review/downvote/")
     }
     ,"user": {
-	   "login": simple_handler("/api/user/login/")
-	   ,"logout": simple_handler("/api/user/logout/")
-      ,"create": simple_handler("/api/user/create/")
+	"login": simple_handler("/api/user/login/")
+	,"logout": simple_handler("/api/user/logout/")
+	,"create": simple_handler("/api/user/create/")
+    }
+    ,"flag": {
+	"retrieve_rankings": simple_handler("/api/flag/retrieve_rankings/")
+	,"retrieve_flags": simple_handler("/api/flag/retrieve_flags/")
+	,"upvote": simple_handler("/api/flag/upvote/")
+	,"downvote": simple_handler("/api/flag/downvote/")
     }
 }
 
@@ -116,8 +122,13 @@ function tapi_auto_form(form_id, tapi_params, jqxhr_f){
 
             if($('#'+form_id).data('submit_in_process') === true) return;
             $('#'+form_id).data('submit_in_process', true);
+
             if($('#'+form_id).attr('data-validate') === "parsley"
-               && !$('#'+form_id).parsley('isValid')) return;
+               && !$('#'+form_id).parsley('isValid')) {
+                $('#'+form_id+" button").attr('disabled', false);
+                $('#'+form_id).data('submit_in_process', false);
+                return;
+            }
             
             tapi_params.data = {};
             $('#'+form_id+' [name]').each(function(){

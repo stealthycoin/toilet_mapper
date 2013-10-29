@@ -3,67 +3,146 @@
 {% block endhead %}
 
 <script>
-  $(document).ready(function(){
-  var toilet_id = {{ t.pk }};
-  var template = Handlebars.compile($('#review-template').html());
+    $(document).ready(function(){
 
-  //Loads or reloads the reviews from the server
-  window.loadReviews = function(){
-   tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
-      callback: function(d){
-        $('#reviews').html('');
-        $('.num_reviews').html(d.count+' Reviews');
-        $('#review-rating').html(generateStars(d.total));
+        /** Load and populate the reviews **/
+        var toilet_id = {{ t.pk }};
+        var template = Handlebars.compile($('#review-template').html());
 
+        //Loads or reloads the reviews from the server
+        window.loadReviews = function(){
+            tapi({noun: "review", verb: "retrieve", data: {toilet_id: toilet_id, start : 0, end : 10},
+                  callback: function(d){
+                      $('#reviews').html('');
+                      $('.num_reviews').html(d.count+' Reviews');
+                      $('#review-rating').html(generateStars(d.total));
 
-        var data = d.review_set; 
-        console.log(data);
-        var topReview = {rank: 0, content: ''};
-        for(o in data){
-          if(topReview.rank < data[o].fields.rank){
-            topReview = data[o].fields;
-          }
-          console.log(data[o]);
-          data[o].fields.stars = generateStars(data[o].fields.rank);
-          data[o].fields.date = data[o].fields.date.slice(0, 10);
-          data[o].fields.pk = data[o].pk;
-          $('#reviews').append(template(data[o].fields));
+                      var data = d.review_set; 
+                      var topReview = {rank: 0, content: ''};
+                      for(o in data){
+                          if(topReview.rank < data[o].fields.rank){
+                              topReview = data[o].fields;
+                          }
+                          data[o].fields.stars = generateStars(data[o].fields.rank);
+                          data[o].fields.date = data[o].fields.date.slice(0, 10);
+                          data[o].fields.pk = data[o].pk;
+                          $('#reviews').append(template(data[o].fields));
+                      }
+                      $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
+                      bind_vote_buttons();
+                  }});
+        } //function loadReviews
+        loadReviews();
+
+        //Bind the bathroom rating form so it submits correctly
+        tapi_auto_form('rate-bathroom-form', 
+                       {  noun: "review"
+                          , verb: "create"
+                          , callback :function(data){
+                              $('#leaveReview').slideUp();
+                              loadReviews();
+                          }});
+
+        /** Load and populate Flags Interface **/
+        var flag_rank_template = Handlebars.compile($('#flag-rank-template').html());
+        var flag_ifc_template = Handlebars.compile($('#flag-ifc-template').html());
+        var flagdata = {};
+        
+        // Load / reload the rankings for flags for this toilet 
+        window.load_flag_rankings = function(){
+            console.log("LOADING FLAG RANKINGS");
+            tapi({
+	        noun: "flag"
+	        , verb: "retrieve_rankings"
+	        , data : { toilet_pk: toilet_id }
+                , callback: function(data){
+                    if(data.length === 0) return;
+                    $('#flag-rankings').show();
+                    $('#flag-rankings').html('<h3>Restroom Flags</h3>');
+                    for(o in data){
+                        var obj = {
+                            pk: data[o].pk
+                            ,fields: flagdata[data[o].fields.flag]
+                            ,flag_pk: data[o].fields.flag
+                            ,up_down_vote: data[o].fields.up_down_vote
+                        }
+                        $('#flag-rankings').append(flag_rank_template(obj));
+                    }
+                    bind_flagvote_buttons();
+                }
+            });
         }
-        $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
-        bind_vote_buttons();
-     }});
-  }
-  loadReviews();
-  window.tempfunction = loadReviews
-  tapi_auto_form('rate-bathroom-form', 
-    {  noun: "review"
-     , verb: "create"
-     , callback :function(data){
-          $('#leaveReview').slideUp();
-          loadReviews();
-    }});
-    
-  });
-  
+
+        // Load data for all flags (and call load_flag_rankings())
+        tapi({ noun: "flag", verb: "retrieve_flags"
+               , data : {}
+               , callback: function(fd){
+                   $('#flag-ifc').append(flag_ifc_template(fd)); 
+                   bind_flag_buttons();
+                   bind_panels();
+                   for(o in fd) {
+                       flagdata[fd[o].pk] = fd[o].fields;
+                   }
+                   load_flag_rankings();
+               }});
+    });
+
 function bind_vote_buttons () {
     var in_progress = false;
-    
     function vote(clicked_node, current_vote){
         if(in_progress === true){ return; }
         in_progress = true;
-        var i = parseInt(clicked_node.parents('.review').find('.review_up_down_rank').html());
-        clicked_node.parents('.review').find('.review_up_down_rank').html(i + current_vote);
+        var i = parseInt(clicked_node.parents('.review')
+                         .find('.review_up_down_rank').html());
+        clicked_node.parents('.review').find('.review_up_down_rank')
+            .html(i + current_vote);
         var str = "up";
         if(current_vote === -1){ str = "down"; }
-        tapi({noun:"review", verb:str+"vote", data:{review_pk: clicked_node.attr("data-pk")}
+        tapi({noun:"review", verb:str+"vote"
+              , data:{review_pk: clicked_node.attr("data-pk")}
               , callback: function(){ loadReviews(); in_progress = false; }}); 
         return false;
     }
-    $('.upvote_button').click(function (e){
+    $('.upvote_button').click(function(e){
         e.preventDefault();
         vote($(this), 1);
     });
-    $('.downvote_button').click(function (e){
+    $('.downvote_button').click(function(e){
+        e.preventDefault(); 
+        vote($(this), -1);
+    });
+}
+
+function bind_flag_buttons(){
+    $('a.flag_listing').click(function(e){
+        e.preventDefault();
+         tapi({noun:"flag", verb:"upvote"
+              , data:{toilet_pk: {{t.pk}}, flag_pk: $(this).attr("data-pk")}
+               , callback: function(){ load_flag_rankings(); in_progress = false; }});
+        return false;
+    });
+}
+function bind_flagvote_buttons () {
+    var in_progress = false;
+    function vote(clicked_node, current_vote){
+        if(in_progress === true){ return; }
+        in_progress = true;
+        var i = parseInt(clicked_node.parents('.flag')
+                         .find('.flag_up_down_rank').html());
+        clicked_node.parents('.flag').find('.flag_up_down_rank')
+            .html(i + current_vote);
+        var str = "up";
+        if(current_vote === -1){ str = "down"; }
+        tapi({noun:"flag", verb:str+"vote"
+              , data:{toilet_pk: {{t.pk}}, flag_pk: clicked_node.attr("data-pk")}
+              , callback: function(){ load_flag_rankings(); in_progress = false; }});
+        return false;
+    }
+    $('.flag_upvote_button').click(function(e){
+        e.preventDefault();
+        vote($(this), 1);
+    });
+    $('.flag_downvote_button').click(function(e){
         e.preventDefault(); 
         vote($(this), -1);
     });
@@ -122,12 +201,35 @@ function bind_vote_buttons () {
 
 <div class='clearfix visible-xs'></div>
 
+
+{% verbatim %}
+  <script id="flag-rank-template" type="text/x-handlebars-template">
+    <div class='row'>
+      <div class='overflow: hidden; display: block; float: left;'>
+	<div style='text-align: center; float: left;'><a href='' style='color:#aaaaaa; display: block;' class='btn icon-arrow-up flag_upvote_button' data-pk='{{flag_pk}}'></a></div>
+	<div class='flag_up_down_rank'>
+	  {{up_down_vote}}</div>
+	<div style='text-align: center; float: left; '><a href='' style='color:#aaaaaa; display: block;' class='btn icon-arrow-down flag_downvote_button' data-pk='{{flag_pk}}'></a></div>
+      </div>
+
+      <div class='overflow: hidden; display: block; float: left; padding-left: 15px;'>
+        <div class='flagName'>{{fields.name}}</div>
+        <div class='flagIconButton'><i class='icon-info'></i></div>
+        <!--<div class='col-lg-1 explanation' style='display: none;'>{{fields.explanation}}</div>-->
+      </div>
+    </div>
+</script>
+{% endverbatim %}
+<div class='clearfix'></div>
+<div class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-rankings'></div>
+<div class='clearfix'></div>
+
 {% if has_reviewed == False and user.is_authenticated %}
 
-  <div id='leaveReview' class='col-lg-offset-1 col-lg-7 col-md-8 col-sm-10 col-xs-12 row'>
+  <div id='leaveReview' class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row'>
     <link rel='stylesheet' href='/static/css/rateit.css'>
     <script src='/static/js/jquery.rateit.min.js'></script>
-    <div class="panel panel-default">
+    <div class="panel panel-default" style='margin-bottom: 0px;' >
       <a class="panel-heading panel-button">Review This Bathroom
 	<span class='panel-button-icon icon-chevron-down'></span>
       </a>
@@ -149,7 +251,8 @@ function bind_vote_buttons () {
 	  <div class="form-group">
 	    <label for="inputReview" class="col-lg-2 col-sm-2 control-label">Review</label>
 	    <div class="col-lg-5 col-sm-7">
-	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-regexp="^\s*([a-zA-Z]+\s*){5,}" data-error-message="Your review must be at least 5 words long."></textarea>
+	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-regexp="^((\b\w{2,40}\b)\s*){5,}$" data-error-message="Your review must be at least 5 words long."></textarea>
+    <!-- old regexp "^\s*([a-zA-Z]+\s*){5,}" -->
 	    </div>
 	  </div><!-- form-group -->
 
@@ -164,33 +267,54 @@ function bind_vote_buttons () {
   </div> <!-- #leaveReview -->
 
   {% endif %}
-  <div class='clearfix '></div>
 
 
 
+{% verbatim %}
+<script id="flag-ifc-template" type="text/x-handlebars-template">
+  <div class="panel panel-default">
+    <a class="panel-heading panel-button">Flag this Bathroom
+      <span class='panel-button-icon icon-chevron-down'></span>
+    </a>
+    <div class="panel-body" id="reviewForm" style='display: none;'>
+      {{#each this}}
+      <a class='btn flag_listing' data-pk ='{{this.pk}}'>
+        <div class='flag_vote'><i class='icon-thumbs-up'></i></div>
+        <div class='flag_name'>{{this.fields.name}}</div>
+    <!--<div class='flag_explanation'>{{this.fields.explanation}}</div>-->
+      </a>
+      {{/each}}
+    </div>
+  </div>
+</script>
+{% endverbatim %}
+
+<div class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-ifc'></div>
 
 
+
+{% verbatim %}
 <script id="review-template" type="text/x-handlebars-template">
-  <div class='review col-lg-8 col-md-8 col-sm-10 col-xs-12'>
+  <div class='review col-lg-7 col-md-8 col-sm-10 col-xs-12'>
     <div style='clear: both; overflow: hidden;'>
       <div class='col-xs-2 col-sm-1 col-md-1'>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-up upvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-up upvote_button' data-pk='{{pk}}'></a></div>
 	<div style='text-align: center; font-weight: bold; color: #aaaaaa;' class='review_up_down_rank'>
-	  {% templatetag openvariable %}up_down_rank{% templatetag closevariable %}</div>
-	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-down downvote_button' data-pk='{% templatetag openvariable %}pk{% templatetag closevariable %}'></a></div>
+	  {{up_down_rank}}</div>
+	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-down downvote_button' data-pk='{{pk}}'></a></div>
       </div>
       <div class='col-xs-2 col-sm-1 col-md-1' style='margin-left: 0px;'>
 	<div style='text-align: center;'><span class='icon-user icon-3x'></span></div>
 	<div style='text-align: center;'><small>
-	    {% templatetag openvariable %}username{% templatetag closevariable %}</small></div>
+	    {{username}}</small></div>
       </div>
       <div class='col-md-10 col-sm-9 col-xs-8'>
 	<div class='row'>
 	  <div class='col-lg-4 col-md-3 col-sm-4 star-ratings' style='text-align: left;' >
-	    {% templatetag openvariable %}{ stars }{% templatetag closevariable %}
+	    {{{ stars }}}
 	  </div>
 	  <div class='col-lg-4 col-md-3 col-sm-3'>
-	    {% templatetag openvariable %} date {% templatetag closevariable %}
+	    {{ date }}
 	  </div>
 	  <div class='col-lg-4 col-md-3 col-sm-3'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos </div>
 
@@ -198,15 +322,15 @@ function bind_vote_buttons () {
       </div>
 	<div class='col-md-10 col-sm-9 col-xs-12'>
 	  <p class='review_content'></p>
-	  {% templatetag openvariable %} content {% templatetag closevariable %}
+	  {{ content }}
 	</div>
       </div>
 
   </div>
 </script>
+{% endverbatim %}
 
-
-
+<div class='clearfix'></div>
 
 <h2> Reviews </h2>
 <div id='reviews'></div>
