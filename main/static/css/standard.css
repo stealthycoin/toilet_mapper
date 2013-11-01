@@ -1,5 +1,12 @@
 body {
     background-color: #DCDCDC;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
 }
 
 h2 { margin-top: 10px; }
@@ -155,4 +162,7 @@ ul.parsley-error-list li, .error {
 .flag_explanation { font-size: 0.8em; color : #aaaaaa; }
 
 #flag-ifc { margin: 5px 0px; padding: 0px;  }
+
+
+
 
