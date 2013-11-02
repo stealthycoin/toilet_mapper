@@ -13,12 +13,9 @@ class Toilet (models.Model):
     creator = models.ForeignKey(User)
     name = models.CharField(max_length = 64)
     
-    lat = models.DecimalField(max_digits=10, decimal_places=6)
-    lng = models.DecimalField(max_digits=10, decimal_places=6)
+    lat = models.DecimalField(max_digits=10, decimal_places=6, null=True)
+    lng = models.DecimalField(max_digits=10, decimal_places=6, null=True)
     
-
-
-    #zip = django.contrib.localflavor.USpostalCodeField()
 
 class Flag (models.Model):
     def __unicode__(self): return u'%s'%self.name
