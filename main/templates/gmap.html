@@ -1,12 +1,7 @@
 {% extends "standard.html" %}
 
 {% block content %}
-    
 
-
-
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
-</script>
 <style type="text/css">
     #gMap {
        height:100%; 
@@ -16,25 +11,68 @@
        height:100%;
     }
 </style>
+   
+
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=true"></script>
+
 <script>
-function initialize()
-{
-    google.maps.visualRefresh = true;
-    var mapProp = {
-        center:new google.maps.LatLng(36.973, -122.029),
-        zoom:11,
+google.maps.visualRefresh = true;
+var map;
+var initialLocation;
+var marker;
+var santaCruz = new google.maps.LatLng(36.973, -122.029);
+var siberia = new google.maps.LatLng(60, 105);
+
+function initialize() {
+    var options = {
+        zoom:13,
         mapTypeId:google.maps.MapTypeId.ROADMAP
     };
-    var map=new google.maps.Map(document.getElementById("gMap")
-                                ,mapProp);
+    map = new google.maps.Map(document.getElementById("gMap"), options);
+    
+    if (navigator.geolocation) {
+	navigator.geolocation.getCurrentPosition(function(position) {
+          initialLocation = new google.maps.LatLng(position.coords.latitude, 
+                                                 position.coords.longitude);
+	  map.setCenter(initialLocation);
+          createMapMarkers(initialLocation);
+        }, function () {
+          handleNoGeolocation(true);
+        });
+    } else {
+        handleNoGeolocation(false);
+    }
 }
 
+
+function handleGeolocation(supportFlag) { 
+    if (supportFlag == true) {
+          alert("Geolocation Service Failed.");
+    } else {
+          alert("Browser Doesn't Support Geolocation");
+    }
+    map.setCenter(siberia);
+}
+    
+function createMapMarkers(gps) {
+    var marker = new google.maps.Marker({
+       position: gps,
+       animation: google.maps.Animation.DROP,
+       title: "Your Current Location"
+    });
+    // add markers to the map
+    marker.setMap(map);
+}
+    
+
+
 google.maps.event.addDomListener(window, 'load', initialize);
+
 </script>
 
 <div id="gMap"></div>
 
-
-
-
 {% endblock %}
+
+
+
