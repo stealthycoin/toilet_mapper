@@ -12,6 +12,12 @@ class Toilet (models.Model):
     date = models.DateTimeField()
     creator = models.ForeignKey(User)
     name = models.CharField(max_length = 64)
+    
+    lat = models.DecimalField(max_digits=10, decimal_places=6)
+    lng = models.DecimalField(max_digits=10, decimal_places=6)
+    
+
+
     #zip = django.contrib.localflavor.USpostalCodeField()
 
 class Flag (models.Model):
