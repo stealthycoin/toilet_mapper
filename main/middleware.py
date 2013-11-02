@@ -10,6 +10,7 @@ class InvalidPostError(Exception):
 
 class Middleware():    
     def process_exception(self, request, e):
+        print "AM I ALIVE??"
         response = "dunno man"
         status = 500
         if isinstance(exception, InvalidPostError):
