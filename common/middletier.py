@@ -3,6 +3,7 @@ from django.core import serializers
 from django.utils.timezone import utc
 import datetime
 import sys
+from toilet.models import Toilet
 
 #turns post data into a json object
 def post_to_dict(post):
@@ -100,18 +101,23 @@ COMMON OBJECT RETRIEVAL FUNCTIONS
 
 
 def str_to_class(str):
-    return getattr(sys.modules[__name__], str)`
+    #return getattr(sys.modules[__name__], str)
+    lookup = {'Toilet': Toilet}
+    return lookup.get(str)
             
-def security_check(e):
-    return e
+def security_check(k, v):
+    return v
 
 def get_obj(request, name):
     if request.POST:
         start = request.POST.get('start')
         end = request.POST.get('end')
-        filters = request.POST.get('filters')
-        filters = filters.map(security_check)
-        
+        print "FILTERS"
+        print request.POST.get('filters')
+        print type(request.POST.get('filters'))
+        filters = json.loads(request.POST.get('filters'))
+        filters = {k: security_check(k,v) for k, v in filters.items()}
+
         print start,end,filters
 
         qs = str_to_class(name).objects.all().filter(**filters)[start:end]

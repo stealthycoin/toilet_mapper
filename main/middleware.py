@@ -9,20 +9,20 @@ class InvalidPostError(Exception):
 
 
 class Middleware():    
-    def process_exception(self, request, e):
+    def process_e(self, request, e):
         print "AM I ALIVE??"
         response = "dunno man"
         status = 500
-        if isinstance(exception, InvalidPostError):
+        if isinstance(e, InvalidPostError):
             status = 415
             response = e.value 
-        if isinstance(exception, KeyError):
+        if isinstance(e, KeyError):
             status = 400
             response = "Missing " + str(e).replace('\'',"") + " attribute" 
-        if isinstance(exception, ValueError):
+        if isinstance(e, ValueError):
             status = 400
             response = str(e).replace('\'',"")
-        if isinstance(exception, ObjectDoesNotExist):
+        if isinstance(e, ObjectDoesNotExist):
             status = 404
             response = str(e).replace('\'',"")
 

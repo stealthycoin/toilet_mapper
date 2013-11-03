@@ -50,17 +50,24 @@
 
 **/
 
-function simple_post(url, data){
+function simple_post(url, data, stringify){
+    if(stringify !== undefined){
+	for(o in stringify){
+	    if(data[stringify[o]] === undefined) data[stringify[o]] = {}
+	    data[stringify[o]] = JSON.stringify(data[stringify[o]]);
+	}
+	
+    }
     return $.ajax({ url: url, type: 'POST', data: data, dataType: 'json'});
 }
 
-function simple_handler(url){
-    return function(data){ return simple_post(url, data); }
+function simple_handler(url, stringify){
+    return function(data){ return simple_post(url, data, stringify ); }
 }
 
 var internal_mapping = {
     "toilet": {
-        "retrieve": simple_handler("/api/toilet/retrieve/")
+        "retrieve": simple_handler("/api/Toilet/get/", ["filters"])
         ,"create": simple_handler("/api/toilet/create/")
     }
     ,"review": {

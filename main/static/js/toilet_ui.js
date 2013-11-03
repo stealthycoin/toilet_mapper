@@ -69,6 +69,8 @@ var numToiletsLoaded = 0;
 var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i, filter){
+    i = i || 10;
+
     if(toiletsLoading) return; 
     if(!isTemplateLoaded("toilet")){
 	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', "+JSON.stringify(filter)+" );", 50);
@@ -76,9 +78,7 @@ function loadToiletListings(div_id, i, filter){
     }
     template = getTemplate("toilet");
     toiletsLoading = true;
-
-    i = i || 10;
-
+ 
     //Appendable parameters to send to tapi
     var params = {
         noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
