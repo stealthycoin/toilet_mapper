@@ -87,11 +87,11 @@ function loadToiletListings(div_id, i, filter){
             for(o in data){
 		console.log(data[o]);
 		var params = {};
-		params.pk = data[o].t[0].pk;
-		params.stars = generateStars(data[o].ranking);
-		params.date = data[o].t[0].fields.date.slice(0, 10);
-		params.name = data[o].t[0].fields.name;
-		params.num_reviews = data[o].count;
+		params.pk = data[o].pk;
+		params.stars = generateStars(data[o].ranking || 3.5);
+		params.date = data[o].fields.date.slice(0, 10);
+		params.name = data[o].fields.name;
+		params.num_reviews = data[o].count || 42;
 		$('#'+div_id).append(template(params));
             }
             loading = false;

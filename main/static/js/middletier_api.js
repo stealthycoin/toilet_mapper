@@ -71,7 +71,7 @@ var internal_mapping = {
         ,"create": simple_handler("/api/toilet/create/")
     }
     ,"review": {
-        "retrieve": simple_handler("/api/review/retrieve/")
+        "retrieve": simple_handler("/api/Review/get/", ["filters"])
         ,"create": simple_handler("/api/review/create/")
         ,"upvote": simple_handler("/api/review/upvote/")
         ,"downvote": simple_handler("/api/review/downvote/")
@@ -82,8 +82,8 @@ var internal_mapping = {
 	,"create": simple_handler("/api/user/create/")
     }
     ,"flag": {
-	"retrieve_rankings": simple_handler("/api/flag/retrieve_rankings/")
-	,"retrieve_flags": simple_handler("/api/flag/retrieve_flags/")
+	"retrieve_rankings": simple_handler("/api/FlagRanking/get/", ["filters"])
+	,"retrieve_flags": simple_handler("/api/Flag/get/", ["filters"])
 	,"upvote": simple_handler("/api/flag/upvote/")
 	,"downvote": simple_handler("/api/flag/downvote/")
     }

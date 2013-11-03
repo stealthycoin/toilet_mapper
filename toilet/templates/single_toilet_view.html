@@ -17,7 +17,7 @@
                       $('.num_reviews').html(d.count+' Reviews');
                       $('#review-rating').html(generateStars(d.total));
 
-                      var data = d.review_set; 
+                      var data = d;
                       var topReview = {rank: 0, content: ''};
                       for(o in data){
                           if(topReview.rank < data[o].fields.rank){
@@ -50,11 +50,10 @@
         
         // Load / reload the rankings for flags for this toilet 
         window.load_flag_rankings = function(){
-            console.log("LOADING FLAG RANKINGS");
             tapi({
 	        noun: "flag"
 	        , verb: "retrieve_rankings"
-	        , data : { toilet_pk: toilet_id }
+	        , data : { filters: {toilet: toilet_id} }
                 , callback: function(data){
                     if(data.length === 0) return;
                     $('#flag-rankings').show();
@@ -251,7 +250,7 @@ function bind_flagvote_buttons () {
 	  <div class="form-group">
 	    <label for="inputReview" class="col-lg-2 col-sm-2 control-label">Review</label>
 	    <div class="col-lg-5 col-sm-7">
-	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-regexp="^((\b\w{2,40}\b)\s*){5,}$" data-error-message="Your review must be at least 5 words long."></textarea>
+	      <textarea id="inputReview" name="content" class="form-control" rows="3" data-required="true" data-regexp="^(\b\S+\b\s*){5,}$" data-error-message="Your review must be at least 5 words long."></textarea>
     <!-- old regexp "^\s*([a-zA-Z]+\s*){5,}" -->
 	    </div>
 	  </div><!-- form-group -->
