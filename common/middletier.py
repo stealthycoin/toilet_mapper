@@ -2,6 +2,7 @@ import json
 from django.core import serializers
 from django.utils.timezone import utc
 import datetime
+import sys
 
 #turns post data into a json object
 def post_to_dict(post):
@@ -91,3 +92,36 @@ def logout(request):
     response = '"Logged out"'
 
     return HttpResponse(package_error(response,''),status=200)
+
+
+"""
+COMMON OBJECT RETRIEVAL FUNCTIONS
+"""
+
+
+def str_to_class(str):
+    return getattr(sys.modules[__name__], str)`
+            
+def security_check(e):
+    return e
+
+def get_obj(request, name):
+    if request.POST:
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+        filters = request.POST.get('filters')
+        filters = filters.map(security_check)
+        
+        print start,end,filters
+
+        qs = str_to_class(name).objects.all().filter(**filters)[start:end]
+        
+        print qs
+        
+        return HttpResponse(serializers.serialize('json', qs))
+    else:
+        return HttpResponse("DUDE WTF GIOMME A POST")
+        
+        
+    
+        
