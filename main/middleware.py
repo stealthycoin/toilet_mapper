@@ -11,8 +11,9 @@ class InvalidPostError(Exception):
 
 
 class Middleware():    
-    def process_request(self, request):
-        if request.method == 'POST' and request.user != None: 
+    #remove _DONT_CALL to turn back on
+    def process_request_DONT_CALL(self, request):
+        if request.method == 'POST' and request.user.is_authenticated():
             user = request.user
             try:
                 userTime = TimedUser.objects.get(user=user)
@@ -22,7 +23,7 @@ class Middleware():
                 userTime.time = currentTime() 
                 userTime.save()
             print (currentTime() - userTime.time).total_seconds()
-            if (currentTime() - userTime.time).total_seconds() < 0.015:
+            if (currentTime() - userTime.time).total_seconds() < 0.02:
                 return HttpResponse("To many posts persecond", status=403)
             userTime.time = currentTime()
             userTime.save()
