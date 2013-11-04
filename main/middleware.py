@@ -1,5 +1,5 @@
 from django.http import *
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, FieldError
 
 class InvalidPostError(Exception):
     def __init__(self,value):
@@ -9,10 +9,12 @@ class InvalidPostError(Exception):
 
 
 class Middleware():    
-    def process_e(self, request, e):
-        print "AM I ALIVE??"
-        response = "dunno man"
+    def process_exception(self, request, e):
+        response = str(e)
         status = 500
+        if isinstance(e, FieldError) or isinstance(e, AttributeError):
+            response = str(e)
+            status = 400 
         if isinstance(e, InvalidPostError):
             status = 415
             response = e.value 

@@ -121,12 +121,11 @@ def get_obj(request, name):
         filters = {k: security_check(k,v) for k, v in filters.items()}
 
 
-        qs = str_to_class(name).objects.all().filter(**filters)[start:end]
-        
-        
+        qs = str_to_class(name).objects.all().filter(**filters)[start:end] 
         return HttpResponse(serializers.serialize('json', qs))
+
     else:
-        return HttpResponse("DUDE WTF GIOMME A POST")
+        return HttpResponse("DUDE WTF GIOMME A POST", status=412)
         
         
     
