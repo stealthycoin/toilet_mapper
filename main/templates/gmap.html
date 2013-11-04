@@ -21,7 +21,7 @@ var map;
 var initialLocation;
 var marker;
 var santaCruz = new google.maps.LatLng(36.973, -122.029);
-var siberia = new google.maps.LatLng(60, 105);
+var LA = new google.maps.LatLng(34.052, -118.243);
 
 function initialize() {
     var options = {
@@ -29,7 +29,10 @@ function initialize() {
         mapTypeId:google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("gMap"), options);
-    
+    google.maps.event.addListener(map, "click", function () {
+        infowindow.close();
+    });
+
     if (navigator.geolocation) {
 	navigator.geolocation.getCurrentPosition(function(position) {
           initialLocation = new google.maps.LatLng(position.coords.latitude, 
@@ -37,34 +40,46 @@ function initialize() {
 	  map.setCenter(initialLocation);
           createMapMarkers(initialLocation);
         }, function () {
-          handleNoGeolocation(true);
+          handleGeolocation(true);
         });
     } else {
-        handleNoGeolocation(false);
+        handleGeolocation(false);
     }
 }
 
 
 function handleGeolocation(supportFlag) { 
     if (supportFlag == true) {
-          alert("Geolocation Service Failed.");
+          alert("Geolocation Service Failed. Placing you in LA.");
     } else {
-          alert("Browser Doesn't Support Geolocation");
+          alert("Browser Doesn't Support Geolocation. Placing you in LA.");
     }
-    map.setCenter(siberia);
+    map.setCenter(LA);
 }
     
 function createMapMarkers(gps) {
+    var image = '{{ STATIC_URL }}images/currentlocation.png';
     var marker = new google.maps.Marker({
        position: gps,
        animation: google.maps.Animation.DROP,
-       title: "Your Current Location"
+       title: "Your Current Location",
+       icon: image
     });
     // add markers to the map
+    addEventToMarker(marker);
     marker.setMap(map);
 }
-    
 
+var infowindow;
+function addEventToMarker(marker) {
+    google.maps.event.addListener(marker, "click", function() {
+        infowindow = new google.maps.InfoWindow({
+            map:map,
+	    content: 'Current Location'
+	});
+	infowindow.open(map, marker);
+    });
+}
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
