@@ -30,7 +30,7 @@ class ToiletTestCreate(TestCase):
     def test_put_toilet_not_logged_in(self):
         self.client.user = None
         response = self.client.post('/api/toilet/create/', {'data' : 'djdjdjkekle' })
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401) 
 
     @unittest.skip("not sure if this is the right test case yet")
     def test_put_toilet_logged_in_bad_data(self):
