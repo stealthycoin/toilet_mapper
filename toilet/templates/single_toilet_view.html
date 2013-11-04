@@ -1,7 +1,12 @@
 
 {% extends "standard.html" %}
 {% block endhead %}
-
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?sensor=true">
+</script>
+<script type="text/javascript"
+    src="{{STATIC_URL}}js/map.js"
+</script>
 <script>
     $(document).ready(function(){
 
