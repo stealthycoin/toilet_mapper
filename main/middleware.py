@@ -11,9 +11,11 @@ class InvalidPostError(Exception):
 
 
 class Middleware():    
-    #remove _DONT_CALL to turn back on
-    def process_request_DONT_CALL(self, request):
-        if request.method == 'POST' and request.user.is_authenticated():
+    def process_request(self, request):
+        if request.path == '/api/user/create/' and request.user.is_authenticated():
+            return HttpResponse("Can't create an account you are logged in", status=415)
+
+        if request.path == '/api/user/create/' and request.method == 'POST' and request.user.is_authenticated():
             user = request.user
             try:
                 userTime = TimedUser.objects.get(user=user)
