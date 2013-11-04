@@ -69,6 +69,8 @@ var numToiletsLoaded = 0;
 var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i, filter){
+    i = i || 10;
+
     if(toiletsLoading) return; 
     if(!isTemplateLoaded("toilet")){
 	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', "+JSON.stringify(filter)+" );", 50);
@@ -76,9 +78,7 @@ function loadToiletListings(div_id, i, filter){
     }
     template = getTemplate("toilet");
     toiletsLoading = true;
-
-    i = i || 10;
-
+ 
     //Appendable parameters to send to tapi
     var params = {
         noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
@@ -87,11 +87,11 @@ function loadToiletListings(div_id, i, filter){
             for(o in data){
 		console.log(data[o]);
 		var params = {};
-		params.pk = data[o].t[0].pk;
-		params.stars = generateStars(data[o].ranking);
-		params.date = data[o].t[0].fields.date.slice(0, 10);
-		params.name = data[o].t[0].fields.name;
-		params.num_reviews = data[o].count;
+		params.pk = data[o].pk;
+		params.stars = generateStars(data[o].ranking || 3.5);
+		params.date = data[o].fields.date.slice(0, 10);
+		params.name = data[o].fields.name;
+		params.num_reviews = data[o].count || 42;
 		$('#'+div_id).append(template(params));
             }
             loading = false;

@@ -19,6 +19,8 @@ urlpatterns = patterns('',
                        url(r'^addrestroom$', 'main.views.add_restroom', name='add_restroom'),
                        
 # API Section
+                       url(r'api/(.*)/get/', 'common.middletier.get_obj', name='gets whatever'),
+
                # Toilet API
                        url(r'^api/toilet/create/$', 'toilet.middletier.add', name='api_toilet_create'),
                        url(r'^api/toilet/retrieve/$', 'toilet.middletier.listing', name='api_toilet_retrieve'),

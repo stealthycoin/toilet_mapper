@@ -2,6 +2,9 @@ import json
 from django.core import serializers
 from django.utils.timezone import utc
 import datetime
+import sys
+from toilet.models import Toilet, Flag, FlagRanking
+from review.models import Review
 
 #turns post data into a json object
 def post_to_dict(post):
@@ -91,3 +94,39 @@ def logout(request):
     response = '"Logged out"'
 
     return HttpResponse(package_error(response,''),status=200)
+
+
+"""
+COMMON OBJECT RETRIEVAL FUNCTIONS
+"""
+
+
+def str_to_class(str):
+    lookup = {'Toilet': Toilet
+              , 'Review': Review
+              , 'FlagRanking': FlagRanking
+              , 'Flag' : Flag}
+    return lookup.get(str)
+
+# We need to actually add in all of the large expesnive queries here        
+def security_check(k, v):
+    return v
+
+def get_obj(request, name):
+    if request.POST:
+        #get start and end for pagination 
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+        filters = json.loads(request.POST.get('filters'))
+        #map over all of the filter objects to amke sure they aren't expensive queries
+        filters = {k: security_check(k,v) for k, v in filters.items()}
+        #convert the string from name into an object, apply all of the filters to the object
+        qs = str_to_class(name).objects.all().filter(**filters)[start:end] 
+        return HttpResponse(serializers.serialize('json', qs))
+
+    else:
+        return HttpResponse("DUDE WTF GIOMME A POST", status=412)
+        
+        
+    
+        

@@ -16,7 +16,6 @@ def add(request):
 
     if request.method == 'POST':
         data = request.POST.copy()
-        print request.user.is_authenticated()
         if not request.user.is_authenticated():
             status = 401
             error += 'Unauthorized creation of restroom. Please log in.\n'
