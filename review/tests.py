@@ -27,11 +27,13 @@ class putNewReviewTest(TestCase):
     
     def test_put_new_review(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
-      response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 5, 'content' : 'This is a dumb test'})
+      response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 3, 'content' : 'This is a dumb test'})
       self.assertEqual(response.status_code, 201)
       review = Review.objects.get(content='This is a dumb test')
       responcedict = json.loads(response.content)
       self.assertEqual(review.id, responcedict[0]['pk'])
+      #make sure that the rating updated
+      self.assertEqual(Toilet.objects.get(pk=self.toilet.id).rating, 3)
    
     def test_put_no_toilet(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')

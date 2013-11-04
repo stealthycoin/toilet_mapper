@@ -11,7 +11,6 @@ class InvalidPostError(Exception):
 class Middleware():    
     def process_exception(self, request, e):
         response = str(e)
-        print response
         status = 500
         if isinstance(e, FieldError) or isinstance(e, AttributeError):
             response = str(e)

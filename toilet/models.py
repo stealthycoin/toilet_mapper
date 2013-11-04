@@ -8,6 +8,7 @@ class Toilet (models.Model):
     def setattrs(self, dictionary):
         for k, v in dictionary.items():
             setattr(self, k, v)
+
     def updateRating(self, newRating):
         numerator = (float(self.rating) * float(self.numberOfReviews)) + float(newRating)
         self.numberOfReviews = self.numberOfReviews + 1
