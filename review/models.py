@@ -18,8 +18,6 @@ class Review (models.Model):
 
 class Vote (models.Model):
     def __unicode__(self): return u'%s'%self.user
-
-
     review = models.ForeignKey(Review)
     user = models.ForeignKey(User)
     vote = models.SmallIntegerField()

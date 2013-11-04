@@ -12,12 +12,14 @@ def add(request):
     status = 201
     if request.method == 'POST':
         data = request.POST.copy()        
+        toilet = Toilet.objects.get(pk=data['toilet'])
+        toilet.updateRating(data['rank']) 
         #We shouldn't be allowed to review a restroom twice
         if len(Review.objects.filter(user=request.user).filter(toilet=data['toilet'])) == 0:
             r = Review()
             data['date'] = currentTime()
             data['user'] = request.user
-            data['toilet'] = Toilet.objects.get(pk=data['toilet'])
+            data['toilet'] = toilet
             data['up_down_rank'] = 0;
             r.setattrs(data)
             r.save()

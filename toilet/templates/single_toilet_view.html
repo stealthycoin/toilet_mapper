@@ -7,6 +7,7 @@
 
         /** Load and populate the reviews **/
         var toilet_id = {{ t.pk }};
+        var toilet_rating = {{t.rating}}
         var template = Handlebars.compile($('#review-template').html());
 
         //Loads or reloads the reviews from the server
@@ -15,7 +16,7 @@
                   callback: function(d){
                       $('#reviews').html('');
                       $('.num_reviews').html(d.count+' Reviews');
-                      $('#review-rating').html(generateStars(d.total));
+                      $('#review-rating').html(generateStars(toilet_rating));
 
                       var data = d;
                       var topReview = {rank: 0, content: ''};
@@ -40,6 +41,8 @@
                           , verb: "create"
                           , callback :function(data){
                               $('#leaveReview').slideUp();
+                              //TODO: Get the new rating from the toilet and update the srars 
+                              //$('#review-rating').html(generateStars());
                               loadReviews();
                           }});
 

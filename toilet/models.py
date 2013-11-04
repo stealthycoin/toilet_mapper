@@ -8,15 +8,20 @@ class Toilet (models.Model):
     def setattrs(self, dictionary):
         for k, v in dictionary.items():
             setattr(self, k, v)
+    def updateRating(self, newRating):
+        numerator = (float(self.rating) * float(self.numberOfReviews)) + float(newRating)
+        self.numberOfReviews = self.numberOfReviews + 1
+        self.rating = numerator/self.numberOfReviews 
+        self.save()
 
     date = models.DateTimeField()
     creator = models.ForeignKey(User)
     name = models.CharField(max_length = 64)
-    
+    numberOfReviews = models.IntegerField(default=0)
+    rating = models.DecimalField(default=5.0, max_digits=11, decimal_places=10) 
     lat = models.DecimalField(max_digits=10, decimal_places=6, null=True)
     lng = models.DecimalField(max_digits=10, decimal_places=6, null=True)
-    
-
+   
 class Flag (models.Model):
     def __unicode__(self): return u'%s'%self.name
     def setattrs(self, dictionary):
