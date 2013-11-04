@@ -114,18 +114,15 @@ def security_check(k, v):
 
 def get_obj(request, name):
     if request.POST:
+        
         start = request.POST.get('start')
         end = request.POST.get('end')
-        print "Str_to_class (name)"
-        print str_to_class(name)
         filters = json.loads(request.POST.get('filters'))
         filters = {k: security_check(k,v) for k, v in filters.items()}
 
-        print start,end,filters
 
         qs = str_to_class(name).objects.all().filter(**filters)[start:end]
         
-        print qs
         
         return HttpResponse(serializers.serialize('json', qs))
     else:
