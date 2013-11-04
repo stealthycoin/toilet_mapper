@@ -1,6 +1,9 @@
 
 function showMap(from) {
- var toilet_address = new google.maps.LatLng(36.991366,-122.059844);
+ //lat=lat||36.991366;
+ //lng=lng||-122.059844;
+ console.log($('#lat').val(), $('#lng').val());
+ var toilet_address = new google.maps.LatLng($('#lat').val(), $('#lng').val());
  var mapOptions = {
     zoom: 15,
     center: toilet_address,
@@ -69,6 +72,10 @@ $("#from-link").click(function(event) {
         showMap($("#from").val());
     });
 }
+
+function loadMap(){
+    showMap($("#from").val());
+}
      
-google.maps.event.addDomListener(window,'load',showMap);
+google.maps.event.addDomListener(window,'load',loadMap);
 
