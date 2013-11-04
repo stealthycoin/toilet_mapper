@@ -47,7 +47,7 @@ class Middleware():
         if isinstance(e, ValueError):
             status = 400
             response = str(e).replace('\'',"")
-        if isinstance(e, ObjectDoesNotExist) or isinstance(e, DoesNotExist):
+        if isinstance(e, ObjectDoesNotExist):
             status = 404
             response = str(e).replace('\'',"")
 
