@@ -1,15 +1,21 @@
 
 {% extends "standard.html" %}
 {% block endhead %}
+    <style type="text/css">
+       #map-canvas { height: 400px; width:58% }
+       #form_posit { height: 100%; width:58% }
+    </style>
+  
 <script type="text/javascript"
     src="https://maps.googleapis.com/maps/api/js?sensor=true">
 </script>
 <script type="text/javascript"
-    src="{{STATIC_URL}}js/map.js"
+    src="{{STATIC_URL}}js/map.js">
 </script>
-<script>
+<script type="text/javascript">
     $(document).ready(function(){
-
+        console.log("template");
+        initMap();
         /** Load and populate the reviews **/
         var toilet_id = {{ t.pk }};
         var toilet_rating = {{t.rating}}
@@ -230,6 +236,16 @@ function bind_flagvote_buttons () {
 <div class='clearfix'></div>
 <div class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-rankings'></div>
 <div class='clearfix'></div>
+<div id=form_posit>
+   <form id="calculate-route" name="calculate-route" action="#" method="get">
+      <label for="from">From:</label>
+      <input type="text" id="from" name="from" required="required" placeholder="An address" size="30" />
+      <a id="from-link" href="#">Get my position</a>
+      <input type="submit" />
+      <input type="reset" />
+   </form>
+</div>
+<div id="map-canvas"></div>
 
 {% if has_reviewed == False and user.is_authenticated %}
 

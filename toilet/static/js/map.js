@@ -1,9 +1,6 @@
-<script type="text/javascript"
-src="https://maps.googleapis.com/maps/api/js?sensor=true">
-</script>
 
-function showMap(from, lat, lng) {
- var toilet_address = new google.maps.LatLng(lat, lng);
+function showMap(from) {
+ var toilet_address = new google.maps.LatLng(36.991366,-122.059844);
  var mapOptions = {
     zoom: 15,
     center: toilet_address,
@@ -34,8 +31,9 @@ function showMap(from, lat, lng) {
     }
  );
 }
+ 
 
-$(document).ready(function() {
+function initMap () {
 // If the browser supports the Geolocation API
 if (typeof navigator.geolocation == "undefined") {
   $("#error").text("Your browser doesn't support the Geolocation API");
@@ -66,16 +64,11 @@ $("#from-link").click(function(event) {
      });
 });
 
-$("#calculate-route").submit(function(event) {
-  event.preventDefault();
-  showMap($("#from").val());
-});
-});
-
-function loadScript() {
- var script = document.createElement("script");
- script.src = showMap();
- document.body.appendChild(script);
+    $("#calculate-route").submit(function(event) {
+        event.preventDefault();
+        showMap($("#from").val());
+    });
 }
-window.onload = loadScript;
+     
+google.maps.event.addDomListener(window,'load',showMap);
 

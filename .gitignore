@@ -41,6 +41,6 @@ venv
 db.db
 staticfiles
 
-
+*.swp
 
 *#
