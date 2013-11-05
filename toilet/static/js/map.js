@@ -5,7 +5,7 @@ function showMap(from) {
  console.log($('#lat').val(), $('#lng').val());
  var toilet_address = new google.maps.LatLng($('#lat').val(), $('#lng').val());
  var mapOptions = {
-    zoom: 15,
+    zoom: 10,
     center: toilet_address,
     mapTypeId: google.maps.MapTypeId.ROADMAP
  }
