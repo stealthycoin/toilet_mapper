@@ -14,6 +14,9 @@ def signin(request):
     c = Context({ "GET": request.GET });
     return render(request, 'signin.html', c)
 
+def faq(request):
+    return render(request, 'faq.html')
+
 def create_user(request):
     return render(request, 'create_user.html')
 
