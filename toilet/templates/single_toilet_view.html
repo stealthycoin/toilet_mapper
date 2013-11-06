@@ -237,22 +237,25 @@ function bind_flagvote_buttons () {
 <div class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-rankings'></div>
 <div class='clearfix'></div>
 <div id=form_posit>
-   <form id="calculate-route" name="calculate-route" action="#" method="get">
-      <label for="from">From:</label>
-      <input type="text" id="from" name="from" required="required" placeholder="Enter your address" size="30" />
-      <a id="from-link" href="#">Get my position</a>
-      <input type="submit" value="Get Route"/>
-      <input type="reset" value="Clear Address"/>
-      <select id='dropDown' name="direct_otptions">
-        <option value="WALKING">By foot</option>
-        <option value="DRIVING">By car</option>
-      </select>
-      <input type="hidden" id="lat" value="{{t.lat}}" />
-      <input type="hidden" id="lng" value="{{t.lng}}" />
-      <input type="hidden" id="toilet_name" value="{{t.name}}" />
-   </form>
+    <form id="calculate-route" name="calculate-route" action="#" method="get">
+        <label for="from">From:</label>
+        <input type="text" id="from" name="from" required="required" placeholder="Enter your address" size="30" />
+        <a id="from-link" href="#">Get my position</a>
+        <input type="submit" value="Get Route"/>
+        <input type="reset" value="Clear Address"/>
+        <select id='dropDown' name="direct_otptions">
+            <option value="WALKING">By foot</option>
+            <option value="DRIVING">By car</option>
+        </select>
+        <input type="hidden" id="lat" value="{{t.lat}}" />
+        <input type="hidden" id="lng" value="{{t.lng}}" />
+        <input type="hidden" id="toilet_name" value="{{t.name}}" />
+    </form>
 </div>
-<div id="map-canvas"></div>
+<div id="map-canvas">
+    <div id="map" style="width: 350px; height: 400px; float: left;"></div> 
+    <div id="step_panel" style="width: 300px; float: right;"></div> 
+</div>
 
 {% if has_reviewed == False and user.is_authenticated %}
 

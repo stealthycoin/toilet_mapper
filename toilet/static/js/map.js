@@ -13,7 +13,7 @@ function showMap(from) {
         center: toilet_address,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     }
-    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
     var marker = new google.maps.Marker({
         position: toilet_address,
         map: map,
@@ -21,27 +21,20 @@ function showMap(from) {
     });
     // Try W3C Geolocation (Preferred)
     var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
     var directionsRequest = {
         origin: from,
         destination: toilet_address,
         travelMode: travelOption,
         unitSystem: google.maps.UnitSystem.METRIC
     };
-    directionsService.route(
-        directionsRequest,
-        function(response, status)
-        {
-            if (status == google.maps.DirectionsStatus.OK)
-            {
-              new google.maps.DirectionsRenderer({
-                map: map,
-                directions: response
-              });
-            }
-            else
-              $("#error").append("Unable to retrieve your route<br />");
-            }
-    );
+    directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('step_panel'));
+    directionsService.route(directionsRequest, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        }
+    });
 }
  
 
