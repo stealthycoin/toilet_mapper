@@ -241,12 +241,14 @@ function bind_flagvote_buttons () {
         <label for="from">From:</label>
         <input type="text" id="from" name="from" required="required" placeholder="Enter your address" size="30" />
         <a id="from-link" href="#">Get my position</a>
+        <select id='dropDown' name="direct_otptions">
+            <option value="WALKING">Walk</option>
+            <option value="BICYCLING">Bicycle</option>
+            <option value="DRIVING">Car</option>
+            <option value="TRANSIT">Bus/Train</option>
+        </select>
         <input type="submit" value="Get Route"/>
         <input type="reset" value="Clear Address"/>
-        <select id='dropDown' name="direct_otptions">
-            <option value="WALKING">By foot</option>
-            <option value="DRIVING">By car</option>
-        </select>
         <input type="hidden" id="lat" value="{{t.lat}}" />
         <input type="hidden" id="lng" value="{{t.lng}}" />
         <input type="hidden" id="toilet_name" value="{{t.name}}" />
