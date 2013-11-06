@@ -1,10 +1,17 @@
 
 function showMap(from) {
+    //clear prev directions from the page
+    $("#step_panel").html("");
     lat=$('#lat').val();//||36.991366;
     lng=$('#lng').val();//||-122.059844;
+    //decide on which travel option the user chose
     var travelOption = google.maps.DirectionsTravelMode.WALKING;
     if($('#dropDown').val() === 'DRIVING')
         travelOption = google.maps.DirectionsTravelMode.DRIVING;
+    else if($('#dropDown').val() === 'TRANSIT')
+        travelOption = google.maps.DirectionsTravelMode.TRANSIT;
+    else if($('#dropDown').val() === 'BICYCLING')
+        travelOption = google.maps.DirectionsTravelMode.BICYCLING;
     console.log(travelOption);    
     console.log(lat, lng);
     var toilet_address = new google.maps.LatLng(lat, lng);
