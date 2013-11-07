@@ -59,8 +59,10 @@ function initMap () {
                                                    position.coords.longitude)
             },
             function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK)
+                if (status == google.maps.GeocoderStatus.OK) {
                     $("#" + addressId).val(results[0].formatted_address);
+		    $('#calculate-route').submit();
+		}
                 else
                     $("#error").append("Unable to retrieve your address<br />");
            });
