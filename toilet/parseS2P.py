@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 import csv
 import sys
+import os
 import datetime
 import json
-import requests
-from requests.auth import HTTPBasicAuth
+from django.core.management import call_command
+
 
 class Pooper(dict):
-   def __init__(self, attributes,atrbMap):
-      self['name'] = attributes[atrbMap['name']]
-      self['lat'] = attributes[atrbMap['lat']]
-      self['lng'] = attributes[atrbMap['lon']]
+   def __init__(self, attributes,atrbMap, toiletNum):
+      self['fields'] = { 'name' : attributes[atrbMap['name']], 'lat' : attributes[atrbMap['lat']], 'lng' : attributes[atrbMap['lon']], 'numberOfReviews' : 0 , 'rating' : 0.00000, 'creator' : 1, 'date' : attributes[atrbMap['date']] }
+      self['model'] = 'toilet.toilet'
+      self['pk'] = toiletNum
+     
    def stringify(self):
       return self.name + " , " + self.lat +  " , " + self.lng 
 
@@ -22,37 +24,24 @@ def main(args):
    #print atrbMap
    peeReader = csv.reader(peeFile, dialect='excel')
    restrooms = []
+   toiletNum = 10
    for line in peeReader:
-      pooper = Pooper(line, atrbMap)
-      restrooms.append(pooper)
-   addToilets(restrooms)
+      pooper = Pooper(line, atrbMap, toiletNum)
+      toiletNum +=1 
+      try:
+         json.dumps(pooper)
+         restrooms.append(pooper)
+      except UnicodeDecodeError:
+         continue
+
+   peeFile.close()
+   poopfiles = open('safetoilets.json', 'w+')
+   poopfiles.write(json.dumps(restrooms))
+   #addToilets(restrooms)
 
 def addToilets(poopers):   
    URL = 'http://127.0.0.1:8000/'
-   #
-   client = requests.session()
-   client.get(URL)
-   csrftoken = client.cookies['csrftoken']
-   cookies = {'cookies' : {'csrftoken' : csrftoken}}
-   #
-   ## Retrieve the CSRF token first
-   #client.get(URL)  # sets cookie
-   #csrftoken = client.cookies['csrftoken']
-   #
-   #login_data = dict(username=, password=PASSWORD, csrfmiddlewaretoken=csrftoken, next='/')
-   #r = client.post(URL, data=login_data, headers=dict(Referer=URL))
-   #cookies = dict(csrftoken=response.cookies['csrftoken'])
-   #print cookies
-   response = requests.post(URL + 'api/user/create/', data=json.dumps({ 'username': 'Safe2pee', 'password' : 'peepee667', 'email':'whoknows@safe2pee.org'}),headers={'X-CSRFToken' : csrftoken, 'dataType' : 'application/json', 'Referer' : URL + 'api/user/create/', 'Origin' : URL, 'Host' : '127.0.0.1:8000'})
-   print response.text
-   #response = requests.post('http://127.0.0.1:8000/api/user/login/', data = json.dumps({'username': 'Safe2pee', 'password' : 'peepee667'}))
-   #for pooper in poopers:
-   #   try:
-   #      print json.dumps(pooper)
-   #      r = requests.post('http://127.0.0.1:8000/api/toilet/create/', auth=HTTPBasicAuth('Safe2pee', 'peepee667'), data=json.dumps(pooper)) 
-   #   except UnicodeDecodeError:
-   #      continue
-
+   
    
 if __name__ == "__main__":
    main(sys.argv)
