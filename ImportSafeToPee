@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "from toilet.parseS2P import main\nmain(['fuck', 'toilet/safe2pee.csv'])" | python localmanage.py shell 
