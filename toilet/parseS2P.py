@@ -5,16 +5,9 @@ import os
 import datetime
 import json
 from django.core.management import call_command
+from toilet.models import Toilet
+from django.contrib.auth.models import User
 
-
-class Pooper(dict):
-   def __init__(self, attributes,atrbMap, toiletNum):
-      self['fields'] = { 'name' : attributes[atrbMap['name']], 'lat' : attributes[atrbMap['lat']], 'lng' : attributes[atrbMap['lon']], 'numberOfReviews' : 0 , 'rating' : 0.00000, 'creator' : 1, 'date' : attributes[atrbMap['date']] }
-      self['model'] = 'toilet.toilet'
-      self['pk'] = toiletNum
-     
-   def stringify(self):
-      return self.name + " , " + self.lat +  " , " + self.lng 
 
 def main(args):
    peeFile = open(args[1])
@@ -24,23 +17,23 @@ def main(args):
    #print atrbMap
    peeReader = csv.reader(peeFile, dialect='excel')
    restrooms = []
-   toiletNum = 10
+   peepee = None
+   try:
+      peepee = User.objects.get(username='safe2pee') 
+   except User.DoesNotExist:
+      peepee = User()
+      peepee.username = "safe2pee"
+      peepee.save()
    for line in peeReader:
-      pooper = Pooper(line, atrbMap, toiletNum)
-      toiletNum +=1 
       try:
-         json.dumps(pooper)
-         restrooms.append(pooper)
+        line = map(lambda x : x.decode('utf-8'), line)
       except UnicodeDecodeError:
-         continue
-
-   peeFile.close()
-   poopfiles = open('safetoilets.json', 'w+')
-   poopfiles.write(json.dumps(restrooms))
-   #addToilets(restrooms)
-
-def addToilets(poopers):   
-   URL = 'http://127.0.0.1:8000/'
+        continue
+      pooper = Toilet()
+      attrs = { 'name' : line[atrbMap['name']], 'lat' : line[atrbMap['lat']], 'lng' : line[atrbMap['lon']], 'numberOfReviews' : 0 , 'rating' : 0.00000, 'creator' : peepee, 'date' : datetime.datetime.now() } 
+      pooper.setattrs(attrs)
+      pooper.save()
+      
    
    
 if __name__ == "__main__":

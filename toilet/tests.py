@@ -10,9 +10,14 @@ from toilet.middletier import listing
 from django.test.client import Client
 from django.contrib.auth.models import User
 from toilet.models import Toilet
+from parseS2P import main
 import json
 import datetime
 import unittest
+
+class ImportSafeToPee(TestCase):
+    def test_insert_shit(self):
+        main(['fuck', 'toilet/safe2pee.csv']) 
 
 class ToiletTestCreate(TestCase):
     def setUp(self):
