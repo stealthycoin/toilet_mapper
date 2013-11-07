@@ -14,13 +14,12 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
-        console.log("template");
-        initMap();
+        initMap(); 
         /** Load and populate the reviews **/
         var toilet_id = {{ t.pk }};
         var toilet_rating = {{t.rating}}
         var template = Handlebars.compile($('#review-template').html());
-
+        $("#from-link").click();
         //Loads or reloads the reviews from the server
         window.loadReviews = function(){
             tapi({noun: "review", verb: "retrieve", data: { filters : {toilet_id: toilet_id}, start : 0, end : 10},
@@ -98,6 +97,9 @@
                    }
                    load_flag_rankings();
                }});
+        //after the document is ready submit the direction request with the users
+        //current locations
+        $("#calculate-route").submit();
     });
 
 function bind_vote_buttons () {
@@ -247,16 +249,16 @@ function bind_flagvote_buttons () {
             <option value="DRIVING">Car</option>
             <option value="TRANSIT">Bus/Train</option>
         </select>
-        <input type="submit" value="Get Route"/>
+        <input type="submit" id="submit_form" value="Get Route"/>
         <input type="reset" value="Clear Address"/>
         <input type="hidden" id="lat" value="{{t.lat}}" />
         <input type="hidden" id="lng" value="{{t.lng}}" />
         <input type="hidden" id="toilet_name" value="{{t.name}}" />
     </form>
 </div>
-<div id="map-canvas">
-    <div id="map" style="width: 350px; height: 400px; float: left;"></div> 
-    <div id="step_panel" style="width: 300px; float: right;"></div> 
+<div id="map-canvas"> 
+    <div id="map" style="width: 340px; height: 400px; float: left;"></div> 
+    <div id="step_panel" style="overflow-y: scroll; height:400px; width: 300px; float: right;"></div> 
 </div>
 
 {% if has_reviewed == False and user.is_authenticated %}
