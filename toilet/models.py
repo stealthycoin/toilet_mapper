@@ -14,6 +14,8 @@ class Toilet (models.Model):
         self.numberOfReviews = self.numberOfReviews + 1
         self.rating = numerator/self.numberOfReviews 
         self.save()
+    def natural_key(self):
+        return (self.type,)
 
     date = models.DateTimeField()
     creator = models.ForeignKey(User)
@@ -42,7 +44,8 @@ class FlagVote (models.Model):
     toilet = models.ForeignKey(Toilet)
     user = models.ForeignKey(User)
     vote = models.SmallIntegerField()
-    
+
+
 admin.site.register(Toilet)
 admin.site.register(Flag)
 admin.site.register(FlagVote)
