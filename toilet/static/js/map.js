@@ -1,3 +1,4 @@
+var first_run = true;
 function showMap(from) {
     //clear prev directions from the page
     $("#step_panel").html("");
@@ -61,7 +62,11 @@ function initMap () {
             function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
                     $("#" + addressId).val(results[0].formatted_address);
-                    $('#calculate-route').submit();
+                    console.log(first_run);
+                    if(first_run) {
+                        $('#calculate-route').submit();
+                        first_run=false;
+                    }
                 }
                 else
                     $("#error").append("Unable to retrieve your address<br />");
