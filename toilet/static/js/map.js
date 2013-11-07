@@ -1,4 +1,3 @@
-
 function showMap(from) {
     //clear prev directions from the page
     $("#step_panel").html("");
@@ -33,7 +32,7 @@ function showMap(from) {
         origin: from,
         destination: toilet_address,
         travelMode: travelOption,
-        unitSystem: google.maps.UnitSystem.METRIC
+        unitSystem: google.maps.UnitSystem.SI
     };
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('step_panel'));
@@ -43,7 +42,6 @@ function showMap(from) {
         }
     });
 }
- 
 
 function initMap () {
     // If the browser supports the Geolocation API
@@ -54,7 +52,6 @@ function initMap () {
     $("#from-link").click(function(event) {
         event.preventDefault();
         var addressId = this.id.substring(0, this.id.indexOf("-"));
-
         navigator.geolocation.getCurrentPosition(function(position) {
             var geocoder = new google.maps.Geocoder();
                 geocoder.geocode({
