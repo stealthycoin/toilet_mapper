@@ -42,14 +42,15 @@ var clusterStyle = {
      url: '{{ STATIC_URL }}images/toiletsilver.png',
      height: 45,
      width: 45, 
-     textColor: '#000000',
+     textColor: '#000o00',
      textSize: 11
    }, {
      url: '{{ STATIC_URL }}images/toiletgold.png',
      height: 55,
      width: 55,
      textColor: '#ff0000',
-     textSize: 12
+     textSize: 12,
+     anchor: [-15,0]
    }],
    maxZoom:10,
    gridSize:50,
@@ -60,7 +61,7 @@ function createMarkerClusters() {
     if (cluster) {
         cluster.clearMarkers();
     }
-    var markers = [];
+    var markers = tapi({noun: 'toilet', verb: 'retrieve'});
     for (var i = 0; i < 1000; ++i) {
         var latLng = new google.maps.LatLng(data.photos[i].latitude,
                                             data.photos[i].longitude);
