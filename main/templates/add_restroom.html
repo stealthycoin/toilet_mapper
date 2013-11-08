@@ -6,35 +6,78 @@
 {{ forms.as_p }}
 <input type="submit" value="Submit" />
 </form>-->
-
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?sensor=true">
+</script>
+<script type='text/javascript' src='/static/js/map.js'></script>
 <script type='text/javascript'>
 
   function create_form_complete(j){
-    j.done(function(data){
-      window.location = "/toilet/"+data[0].pk;
+      j.done(function(data){
+        window.location = "/toilet/"+data[0].pk;
+      });
+      j.fail(function(data, d1, d2){
+        form_error('test_add', JSON.parse(data.responseText).error);
+      });
+    }
+    $(document).ready(function () {
+      $("#test_add").submit(function(e){
+          if($("#lat").val()!=="" && $("#lng").val()!=="") return;
+          e.preventDefault();
+          e.stopPropagation();
+          $("#test_add").data('submit_in_process',true);
+          address_to_coordinates($("#inputAddress").val(), 
+              function(lat, lng) {
+                 $("#lat").val(lat);
+                 $("#lng").val(lng);
+                 console.log(lat,lng);
+                 $("#test_add").data('submit_in_process',false);
+                 $("#test_add").submit(); 
+              },
+              function (fail_message){
+                 $("#error").html(fail_message).show();
+                 $('#test_add button').attr('disabled', false);
+              });
+       });
+      tapi_auto_form('test_add', {noun: "toilet", verb: "create"}
+        , create_form_complete);
     });
-    j.fail(function(data, d1, d2){
-      form_error('test_add', JSON.parse(data.responseText).error);
-    });
-  }
-  
-  tapi_auto_form('test_add', {noun: "toilet", verb: "create"}
-    , create_form_complete);
-
 </script>
+
 <div class='container'>
 <h1>Add a Restroom</h1>
 
-<form action="/api/toilet/create/" method="post" id="test_add" class="col-lg-8">
-  
+<form action="/api/toilet/create/" method="post" id="test_add" data-validate="parsley" class="col-lg-8">
   <div class="form-group">
-    <label for="inputName" class="col-lg-2 col-sm-2 control-label">Name</label>
-    <div class="col-lg-5 col-sm-7">
-      <input id="inputName" name="name" class="form-control" rows="3" data-required="true" data-minlength="5" data-validation-minlength="1" ></input>
-    </div>
+    <table width=100%>
+      <tr>
+        <td valign="top" width=100px>
+          <label for="inputName" class="col-lg-2 col-sm-2 control-label">Name</label>
+        </td>
+        <td valign="top">
+          <div class="col-lg-5 col-sm-7">
+            <input id="inputName" name="name" class="form-control" rows="3" data-required="true" data-minlength="5" data-validation-minlength="1" ></input>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <label for="inputAddress" class="col-lg-2 col-sm-2 control-label">Restroom Location</label>
+        </td>
+        <td valign="top">
+          <div class="col-lg-5 col-sm-7">
+            <textarea id="inputAddress" name="RestroomLocation" class="form-control" data-required="true" data-validation-minlength="1" ></textarea>
+            <ul class='parsley-error-list'> <li style="display:none" id="error"></li></ul>
+          </div>
+        </td>
+      </tr>
+    </table>
+  <input type='hidden' id="lat" name="lat">
+  <input type='hidden' id="lng" name="lng">
   </div><!-- form-group -->
   <div class='clearfix'></div>
   <button type="submit" class="btn btn-default">Add Restroom</button>
 </form>
+
 </div>
 {% endblock %}
