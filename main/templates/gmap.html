@@ -65,7 +65,6 @@ function createMarkerClusters() {
     var jq = tapi({noun: 'toilet', verb: 'retrieve'});
     jq.done(function(data)  {
       $.each(data, function (i, t){  
-        console.log(t);
         var latLng = new google.maps.LatLng(t.fields.lat,
                                             t.fields.lng);
         var marker = new google.maps.Marker({
@@ -73,6 +72,7 @@ function createMarkerClusters() {
           draggable: false,
 	  icon: flags[i%5],
         });
+	console.log(marker);
 	markers.push(marker);
       });
     });
