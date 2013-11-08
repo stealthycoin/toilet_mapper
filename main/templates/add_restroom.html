@@ -26,15 +26,33 @@
 <h1>Add a Restroom</h1>
 
 <form action="/api/toilet/create/" method="post" id="test_add" class="col-lg-8">
-  
   <div class="form-group">
-    <label for="inputName" class="col-lg-2 col-sm-2 control-label">Name</label>
-    <div class="col-lg-5 col-sm-7">
-      <input id="inputName" name="name" class="form-control" rows="3" data-required="true" data-minlength="5" data-validation-minlength="1" ></input>
-    </div>
+    <table width=100%>
+      <tr>
+        <td valign="top" width=100px>
+          <label for="inputName" class="col-lg-2 col-sm-2 control-label">Name</label>
+        </td>
+        <td valign="top">
+          <div class="col-lg-5 col-sm-7">
+            <input id="inputName" name="name" class="form-control" rows="3" data-required="true" data-minlength="5" data-validation-minlength="1" ></input>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <label for="inputAddress" class="col-lg-2 col-sm-2 control-label">Restroom Location</label>
+        </td>
+        <td valign="top">
+          <div class="col-lg-5 col-sm-7">
+            <textarea id="inputAddress" name="Restroom Location" class="form-control" data-required="true" data-validation-minlength="1" ></textarea>
+          </div>
+        </td>
+      </tr>
+    </table>
   </div><!-- form-group -->
   <div class='clearfix'></div>
   <button type="submit" class="btn btn-default">Add Restroom</button>
 </form>
+
 </div>
 {% endblock %}
