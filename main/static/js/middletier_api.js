@@ -129,7 +129,6 @@ function tapi_auto_form(form_id, tapi_params, jqxhr_f){
 
             if($('#'+form_id).data('submit_in_process') === true) return;
             $('#'+form_id).data('submit_in_process', true);
-
             if($('#'+form_id).attr('data-validate') === "parsley"
                && !$('#'+form_id).parsley('isValid')) {
                 $('#'+form_id+" button").attr('disabled', false);
@@ -151,3 +150,4 @@ function tapi_auto_form(form_id, tapi_params, jqxhr_f){
         });
     });
 }
+
