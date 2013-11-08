@@ -12,8 +12,6 @@ function showMap(from) {
         travelOption = google.maps.DirectionsTravelMode.TRANSIT;
     else if($('#dropDown').val() === 'BICYCLING')
         travelOption = google.maps.DirectionsTravelMode.BICYCLING;
-    console.log(travelOption);    
-    console.log(lat, lng);
     var toilet_address = new google.maps.LatLng(lat, lng);
     var mapOptions = {
         zoom: 17,
@@ -90,7 +88,7 @@ function loadMap(){
     showMap($("#from").val());
 }
 
-function address_to_coordinates(address)
+function address_to_coordinates(address, success, fail)
 {
     var gc   = new google.maps.Geocoder();
     var opts = { 'address' : address };
@@ -99,11 +97,11 @@ function address_to_coordinates(address)
         if (status == google.maps.GeocoderStatus.OK)
         {   
             var loc  = results[0].geometry.location;
-            return [loc.lat(), loc.lng()];  
+            success(loc.lat(), loc.lng());  
         }
         else
         {
-            $("#error").append("Unable to retrieve the coordinates<br/>");
+            fail("Unable to retrieve the coordinates<br/>");
         }
     });
 }
