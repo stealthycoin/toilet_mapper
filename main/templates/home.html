@@ -2,7 +2,7 @@
 
 {% block endhead %}
 
-  <script> 
+    <script> 
     loadToiletListings('toilet-listings', 10); 
 
     </script>
@@ -13,7 +13,8 @@
         $("#restroom_search").submit(function(event) {
             event.preventDefault();
             //REMOVE FOR LIVESEARCH
-            console.log($("#toilet-listings li").children());
+            //console.log($("#toilet-listings li").children());
+            $("#toilet-listings").html('');
             //$("toilet-listings").empty();
             //$.each($("#toilet-listings").children(), function(i, val){
             //    console.log(val);
@@ -21,7 +22,7 @@
             //    });
             //console.log($("#search").val());
             loadToiletListings('toilet-listings', 10, {filters:{name__icontains: $("#search").val()}});
-            $("#restroom_search").listView("refresh");
+            $('toilet-listings').listview('refresh');
             return false;
         });
     
