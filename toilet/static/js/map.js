@@ -89,6 +89,24 @@ function initMap () {
 function loadMap(){
     showMap($("#from").val());
 }
+
+function address_to_coordinates(address)
+{
+    var gc   = new google.maps.Geocoder();
+    var opts = { 'address' : address };
+    gc.geocode(opts, function (results, status)
+    {
+        if (status == google.maps.GeocoderStatus.OK)
+        {   
+            var loc  = results[0].geometry.location;
+            return [loc.lat(), loc.lng()];  
+        }
+        else
+        {
+            $("#error").append("Unable to retrieve the coordinates<br/>");
+        }
+    });
+}
      
 google.maps.event.addDomListener(window,'load',loadMap);
 
