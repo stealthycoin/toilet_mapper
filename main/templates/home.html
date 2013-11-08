@@ -2,13 +2,43 @@
 
 {% block endhead %}
 
-  <script> loadToiletListings('toilet-listings', 10); </script>
+  <script> 
+    loadToiletListings('toilet-listings', 10); 
+
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+    
+        $("#restroom_search").submit(function(event) {
+            event.preventDefault();
+            //REMOVE FOR LIVESEARCH
+            console.log($("#toilet-listings li").children());
+            //$("toilet-listings").empty();
+            //$.each($("#toilet-listings").children(), function(i, val){
+            //    console.log(val);
+            //    val.remove();
+            //    });
+            //console.log($("#search").val());
+            loadToiletListings('toilet-listings', 10, {filters:{name__icontains: $("#search").val()}});
+            $("#restroom_search").listView("refresh");
+            return false;
+        });
+    
+    });
+    </script>
 {% endblock %}
 
 {% block content %}
 
 <div class='container'>
   <h1>Welcome to Toilet Mapper</h1>
+
+<div id=searcher>
+    <form id="restroom_search" name="restroom_search">
+        <input id="search" type="text" required="required" placeholder="Search for a restroom" size="30"/>
+    </form>
+</div>
 
   <ul id='toilet-listings' class='nav nav-pills nav-stacked col-lg-9 col-md-9 col-sm-9 col-xs-12'>
 
