@@ -21,6 +21,7 @@
       });
     }
     $(document).ready(function () {
+      listenKeyTimer('inputAddress',2,'gearimg');
       $("#test_add").submit(function(e){
           if($("#lat").val()!=="" && $("#lng").val()!=="") return;
           e.preventDefault();
@@ -37,7 +38,7 @@
               function (fail_message){
                  $("#error").html(fail_message).show();
                  $('#test_add button').attr('disabled', false);
-              });
+          });
        });
       tapi_auto_form('test_add', {noun: "toilet", verb: "create"}
         , create_form_complete);
@@ -55,7 +56,7 @@
           <label for="inputName" class="col-lg-2 col-sm-2 control-label">Name</label>
         </td>
         <td valign="top">
-          <div class="col-lg-5 col-sm-7">
+          <div>
             <input id="inputName" name="name" class="form-control" rows="3" data-required="true" data-minlength="5" data-validation-minlength="1" ></input>
           </div>
         </td>
@@ -65,10 +66,15 @@
           <label for="inputAddress" class="col-lg-2 col-sm-2 control-label">Restroom Location</label>
         </td>
         <td valign="top">
-          <div class="col-lg-5 col-sm-7">
+          <div>
             <textarea id="inputAddress" name="RestroomLocation" class="form-control" data-required="true" data-validation-minlength="1" ></textarea>
             <ul class='parsley-error-list'> <li style="display:none" id="error"></li></ul>
           </div>
+         <td halign='right'>
+          <div id="gearimg" style="display:none">
+             <img src="../static/images/largegears.gif" height="42" width="42">
+          </div>
+         </td>
         </td>
       </tr>
     </table>

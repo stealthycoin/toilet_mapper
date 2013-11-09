@@ -105,6 +105,30 @@ function address_to_coordinates(address, success, fail)
         }
     });
 }
+
+function listenKeyTimer(item_id, time_sec, id_thinking)
+{
+   //setup before functions
+   var typingTimer;
+   var doneTypingInterval = time_sec*1000;  
+
+   //on keyup, start the countdown
+   $('#'+item_id).keyup(function(){
+       typingTimer = setTimeout(doneTyping, doneTypingInterval);
+   });
+
+   //on keydown, clear the countdown 
+   $('#'+item_id).keydown(function(){
+       clearTimeout(typingTimer);
+       $('#'+id_thinking).hide();
+   });
+
+   //user is "finished typing," do something
+   function doneTyping () {
+       $('#'+id_thinking).show();
+       //do something
+   }
+}
      
 google.maps.event.addDomListener(window,'load',loadMap);
 
