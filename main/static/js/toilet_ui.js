@@ -83,22 +83,21 @@ function loadToiletListings(div_id, i, filter){
     }
     template = getTemplate("toilet");
     toiletsLoading = true;
-    $('#'+div_id).empty();
     //Appendable parameters to send to tapi
     var params = {
         noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
 	callback: function(data){
 	    console.log("Callbaaaack");
-            for(o in data){
-		console.log(data[o]);
-		var params = {};
-		params.pk = data[o].pk;
-		params.stars = generateStars(data[o].ranking || 3.5);
-		params.date = data[o].fields.date.slice(0, 10);
-		params.name = data[o].fields.name;
-		params.num_reviews = data[o].count || 42;
-		$('#'+div_id).append(template(params));
-            }
+        for(o in data){
+		    console.log(data[o]);
+		    var params = {};
+		    params.pk = data[o].pk;
+		    params.stars = generateStars(data[o].ranking || 3.5);
+		    params.date = data[o].fields.date.slice(0, 10);
+		    params.name = data[o].fields.name;
+		    params.num_reviews = data[o].count || 42;
+		    $('#'+div_id).append(template(params));
+        }
             toiletsloading = false;
             numToiletsLoaded += i;
         }};
@@ -113,6 +112,11 @@ function loadToiletListings(div_id, i, filter){
     tapi(params);
 }
 
+
+//This is sort of a janky way to fix the bugs we faced when doing searches
+//toiletsLoading isn't reset properly and numToiletsLoaded is incrementing each call
+//causing no results to be returned
 function searchReset(){
     toiletsLoading = false;
+    numToiletsLoaded = 0;
 }
