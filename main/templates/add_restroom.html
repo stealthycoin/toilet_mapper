@@ -21,7 +21,7 @@
       });
     }
     $(document).ready(function () {
-      listenKeyTimer('inputAddress',2,'gearimg');
+      listenKeyTimer('inputAddress','gearimg','success','fail',2.5);
       $("#test_add").submit(function(e){
           if($("#lat").val()!=="" && $("#lng").val()!=="") return;
           e.preventDefault();
@@ -73,6 +73,12 @@
          <td halign='right'>
           <div id="gearimg" style="display:none">
              <img src="../static/images/largegears.gif" height="42" width="42">
+          </div>
+          <div id="success" style="display:none">
+             <img src="../static/images/success.png" height="42" width="42">
+          </div>
+          <div id="fail" style="display:none">
+             <img src="../static/images/fail.jpg" height="42" width="42">
           </div>
          </td>
         </td>

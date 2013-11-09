@@ -106,7 +106,7 @@ function address_to_coordinates(address, success, fail)
     });
 }
 
-function listenKeyTimer(item_id, time_sec, id_thinking)
+function listenKeyTimer(item_id, id_thinking, id_success, id_fail, time_sec)
 {
    //setup before functions
    var typingTimer;
@@ -120,13 +120,27 @@ function listenKeyTimer(item_id, time_sec, id_thinking)
    //on keydown, clear the countdown 
    $('#'+item_id).keydown(function(){
        clearTimeout(typingTimer);
-       $('#'+id_thinking).hide();
-   });
-
-   //user is "finished typing," do something
-   function doneTyping () {
        $('#'+id_thinking).show();
-       //do something
+       $('#'+id_fail).hide();
+       $('#'+id_success).hide();
+   });
+   //user is "finished typing"
+   function doneTyping () {
+      $('#'+id_thinking).show();
+      $('#'+id_fail).hide();
+      $('#'+id_success).hide();
+      address_to_coordinates($('#'+item_id).val(),
+         function success(lat, lng){
+            $('#'+id_thinking).hide();
+            $('#'+id_fail).hide();
+            $('#'+id_success).show();
+         },
+         function fail(fail_message){
+            $('#'+id_thinking).hide();
+            $('#'+id_fail).show();
+            $('#'+id_success).hide();
+         }
+      );
    }
 }
      
