@@ -64,21 +64,26 @@ function generateStars(i){
     return a;
 }
 
+
 /** Toilet Listings **/
 var numToiletsLoaded = 0; 
 var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i, filter){
+    i = Number(i);
     i = i || 10;
 
-    if(toiletsLoading) return; 
+    if(toiletsLoading){
+       // toiletsLoading = false;
+        return;
+    }
     if(!isTemplateLoaded("toilet")){
 	setTimeout("loadToiletListings('"+div_id+"', '"+i+"', "+JSON.stringify(filter)+" );", 50);
 	return;
     }
     template = getTemplate("toilet");
     toiletsLoading = true;
- 
+    $('#'+div_id).empty();
     //Appendable parameters to send to tapi
     var params = {
         noun: "toilet", verb: "retrieve", data: {start : numToiletsLoaded, end : numToiletsLoaded + i },
@@ -94,7 +99,7 @@ function loadToiletListings(div_id, i, filter){
 		params.num_reviews = data[o].count || 42;
 		$('#'+div_id).append(template(params));
             }
-            loading = false;
+            toiletsloading = false;
             numToiletsLoaded += i;
         }};
 
@@ -108,3 +113,6 @@ function loadToiletListings(div_id, i, filter){
     tapi(params);
 }
 
+function searchReset(){
+    toiletsLoading = false;
+}

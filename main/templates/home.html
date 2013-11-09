@@ -3,7 +3,7 @@
 {% block endhead %}
 
     <script> 
-    loadToiletListings('toilet-listings', 10); 
+    //loadToiletListings('toilet-listings', 10); 
 
     </script>
 
@@ -13,16 +13,10 @@
         $("#restroom_search").submit(function(event) {
             event.preventDefault();
             //REMOVE FOR LIVESEARCH
-            //console.log($("#toilet-listings li").children());
-            $("#toilet-listings").html('');
-            //$("toilet-listings").empty();
-            //$.each($("#toilet-listings").children(), function(i, val){
-            //    console.log(val);
-            //    val.remove();
-            //    });
-            //console.log($("#search").val());
+            //$("#toilet-listings").empty();
+            //searchReset();
             loadToiletListings('toilet-listings', 10, {filters:{name__icontains: $("#search").val()}});
-            $('toilet-listings').listview('refresh');
+            //$('toilet-listings').listview('refresh');
             return false;
         });
     
