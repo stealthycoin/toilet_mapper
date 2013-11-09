@@ -16,7 +16,6 @@
             $("#toilet-listings").empty();
             searchReset();
             loadToiletListings('toilet-listings', 10, {filters:{name__icontains: $("#search").val()}});
-            //$('toilet-listings').listview('refresh');
             return false;
         });
     

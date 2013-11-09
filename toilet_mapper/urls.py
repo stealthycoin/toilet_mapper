@@ -37,7 +37,7 @@ urlpatterns = patterns('',
                        url(r'^api/user/logout/$', 'common.middletier.logout', name='signin'), 
                        url(r'^api/user/create/$', 'common.middletier.create_user', name='signin'), 
 
-               # Flag API
+                       # Flag API
                        url(r'^api/flag/retrieve_rankings/$', 'toilet.middletier.flag_retrieve_rankings', name='api_flag_rankings'),
                        url(r'^api/flag/retrieve_flags/$', 'toilet.middletier.flag_retrieve_flags', name='api_flag_flags'),
                        url(r'^api/flag/upvote/$', 'toilet.middletier.flag_upvote', name='api_flag_upvote'),

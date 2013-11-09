@@ -11,7 +11,8 @@ def single_toilet_view(req, pk):
         reviewed = False
     else:
         reviewed = True if len(Review.objects.filter(toilet=t).filter(user=req.user)) > 0 else False
-    c = Context({ "t": t, 'has_reviewed' : reviewed })    
+    c = Context({ "t": t, 'has_reviewed' : reviewed })
+    print t
     return render(req, "single_toilet_view.html", c)
 
 
