@@ -105,6 +105,44 @@ function address_to_coordinates(address, success, fail)
         }
     });
 }
+
+function listenKeyTimer(item_id, id_thinking, id_success, id_fail, time_sec)
+{
+   //setup before functions
+   var typingTimer;
+   var doneTypingInterval = time_sec*1000;  
+
+   //on keyup, start the countdown
+   $('#'+item_id).keyup(function(){
+       typingTimer = setTimeout(doneTyping, doneTypingInterval);
+   });
+
+   //on keydown, clear the countdown 
+   $('#'+item_id).keydown(function(){
+       clearTimeout(typingTimer);
+       $('#'+id_thinking).show();
+       $('#'+id_fail).hide();
+       $('#'+id_success).hide();
+   });
+   //user is "finished typing"
+   function doneTyping () {
+      $('#'+id_thinking).show();
+      $('#'+id_fail).hide();
+      $('#'+id_success).hide();
+      address_to_coordinates($('#'+item_id).val(),
+         function success(lat, lng){
+            $('#'+id_thinking).hide();
+            $('#'+id_fail).hide();
+            $('#'+id_success).show();
+         },
+         function fail(fail_message){
+            $('#'+id_thinking).hide();
+            $('#'+id_fail).show();
+            $('#'+id_success).hide();
+         }
+      );
+   }
+}
      
 google.maps.event.addDomListener(window,'load',loadMap);
 
