@@ -36,10 +36,11 @@
 <script src='{{ STATIC_URL }}js/jquery.ui.map.js'></script>
 
 <script>
+// global variables.
 google.maps.visualRefresh = true;
-var map = null;
-var initialLocation = null;
-var cluster = null;
+var map = null;             // the map
+var initialLocation = null; // the user location
+var cluster = null;         // the cluster object
 var santaCruz = new google.maps.LatLng(36.973, -122.029);
 var LA = new google.maps.LatLng(34.052, -118.243);
 var siberia = new google.maps.LatLng(60, 105);
@@ -52,7 +53,7 @@ var flagwhite = '{{ STATIC_URL }}images/flagwhite.png';
 var flags = new Array(flagwhite, flagred, flagbrown, 
                       flagyellow, flagsilver, flaggreen);
 
-// styles for the lengend
+// data, icons, and styles for the lengend
 var icons = {
    redflag: {
       icon: flagred,
@@ -95,6 +96,7 @@ var icons = {
       str: 'User Current Location'
    }
 };
+
 // styles for the cluster.
 var clusterStyle = { 
    styles: [{
@@ -121,6 +123,9 @@ var clusterStyle = {
 
 };
 
+// this function creates the marker clusters
+// also it sets up the infoWindow content for each marker.
+// NOTE: there is only 1 infoWindow that gets reused. DO NOT ADD MORE
 function createMarkerClusters() {
     if (cluster) {
         cluster.clearMarkers();
@@ -131,17 +136,28 @@ function createMarkerClusters() {
     jq.done(function(data)  {
       $.each(data, function (i, t) {  
         var latLng = new google.maps.LatLng(t.fields.lat, t.fields.lng);
+	var inView = '<a href=/toilet/' + t.pk + '><b>' + 
+	             t.fields.name + '</b></a>' 
+		     + '<table><tr><td>Number of Ratings: ' + 
+                     t.fields.numberOfReviews  + '</td></tr>' 
+		     + '<tr><td> Rating: ' + 
+         	     t.fields.rating + '</td></tr></table>';
         var marker = new google.maps.Marker({
           position: latLng,
           draggable: false,
-	  icon: flags[t.fields.rating]
+	  icon: flags[t.fields.rating],
         });
+	google.maps.event.addListener(marker, 'click', function (){
+	   infowindow.setContent(inView);
+	   infowindow.open(map, marker);
+	});
 	markerlist.push(marker);
       });
     cluster = new MarkerClusterer(map, markerlist, clusterStyle);
     });
 }
 
+// this function initalizes the map and calls the other functions.
 var legendVisible = false;
 function initialize() {
     var options = {
@@ -175,13 +191,13 @@ function initialize() {
     legendVisible = false;
     $('#legend').click(function () { 
        legendVisible = false;
-       $('#legend').hide();
-       $('#showL').show();
+       $('#legend').fadeOut();
+       $('#showL').fadeIn();
     });
     $('#showL').click(function () { 
        legendVisible = true;
-       $('#legend').show();
-       $('#showL').hide();
+       $('#legend').fadeIn();
+       $('#showL').fadeOut();
     });
 }
 
@@ -203,6 +219,7 @@ function createLegendElements(legend, showLegend) {
     legend.style.cursor = 'pointer';
 }
 
+// error handling for the geolocation services.
 function handleGeolocation(supportFlag) { 
     if (supportFlag == true) {
           alert("Geolocation Service Failed. Placing you in Siberia, Russia. If you are on mobile, make sure location services are enabled on your browser");
@@ -212,6 +229,8 @@ function handleGeolocation(supportFlag) {
     map.setCenter(siberia);
 }
     
+// this function makes the current location marker
+// and adds the appropriate listeners by calling other functions.
 function createCurrentLocationMarker(gps) {
     var image = '{{ STATIC_URL }}images/currentlocation.png';
     var marker = new google.maps.Marker({
@@ -225,9 +244,12 @@ function createCurrentLocationMarker(gps) {
     marker.setMap(map);
 }
 
+// *** this is the global infoWindow ***** \\ 
 var infowindow = new google.maps.InfoWindow ({
     map:map,
 });
+
+// adds action to the current location marker.
 function showCurrentLocationWindow(marker) {
     google.maps.event.addListener(marker, "click", function() {
         infowindow.setContent('Current Location');
@@ -235,6 +257,8 @@ function showCurrentLocationWindow(marker) {
     });
 }
 
+// this function is currently useless i believe but im leaving it 
+// just incase.
 function createInfoWindow(marker, str, info) {
     google.maps.event.addListener(marker, "click" ,function() {
         infowindow.open(map, marker);
