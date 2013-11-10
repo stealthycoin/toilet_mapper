@@ -10,11 +10,30 @@
     #content {
        height:100%;
     }
+    #legend {
+       background: white;
+       border-style:solid;
+       border-width:1px;
+       border-color:#C0C0C0;
+       margin-right:5px;
+       padding:5px;
+       height:170px;
+       overflow-y:scroll;
+    }
+    #showL {
+       background: white;
+       border-style:solid;
+       border-color:#C0C0C0;
+       border-width:1px;
+       margin-right: 5px;
+       padding: 1px 6px;
+    } 
 </style>
    
 
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=true"></script>
 <script src='{{ STATIC_URL }}js/markerclusterer.js'></script>
+<script src='{{ STATIC_URL }}js/jquery.ui.map.js'></script>
 
 <script>
 google.maps.visualRefresh = true;
@@ -23,13 +42,59 @@ var initialLocation = null;
 var cluster = null;
 var santaCruz = new google.maps.LatLng(36.973, -122.029);
 var LA = new google.maps.LatLng(34.052, -118.243);
+var siberia = new google.maps.LatLng(60, 105);
 var flagbrown = '{{ STATIC_URL }}images/flagbrown.png';
 var flaggreen = '{{ STATIC_URL }}images/flaggreen.png'; 
 var flagsilver = '{{ STATIC_URL }}images/flagsilver.png';
 var flagred = '{{ STATIC_URL }}images/flagred.png';
 var flagyellow = '{{ STATIC_URL }}images/flagyellow.png';
-var flags = new Array(flagred, flagbrown, flagyellow, flagsilver, flaggreen);
+var flagwhite = '{{ STATIC_URL }}images/flagwhite.png';
+var flags = new Array(flagwhite, flagred, flagbrown, 
+                      flagyellow, flagsilver, flaggreen);
 
+// styles for the lengend
+var icons = {
+   redflag: {
+      icon: flagred,
+      str: '1 Star Rated Toilet'
+   },
+   brownflag: {
+      icon: flagbrown,
+      str: '2 Star Rated Toilet'
+   },
+   yellowflag: {
+      icon: flagyellow,
+      str: '3 Star Rated Toilet'
+   },
+   silverflag: {
+      icon: flagsilver,
+      str: '4 Star Rated Toilet' 
+   }, 
+   greenflag: {
+      icon: flaggreen,
+      str: '5 Star Rated Toilet'
+   },
+   whiteflag: {
+      icon: flagwhite,
+      str: 'Toilet Not Rated'
+   },
+   goldtoilet: {
+      icon: '{{ STATIC_URL}}images/toiletgold.png',
+      str: 'Large Group of Toilets'
+   },
+   silvertoilet: {
+      icon: '{{ STATIC_URL }}images/toiletsilver.png',
+      str: 'Medium Group of Toilets'
+   },
+   whitetoilet: {
+      icon: '{{ STATIC_URL }}images/toiletvanilla.png',
+      str: 'Small Group of Toilets'
+   },
+   currentlocation: {
+      icon: '{{ STATIC_URL }}images/currentlocation.png', 
+      str: 'User Current Location'
+   }
+};
 // styles for the cluster.
 var clusterStyle = { 
    styles: [{
@@ -50,12 +115,11 @@ var clusterStyle = {
      width: 55,
      textColor: '#DC143C',
      textSize: 12,
-     anchor: [-15,0]
    }],
    maxZoom:10,
    gridSize:50,
 
-   };
+};
 
 function createMarkerClusters() {
     if (cluster) {
@@ -78,9 +142,10 @@ function createMarkerClusters() {
     });
 }
 
+var legendVisible = false;
 function initialize() {
     var options = {
-        zoom:2,
+        zoom:12,
         mapTypeId:google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("gMap"), options);
@@ -101,16 +166,50 @@ function initialize() {
     } else {
         handleGeolocation(false);
     }
+    // add lengend to the map
+    createLegendElements($('#legend')[0],$('#showL')[0]);
+    map.controls[google.maps.ControlPosition.RIGHT_TOP].push($('#legend')[0]);
+    map.controls[google.maps.ControlPosition.RIGHT_TOP].push($('#showL')[0]);
+    // hide the legend.
+    $('#legend').hide();
+    legendVisible = false;
+    $('#legend').click(function () { 
+       legendVisible = false;
+       $('#legend').hide();
+       $('#showL').show();
+    });
+    $('#showL').click(function () { 
+       legendVisible = true;
+       $('#legend').show();
+       $('#showL').hide();
+    });
 }
 
+// this formats the legend change code here to change layout.
+function createLegendElements(legend, showLegend) {
+    var head = document.createElement('div');
+    head.innerHTML = '<h5>Click to Hide | Scroll Down</h5>';
+    $('#legend').append(head);
+    for (var key in icons) {
+        var type = icons[key];
+	var name = type.str;
+	var icon = type.icon;
+	var div = document.createElement('div');
+	div.innerHTML = '<img src="' + icon + '"> ' + name;
+	$('#legend').append(div);
+    }
+    showLegend.innerHTML = '<b>Show Legend</b>';
+    showLegend.style.cursor = 'pointer';
+    legend.style.cursor = 'pointer';
+}
 
 function handleGeolocation(supportFlag) { 
     if (supportFlag == true) {
-          alert("Geolocation Service Failed. Placing you in LA.");
+          alert("Geolocation Service Failed. Placing you in Siberia, Russia. If you are on mobile, make sure location services are enabled on your browser");
     } else {
-          alert("Browser Doesn't Support Geolocation. Placing you in LA.");
+          alert("Browser Doesn't Support Geolocation. Placing you in Siberia, Russia.");
     }
-    map.setCenter(LA);
+    map.setCenter(siberia);
 }
     
 function createCurrentLocationMarker(gps) {
@@ -147,6 +246,8 @@ google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 
 <div id="gMap"></div>
+<div id="legend" onmouseover="this.style.background='#eeeeee';" onmouseout="this.style.background='white';"></div>
+<div id="showL" onmouseover="this.style.background='#eeeeee';" onmouseout="this.style.background='white';"></div>
 
 {% endblock %}
 
