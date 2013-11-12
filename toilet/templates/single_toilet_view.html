@@ -17,7 +17,9 @@
         initMap(); 
         /** Load and populate the reviews **/
         var toilet_id = {{ t.pk }};
-        var toilet_rating = {{t.rating}}
+        var toilet_rating = {{t.rating}};
+        var toilet_num_reviews = {{t.numberOfReviews}};
+        console.log(toilet_num_reviews);
         var template = Handlebars.compile($('#review-template').html());
         $("#from-link").click();
         //Loads or reloads the reviews from the server
@@ -25,7 +27,7 @@
             tapi({noun: "review", verb: "retrieve", data: { filters : {toilet_id: toilet_id}, start : 0, end : 10},
                   callback: function(d){
                       $('#reviews').html('');
-                      $('.num_reviews').html(d.count+' Reviews');
+                      $('.num_reviews').html(toilet_num_reviews +' Reviews');
                       $('#review-rating').html(generateStars(toilet_rating));
 
                       var data = d;
