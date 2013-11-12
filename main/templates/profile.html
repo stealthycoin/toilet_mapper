@@ -3,8 +3,7 @@
 {% block endhead %}
   <script> 
 
-  loadToiletListings('toilet-listings',10, {creator:{{p.pk}}}); 
-
+  loadToiletListings('toilet-listings',10, {filters:{creator:{{p.pk}}}}); 
   </script>
 {% endblock %}
 
