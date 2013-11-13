@@ -4,6 +4,7 @@ import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 #this adds a review using the post data
 def add(request):
@@ -68,6 +69,7 @@ def get(request):
     
 
 #upvote downvote system
+@login_required(login_url='/signin/')
 def vote(request, new_vote):
     error = ''
     status = 201
@@ -91,6 +93,8 @@ def vote(request, new_vote):
         status = 415
     return HttpResponse(package_error(response,error), status=status)
 
-def upvote(request): return vote(request, 1)
+def upvote(request):
+    return vote(request, 1)
 
-def downvote(request): return vote(request, -1)
+def downvote(request): 
+    return vote(request, -1)
