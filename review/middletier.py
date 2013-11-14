@@ -69,11 +69,13 @@ def get(request):
     
 
 #upvote downvote system
-@login_required(login_url='/signin/')
 def vote(request, new_vote):
+    response = ''
     error = ''
     status = 201
-    if request.method == 'POST':
+    if not request.user.is_authenticated():
+        error = 'wtf bro log in'
+    elif request.method == 'POST':
         data = request.POST
         r = Review.objects.get(pk=data['review_pk'])
         try:
