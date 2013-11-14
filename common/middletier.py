@@ -100,7 +100,6 @@ def logout(request):
 COMMON OBJECT RETRIEVAL FUNCTIONS
 """
 
-
 def str_to_class(str):
     lookup = {'Toilet': Toilet
               , 'Review': Review
@@ -126,7 +125,3 @@ def get_obj(request, name):
 
     else:
         return HttpResponse("DUDE WTF GIOMME A POST", status=412)
-        
-        
-    
-        
