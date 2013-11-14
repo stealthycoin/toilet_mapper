@@ -22,6 +22,7 @@
     }
     $(document).ready(function () {
       listenKeyTimer('inputAddress','gearimg','success','fail',2.5);
+      listen_get_postition_button('get_pos_botton','inputAddress','inputAddress');
       $("#test_add").submit(function(e){
           if($("#lat").val()!=="" && $("#lng").val()!=="") return;
           e.preventDefault();
@@ -89,6 +90,7 @@
   </div><!-- form-group -->
   <div class='clearfix'></div>
   <button type="submit" class="btn btn-default">Add Restroom</button>
+  <button id="get_pos_botton" type="button" class="btn btn-default">Get My Position</button>
 </form>
 
 </div>
