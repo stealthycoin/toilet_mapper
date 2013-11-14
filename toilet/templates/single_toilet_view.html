@@ -39,6 +39,7 @@
                           data[o].fields.stars = generateStars(data[o].fields.rank);
                           data[o].fields.date = data[o].fields.date.slice(0, 10);
                           data[o].fields.pk = data[o].pk;
+                          data[o].fields.content = filter_content(data[o].fields.content);
                           $('#reviews').append(template(data[o].fields));
                       }
                       $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
