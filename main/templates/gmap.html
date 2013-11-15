@@ -162,7 +162,7 @@ var legendVisible = false;
 function initialize() {
     var options = {
         zoom:12,
-        mapTypeId:google.maps.MapTypeId.ROADMAP
+        mapTypeId:google.maps.MapTypeId.ROADMAP,
     };
     map = new google.maps.Map(document.getElementById("gMap"), options);
     google.maps.event.addListener(map, "click", function () {
