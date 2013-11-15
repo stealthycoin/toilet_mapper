@@ -1,11 +1,6 @@
 /** Template helper functions **/
 window.templateStatus = {};
 
-
-
-
-
-
 function loadTemplate(url, varname) {
     $.ajax({
         url: url,
@@ -80,6 +75,16 @@ var toiletsLoading = false;
 loadTemplate("/static/handlebars/toilet.html", "toilet");
 
 function loadToiletListings(div_id, i, filter) {
+    //for the love of all that is holy abstract this out later please
+    //not checking for existence because I am assuming there is a global
+    //in window I should be able to access, just cant find it.
+    var location;
+    navigator.geolocation.getCurrentPosition(function(position) {
+	location = new google.maps.LatLng(position.coords.latitude,
+					      position.coords.longitude);
+    });
+
+	
     //i was originally being appended when adding, silly JS thought it was a string...
     i = Number(i);
     i = i || 10;
@@ -111,6 +116,12 @@ function loadToiletListings(div_id, i, filter) {
                 params.date = data[o].fields.date.slice(0, 10);
                 params.name = data[o].fields.name;
                 params.num_reviews = data[o].count || 42;
+		console.log(window);
+		//please fix this someday
+		var toilet_pos = new google.maps.LatLng(data[o].fields.lat,
+							data[o].fields.lng);
+		var dist = distHaversine(location, toilet_pos);
+		params.distance = dist;
                 $('#' + div_id).append(template(params));
             }
             //This doesn't do anything. Have to manually set toiletsLoading
@@ -128,6 +139,21 @@ function loadToiletListings(div_id, i, filter) {
     console.log(params.data);
 
     tapi(params);
+}
+
+//this should not live here but its the haversign function 
+function distHaversine(p1, p2) {
+    var torad = function(x) {return x*Math.PI/180;};
+    var R = 3959;
+    var dLat  = torad(p2.lat()-p1.lat());
+    var dLong = torad(p2.lng()-p1.lng());
+
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(torad(p1.lat())) * Math.cos(torad(p2.lat())) * Math.sin(dLong/2) * Math.sin(dLong/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c;
+
+    return d.toFixed(1);
 }
 
 
