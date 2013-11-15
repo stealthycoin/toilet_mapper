@@ -81,6 +81,7 @@ loadTemplate("/static/handlebars/toilet.html", "toilet");
 
 function loadToiletListings(div_id, i, filter) {
     //i was originally being appended when adding, silly JS thought it was a string...
+    //silly silly JS
     i = Number(i);
     i = i || 10;
 
@@ -94,14 +95,13 @@ function loadToiletListings(div_id, i, filter) {
     toiletsLoading = true;
     //Appendable parameters to send to tapi
     var params = {
-        noun: "toilet",
-        verb: "retrieve",
+        noun: "toilet", 
+       verb: "retrieve",
         data: {
             start: numToiletsLoaded,
             end: numToiletsLoaded + i
         },
         callback: function (data) {
-            console.log("Callbaaaack");
             //For each toilet that we look up set the attributes
             for (o in data) {
                 console.log(data[o]);
@@ -110,7 +110,7 @@ function loadToiletListings(div_id, i, filter) {
                 params.stars = generateStars(data[o].ranking || 3.5);
                 params.date = data[o].fields.date.slice(0, 10);
                 params.name = data[o].fields.name;
-                params.num_reviews = data[o].count || 42;
+                params.num_reviews = data[o].fields.numberOfReviews || 0;
                 $('#' + div_id).append(template(params));
             }
             //This doesn't do anything. Have to manually set toiletsLoading
@@ -123,7 +123,6 @@ function loadToiletListings(div_id, i, filter) {
     //append filter arguments to params.data
     if (filter !== undefined) {
         jQuery.extend(params.data, filter);
-        console.log(params.data + "  woop");
     }
     console.log(params.data);
 

@@ -31,9 +31,9 @@ urlpatterns = patterns('',
                        url(r'^api/review/retrieve/$', 'review.middletier.get', name='api_review_retrieve'),
 
                        # User API
-                       url(r'^api/user/login/$', 'common.middletier.login', name='signin'), 
-                       url(r'^api/user/logout/$', 'common.middletier.logout', name='signin'), 
-                       url(r'^api/user/create/$', 'common.middletier.create_user', name='signin'), 
+                       url(r'^api/user/login/$', 'common.middletier.login', name='login'), 
+                       url(r'^api/user/logout/$', 'common.middletier.logout', name='logout'), 
+                       url(r'^api/user/create/$', 'common.middletier.create_user', name='create user'), 
 
                        # Flag API
                        url(r'^api/flag/retrieve_rankings/$', 'toilet.middletier.flag_retrieve_rankings', name='api_flag_rankings'),
