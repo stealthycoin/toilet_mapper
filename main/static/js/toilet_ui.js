@@ -1,6 +1,11 @@
 /** Template helper functions **/
 window.templateStatus = {};
 
+
+
+
+
+
 function loadTemplate(url, varname) {
     $.ajax({
         url: url,
