@@ -112,8 +112,8 @@ def str_to_class(str):
 def security_check(k, v):
     return v
 
-#Distance between two (lat, long) coordinates
-# Expects lat, long values in degrees
+# Distance between two (lat, long) coordinates
+#  Expects lat, long values in degrees
 def distance(lat1, lon1, lat2, lon2):
     R = 6373.0
     lat1 = radians(lat1)
@@ -128,16 +128,18 @@ def distance(lat1, lon1, lat2, lon2):
     
 def get_obj(request, name):
     if request.POST:
-        
         #get start and end for pagination 
-        start = int(request.POST.get('start'))
-        end = int(request.POST.get('end'))
+        start = request.POST.get('start')
+        if start != None: start = int(start)
+        end = request.POST.get('end')
+        if end != None: end = int(end)
+
         filters = json.loads(request.POST.get('filters'))
         #map over all of the filter objects to amke sure they aren't expensive queries
         filters = {k: security_check(k,v) for k, v in filters.items()}
         #convert the string from name into an object, apply all of the filters to the object
         qs = str_to_class(name).objects.all().filter(**filters)
-
+        
         #Special case for sorting toilets by distance
         if request.POST.get('current_lat') != None:
             current_lat = float(request.POST.get('current_lat'))
