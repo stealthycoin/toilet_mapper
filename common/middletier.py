@@ -3,6 +3,7 @@ from django.core import serializers
 from django.utils.timezone import utc
 import datetime
 import sys
+from math import radians, sin, asin, cos, acos, atan, atan2, sqrt
 from toilet.models import Toilet, Flag, FlagRanking
 from review.models import Review
 
@@ -111,17 +112,45 @@ def str_to_class(str):
 def security_check(k, v):
     return v
 
+#Distance between two (lat, long) coordinates
+# Expects lat, long values in degrees
+def distance(lat1, lon1, lat2, lon2):
+    R = 6373.0
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    return R * c
+    
 def get_obj(request, name):
     if request.POST:
+        
         #get start and end for pagination 
-        start = request.POST.get('start')
-        end = request.POST.get('end')
+        start = int(request.POST.get('start'))
+        end = int(request.POST.get('end'))
         filters = json.loads(request.POST.get('filters'))
         #map over all of the filter objects to amke sure they aren't expensive queries
         filters = {k: security_check(k,v) for k, v in filters.items()}
         #convert the string from name into an object, apply all of the filters to the object
-        qs = str_to_class(name).objects.all().filter(**filters)[start:end] 
-        return HttpResponse(serializers.serialize('json', qs))
+        qs = str_to_class(name).objects.all().filter(**filters)
+
+        #Special case for sorting toilets by distance
+        if request.POST.get('current_lat') != None:
+            current_lat = float(request.POST.get('current_lat'))
+            current_lng = float(request.POST.get('current_lng'))
+            def distanceCmp(t1, t2):
+                d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
+                d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
+                if d1 == d2: return 0
+                return -1 if d1 < d2 else 1
+            qs = list(qs)
+            qs.sort(cmp=distanceCmp)
+
+        return HttpResponse(serializers.serialize('json', qs[start:end]))
 
     else:
         return HttpResponse("DUDE WTF GIOMME A POST", status=412)

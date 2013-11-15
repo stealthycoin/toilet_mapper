@@ -76,12 +76,12 @@ loadTemplate("/static/handlebars/toilet.html", "toilet");
 
 function loadToiletListings(div_id, i, filter) {
     //i was originally being appended when adding, silly JS thought it was a string...
-    i = Number(i);
+    var i = Number(i);
     i = i || 10;
 
     if (toiletsLoading) return;
     //Keep trying until the toilet template has been loaded
-    if (!isTemplateLoaded("toilet")) {
+    if (!isTemplateLoaded("toilet") || window.current_lat === undefined) {
         setTimeout("loadToiletListings('" + div_id + "', '" + i + "', " + JSON.stringify(filter) + " );", 50);
         return;
     }
@@ -93,19 +93,35 @@ function loadToiletListings(div_id, i, filter) {
         verb: "retrieve",
         data: {
             start: numToiletsLoaded,
-            end: numToiletsLoaded + i
+            end: numToiletsLoaded + i,
+            filters: filter
         },
         callback: function (data) {
             console.log("Callbaaaack");
+            function calcDistance(d){
+                if(d.distance !== undefined) return d.distance;
+                d.distance = distance_from_current(window.current_lat,
+                                                   window.current_lng,
+                                                   d.fields.lat,
+                                                   d.fields.lng);
+                return d.distance;
+            }
+            
+            data.sort(function(d1, d2){
+                if(calcDistance(d1) === calcDistance(d2)) return 0;
+                return calcDistance(d1) < calcDistance(d2) ? -1 : 1;
+            });
+
             //For each toilet that we look up set the attributes
             for (o in data) {
                 console.log(data[o]);
                 var params = {};
                 params.pk = data[o].pk;
-                params.stars = generateStars(data[o].ranking || 3.5);
+                params.stars = generateStars(data[o].fields.rating);
                 params.date = data[o].fields.date.slice(0, 10);
                 params.name = data[o].fields.name;
-                params.num_reviews = data[o].count || 42;
+                params.num_reviews = data[o].fields.numberOfReviews;
+                params.distance = data[o].distance + " mi";
                 $('#' + div_id).append(template(params));
             }
             //This doesn't do anything. Have to manually set toiletsLoading
