@@ -3,6 +3,8 @@ from review.models import Review
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
+from django.db import transaction
+
 
 #just using for debugging
 import sys
@@ -93,6 +95,7 @@ def flag_retrieve_flags(request):
 
 
 #upvote downvote system
+@transaction.commit_on_success
 def flag_vote(request, new_vote):
     error = ''
     """ Save this for later. 

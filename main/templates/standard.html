@@ -50,6 +50,18 @@
 <!-- our review filter code -->
 <script src = '/static/js/filter.js'></script>
 
+<!-- our Map Utils -->
+<script src='/static/js/mapUtils.js'></script>
+
+<!-- Google Maps API -->
+<script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+
+<!-- our Google Map Interface --> 
+<script type="text/javascript"
+    src="{{STATIC_URL}}js/map.js"></script>
+
+
 {% if user.is_authenticated %}
 <script type='text/javascript'>
   $(document).ready(function(){
@@ -60,6 +72,13 @@
       });
       j.done(function(d){ console.log(d); window.location = "/"; });
     });
+  
+  current_pos(function(pos){
+    console.log("CURRENT POS");
+    console.log(pos);
+    window.current_lat = pos.coords.latitude;
+    window.current_lng = pos.coords.longitude;
+  });
   });
 </script>
 {% endif %}
