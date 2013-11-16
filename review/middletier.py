@@ -5,6 +5,7 @@ from common.middletier import post_to_dict, serialize, currentTime, package_erro
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 #this adds a review using the post data
 def add(request):
@@ -16,14 +17,17 @@ def add(request):
         #We shouldn't be allowed to review a restroom twice
         if len(Review.objects.filter(user=request.user).filter(toilet=data['toilet'])) == 0:
             r = Review()
-            toilet = Toilet.objects.get(pk=data['toilet'])
+            with transaction.commit_on_success():
+                toilet = Toilet.objects.get(pk=data['toilet'])                
+                data['toilet'] = toilet
+                toilet.updateRating(data['rank']) 
             data['date'] = currentTime()
             data['user'] = request.user
-            data['toilet'] = toilet
             data['up_down_rank'] = 0;
             r.setattrs(data)
             r.save()
-            toilet.updateRating(data['rank']) 
+            
+
             response = serialize([r])
         else:
             error += 'Cannot write more than one review.\n'
@@ -69,6 +73,7 @@ def get(request):
     
 
 #upvote downvote system
+@transaction.commit_on_success
 def vote(request, new_vote):
     response = ''
     error = ''

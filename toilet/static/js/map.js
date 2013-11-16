@@ -45,7 +45,7 @@ function showMap(from) {
 function registerMapForm() {
   $("#from-link").click(function(event) {
     event.preventDefault();
-    get_current_post(
+    current_address(
       function (address){
         $("#from").val(address);
         if(first_run) {
@@ -66,7 +66,7 @@ function registerMapForm() {
 
 function listen_get_postition_button(button_id, address_field, error_field) {
   $("#"+button_id).click(function(event) {
-      get_current_post(
+      current_address(
       function (address){
         $("#"+address_field).val(address);
       },
@@ -77,11 +77,51 @@ function listen_get_postition_button(button_id, address_field, error_field) {
   });
 }
 
-function get_current_post(address, failure) {
+function current_pos(callback){
+  navigator.geolocation.getCurrentPosition(
+      callback
+      ,function(positionError){
+          failure(positionError.message);
+      },
+      {
+          enableHighAccuracy: true,
+          timeout: 10 * 1000 // 10 seconds
+      }
+  );
+}
+
+function pos_to_address(position, address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode(
+        {
+            "location": new google.maps.LatLng(position.coords.latitude, 
+                                               position.coords.longitude)
+        },
+        function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                //in case of success return the address
+                address(results[0].formatted_address);
+            }
+            else
+                failure("Unable to retrieve your address");
+        }
+    );
+}
+
+function current_address(address, failure) {
+    if(window.current_lat !== undefined
+       && window.current_lng !== undefined)
+        return pos_to_address({ coords: {latitude: window.current_lat
+                                         ,longitude: window.current_lng
+                                        }}, address);
+
   // If the browser supports the Geolocation API
-  if (typeof navigator.geolocation == "undefined") 
-      failure("Your browser doesn't support the Geolocation API");
-  navigator.geolocation.getCurrentPosition(function(position) {
+    if (typeof navigator.geolocation == "undefined") 
+        failure("Your browser doesn't support the Geolocation API");
+    
+    current_pos(function(p){ pos_to_address(p, address); });
+    
+/*  navigator.geolocation.getCurrentPosition(function(position) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode(
       {
@@ -97,7 +137,7 @@ function get_current_post(address, failure) {
           failure("Unable to retrieve your address");
       }
     );
-  },
+  }, 
     function(positionError){
       failure(positionError.message);
     },
@@ -105,7 +145,7 @@ function get_current_post(address, failure) {
       enableHighAccuracy: true,
       timeout: 10 * 1000 // 10 seconds
     }
-  );
+  );*/
 }
 
 function loadMap(){

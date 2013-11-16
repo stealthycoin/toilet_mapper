@@ -3,9 +3,37 @@
 {% block endhead %}
 
     <script> 
-    loadToiletListings('toilet-listings', 10); 
+    
+    function homeToiletListings(){
+        if(window.current_lat === undefined
+           || window.current_lng === undefined){
+            setTimeout("homeToiletListings()", 50);
+            return;
+        }
+        var sb = squareBounds(window.current_lat, window.current_lng, 10);
+        var xmin, xmax, ymin, ymax;
 
-    </script>
+        var smallLeft = (sb.x_left < sb.x_right);
+        xmin = smallLeft ? sb_x.left : sb.x_right;
+        xmax = smallLeft ? sb.x_right : sb.x_left;
+
+        var smallBottom = (sb.y_bottom < sb.y_top);
+        ymin = smallBottom ? sb_y.bottom : sb.y_top;
+        ymax = smallBottom ? sb.y_top : sb.y_bottom;
+
+        loadToiletListings('toilet-listings', 10
+                           , {
+                               current_lat: window.current_lat
+                               ,current_lng: window.current_lng
+                               ,filters: {
+                                   lat__gt: xmin
+                                   ,lat__lt: xmax
+                                   ,lng__gt: ymin
+                                   ,lng__lt: ymax
+                               }});
+    }
+  homeToiletListings();
+</script>
 
     <script type="text/javascript">
     $(document).ready(function(){
@@ -18,7 +46,13 @@
             //currently breaking multiple calls to loadToiletListings. 
             //This probably can be removed in the future.
             searchReset();
-            loadToiletListings('toilet-listings', 10, {filters:{name__icontains: $("#search").val()}});
+            
+            
+            loadToiletListings('toilet-listings', 10, {
+                filters:{
+                    name__icontains: $("#search").val()
+
+                }});
             return false;
         });
     
