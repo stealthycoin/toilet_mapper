@@ -13,6 +13,7 @@ from toilet.models import Toilet
 import json
 import datetime
 import unittest
+import random
 
 
 from django.test import TestCase
@@ -39,6 +40,7 @@ class putNewReviewTest(TestCase):
       self.client.login(username=self.user.username, password = 'bqz_qux')
       response = self.client.post('/api/review/create/', {'toilet' : 666, 'rank' : 5, 'content' : 'This is a dumb test'})
       self.assertEqual(response.status_code, 404)
+
     @unittest.skip("Not sure what we should do in this case")
     def test_missing_attributes(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
@@ -48,6 +50,20 @@ class putNewReviewTest(TestCase):
       self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 5, 'content' : 'This is a dumb test'})
       response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 5, 'content' : 'This is a dumb test'})
       self.assertEqual(response.status_code, 403)
+
+    def test_post_review_many(self): 
+      rating_sum = 0
+      ratings = [random.randint(0,5) for x in xrange(10)] 
+      for counter, rating in enumerate(ratings):
+         rating_sum += rating
+         username = 'test_bar' + str(counter)
+         ratingUser = User.objects.create_user(username, username + '@bar.com', 'password')
+         ratingUser.save()
+         self.client.login(username=username,password ='password')
+         response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : rating, 'content' : 'This is a dumb test with rating' + str(rating)})
+         avg = float(rating_sum)/ (counter + 1)
+         toilet = Toilet.objects.get(pk=self.toilet.pk)
+         self.assertEqual(round(float(toilet.rating), 6), round(avg, 6))
 
 class GetReviewTest(TestCase):
     def setUp(self):
