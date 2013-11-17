@@ -5,10 +5,9 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 from django.test import TestCase
-from toilet.middletier import listing
 from django.test.client import Client
 from django.contrib.auth.models import User
-from review.models import Review
+from review.models import Review, Vote
 from toilet.models import Toilet
 import json
 import datetime
@@ -65,6 +64,75 @@ class putNewReviewTest(TestCase):
          toilet = Toilet.objects.get(pk=self.toilet.pk)
          self.assertEqual(round(float(toilet.rating), 6), round(avg, 6))
 
+class UpDownVoteTest(TestCase):
+    def setUp(self):
+      self.client = Client()
+      self.user = User.objects.create_user('test_foo', 'foo@bar.com','bqz_qux')
+      self.user.save()
+      self.user_two = User.objects.create_user('test_bar', 'foo@bar.com', 'bqz_qux')
+      self.user_two.save()
+
+      self.toilet = Toilet(date = datetime.datetime.now() ,
+                            creator = self.user, name = "test_toilet")
+      self.toilet.save()
+      self.review_one_one = Review(user=self.user, date = datetime.datetime.now(),
+                               toilet = self.toilet, content = "foo bar", rank = 5,
+                               up_down_rank = 0)
+      self.review_one_one.save() 
+      self.review_two_one =  Review(user=self.user_two, date = datetime.datetime.now(),
+                               toilet = self.toilet, content = "foo bar", rank = 5,
+                               up_down_rank = 0)
+      self.review_two_one.save()
+
+    def test_up_vote_review(self):
+      self.client.login(username=self.user.username, password='bqz_qux')
+      response = json.loads(self.client.post('/api/review/upvote/', {'review_pk': self.review_one_one.pk}).content)[0]
+      updatedreview = Review.objects.get(pk=self.review_one_one.pk)
+      self.assertEqual(updatedreview.up_down_rank, 1)
+
+    def test_up_vote_twice(self):
+      vote = Vote(review=self.review_one_one, user = self.user_two, vote = 1) 
+      vote.save()
+      self.review_one_one.up_down_rank += 1
+      self.review_one_one.save()
+      self.client.login(username=self.user_two.username, password='bqz_qux')
+      response = json.loads(self.client.post('/api/review/upvote/', {'review_pk': self.review_one_one.pk}).content)[0]
+      self.assertEqual(response['fields']['up_down_rank'],1)
+
+    def test_up_vote_not_logged_in(self):
+      response = self.client.post('/api/review/upvote/', {'review_pk': self.review_one_one.pk})
+      self.assertEqual(response.status_code, 403)
+
+    def test_up_vote_no_data(self):
+      self.client.login(username=self.user_two.username, password='bqz_qux')
+      response = self.client.post('/api/review/upvote/' )
+      self.assertEqual(response.status_code, 400)
+    
+    def test_up_vote_get(self):
+      self.client.login(username=self.user_two.username, password='bqz_qux')
+      response = self.client.get('/api/review/upvote/' )
+      self.assertEqual(response.status_code, 415)
+
+    def test_up_vote_no_review(self):
+      self.client.login(username=self.user_two.username, password='bqz_qux')
+      response = self.client.post('/api/review/upvote/', {'review_pk': 666})
+      self.assertEqual(response.status_code, 404)
+
+    def test_down_vote(self):
+      self.client.login(username=self.user_two.username, password='bqz_qux')
+      response = json.loads(self.client.post('/api/review/downvote/', {'review_pk' : self.review_one_one.pk}).content)[0]
+      self.assertEqual(response['fields']['up_down_rank'], -1)
+
+    def test_down_after_up_vote(self):
+      vote = Vote(review=self.review_one_one, user = self.user_two, vote = 1) 
+      vote.save()
+      self.review_one_one.up_down_rank += 1
+      self.review_one_one.save()
+      self.client.login(username=self.user_two.username, password='bqz_qux')
+      response = json.loads(self.client.post('/api/review/downvote/', {'review_pk': self.review_one_one.pk}).content)[0]
+      self.assertEqual(response['fields']['up_down_rank'],0)
+
+      
 class GetReviewTest(TestCase):
     def setUp(self):
       self.client = Client()

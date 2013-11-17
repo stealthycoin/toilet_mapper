@@ -79,7 +79,8 @@ def vote(request, new_vote):
     error = ''
     status = 201
     if not request.user.is_authenticated():
-        error = 'wtf bro log in'
+        error = 'Must be logged in'
+        status = 403
     elif request.method == 'POST':
         data = request.POST
         r = Review.objects.get(pk=data['review_pk'])
