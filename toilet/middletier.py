@@ -4,6 +4,7 @@ import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
 
 
 #just using for debugging
@@ -37,32 +38,11 @@ def add(request):
     return HttpResponse(package_error(response,error), status=status)
 
 
-
-def flag_retrieve_rankings(request):
-    response = ''
-    error = ''
-    status = 201
-    if request.method == 'POST':
-        data = request.POST
-        t = Toilet.objects.get(pk=data['toilet_pk'])        
-        r = FlagRanking.objects.filter(toilet = t.pk)
-        response = serialize(r)
-
-    return HttpResponse(package_error(response,error), status=status)
-
-
-def flag_retrieve_flags(request):
-    response = ''
-    error = ''
-    status = 201
-    response = serialize(Flag.objects.all())
-    return HttpResponse(package_error(response,error), status=status)
-
-
 #upvote downvote system
 @transaction.commit_on_success
 def flag_vote(request, new_vote):
     error = ''
+    response = ''
     """ Save this for later. 
         error = 'You are clever but not that clever my little pet.'
         + ' BTW our team is super excited about our river boat tour '
@@ -70,7 +50,10 @@ def flag_vote(request, new_vote):
         + ' I mean really I never even thought about river cruises. Cruises on a river? Sign me up. '
     """
     status = 201
-    if request.method == 'POST':
+    if not request.user.is_authenticated():
+      error += "Must be logged in"
+      status = 403
+    elif request.method == 'POST':
         data = request.POST
         t = Toilet.objects.get(pk=data['toilet_pk'])
         f = Flag.objects.get(pk=data['flag_pk'])
