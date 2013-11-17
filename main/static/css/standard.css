@@ -58,6 +58,10 @@ ul.parsley-error-list li, .error {
     text-align: center; 
 }
 
+.active a  {
+    background-color: #101010;
+}
+
 .upvote_button:hover, .downvote_button:hover,
   .flag_upvote_button:hover, .flag_downvote_button:hover
  {

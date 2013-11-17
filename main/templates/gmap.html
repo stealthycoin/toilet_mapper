@@ -141,7 +141,7 @@ function createMarkerClusters() {
 		     + '<table><tr><td>Number of Ratings: ' + 
                      t.fields.numberOfReviews  + '</td></tr>' 
 		     + '<tr><td> Rating: ' + 
-         	     t.fields.rating + '</td></tr></table>';
+         	     (Math.round(t.fields.rating*100)/100) + '</td></tr></table>';
         var marker = new google.maps.Marker({
           position: latLng,
           draggable: false,
