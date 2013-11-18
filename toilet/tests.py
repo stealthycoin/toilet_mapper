@@ -6,18 +6,74 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from toilet.middletier import listing
 from django.test.client import Client
 from django.contrib.auth.models import User
-from toilet.models import Toilet
+from toilet.models import Toilet, Flag, FlagRanking, FlagVote 
 from parseS2P import main
 import json
 import datetime
 import unittest
 
-class ImportSafeToPee(TestCase):
-    def test_insert_shit(self):
-        main(['fuck', 'toilet/safe2pee.csv']) 
+class FlagTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('test_flag', 'foo@bar.com','bqz_qux')
+        self.user.save()
+        self.toilet = Toilet()
+        self.toilet.name = "New toilet"
+        self.toilet.date = datetime.datetime.now()
+        self.toilet.creator = self.user
+        self.toilet.save()
+        self.client = Client()
+        self.flag = Flag()
+        self.flag.name = "test flag"
+        self.flag.explanation = "this is a test flag"
+        self.flag.save()
+        
+    def test_get_flags(self):
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({})}).content)[0]
+        self.assertEqual(response['pk'], self.flag.pk)
+
+    def test_get_rankings(self):
+        flagRanking = FlagRanking(flag=self.flag, toilet = self.toilet, up_down_vote = 0)
+        flagRanking.save()
+        response = json.loads(self.client.post('/api/FlagRanking/get/', {'filters' : json.dumps({'toilet' : self.toilet.pk}) }).content)[0]
+        self.assertEqual(response['fields']['up_down_vote'], 0)
+        self.assertEqual(response['fields']['toilet'], self.toilet.pk)
+
+    def test_upvote_flag(self):
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
+        self.assertEqual(response['fields']['flag'], self.flag.pk)
+        self.assertEqual(response['fields']['up_down_vote'], 1)
+
+    def test_upvote_twice(self):
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
+        self.assertEqual(response['fields']['flag'], self.flag.pk)
+        self.assertEqual(response['fields']['up_down_vote'], 1)
+        response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
+        self.assertEqual(response['fields']['up_down_vote'], 1)
+
+    def test_upvote_not_logged_in(self):
+        response = self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk})
+        self.assertEqual(response.status_code, 403)
+
+    def test_downvote(self):
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        flagRanking = FlagRanking(flag = self.flag, toilet = self.toilet, up_down_vote = 1)
+        flagRanking.save()
+        flagvote = FlagVote(user = self.user, flag = self.flag, toilet = self.toilet, vote = 1)
+        flagvote.save()
+        response = json.loads(self.client.post('/api/flag/downvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
+        self.assertEqual(response['fields']['flag'], self.flag.pk)
+        self.assertEqual(response['fields']['up_down_vote'], 0)
+
+    def test_get_empty_flag_set(self):
+        self.flag.delete()
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({})}).content)
+        self.assertEqual(len(response), 0)
 
 class ToiletTestCreate(TestCase):
     def setUp(self):
