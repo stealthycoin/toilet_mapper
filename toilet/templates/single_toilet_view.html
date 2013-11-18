@@ -14,7 +14,6 @@
         var toilet_id = {{ t.pk }};
         var toilet_rating = {{t.rating}};
         var toilet_num_reviews = {{t.numberOfReviews}};
-        console.log(toilet_num_reviews);
         var template = Handlebars.compile($('#review-template').html());
         $("#from-link").click();
         //Loads or reloads the reviews from the server
@@ -31,6 +30,7 @@
                           if(topReview.rank < data[o].fields.rank){
                               topReview = data[o].fields;
                           }
+                          console.log(data[o].fields.user);
                           data[o].fields.stars = generateStars(data[o].fields.rank);
                           data[o].fields.date = data[o].fields.date.slice(0, 10);
                           data[o].fields.pk = data[o].pk;
