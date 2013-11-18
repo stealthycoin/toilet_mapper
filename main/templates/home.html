@@ -37,9 +37,21 @@
 
     <script type="text/javascript">
     $(document).ready(function(){
-        $("#restroom_search").keyup(function(event) {
-            delay(function(){
-            event.preventDefault();
+        $("#restroom_search").bind("keyup keypress", function(event) {
+            var code = event.keyCode || event.which;
+            if (code == 13){ 
+                event.preventDefault();
+                do_search();
+                return false;
+                //delay(do_search(), 2000);
+                //do_search();
+            }else{
+                //do_search();
+                delay(do_search, 200);
+            }
+        });
+
+    function do_search(){
             //REMOVE FOR LIVESEARCH
             $("#toilet-listings").empty();
             //This jankey, function is just to reset some globals that are
@@ -53,8 +65,8 @@
                     name__icontains: $("#search").val()
 
                 }});
-            return false;}, 600);
-        });
+            return false;
+        }
     
     });
     </script>
