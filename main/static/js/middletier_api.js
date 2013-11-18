@@ -108,9 +108,11 @@ var internal_mapping = {
         if (!params.noun) {
             tapi_error("Request made with no noun.");
         }
+
         if (!params.verb) {
             tapi_error("Request made with no verb.");
         }
+
         if (!internal_mapping.hasOwnProperty(params.noun)) {
             tapi_error("Noun " + params.noun + " is not recognized");
         }
@@ -118,7 +120,6 @@ var internal_mapping = {
         if (!internal_mapping[params.noun].hasOwnProperty(params.verb)) {
             tapi_error("Noun " + params.noun + " does not have the verb " + params.verb);
         }
-
 
         if (params.data === undefined) {
             params.data = {};
