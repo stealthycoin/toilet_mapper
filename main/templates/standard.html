@@ -17,8 +17,10 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <!-- end bootstrap css and js -->
+
+  <!-- disables zoom on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 <!-- fontawesome css and js -->
 <link rel='stylesheet' href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css">
@@ -54,12 +56,10 @@
 <script src='/static/js/mapUtils.js'></script>
 
 <!-- Google Maps API -->
-<script type="text/javascript"
-    src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
 <!-- our Google Map Interface --> 
-<script type="text/javascript"
-    src="{{STATIC_URL}}js/map.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/map.js"></script>
 
 
 {% if user.is_authenticated %}
