@@ -1,11 +1,6 @@
 /** Template helper functions **/
 window.templateStatus = {};
 
-
-
-
-
-
 function loadTemplate(url, varname) {
     $.ajax({
         url: url,
@@ -146,6 +141,14 @@ function loadToiletListings(div_id, i, filter) {
     tapi(params);
 }
 
+//Timer to be used for livesearching. Prevent constant queries
+var delay = (function(){
+    var timer = 0;
+    return function(callback,time_ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback,time_ms);
+    };
+})();
 
 //This is sort of a janky way to fix the bugs we faced when doing searches
 //toiletsLoading isn't reset properly and numToiletsLoaded is incrementing each call

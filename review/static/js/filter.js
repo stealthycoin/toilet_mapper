@@ -9,7 +9,7 @@ function filter_content(string_content) {
     for(var i=0; i<filter_map.length; ++i){
 
         // create a regular expression to use when finding inappropriate words
-        var pattern = new RegExp('\w*' + filter_map[i] + '\w*', 'g');
+        var pattern = new RegExp('\w*' + filter_map[i] + '\w*', 'gi');
 
         // create a new string filled with '*'
         var replacement = '*'.repeat(filter_map[i].length);
