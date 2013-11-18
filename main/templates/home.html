@@ -37,8 +37,8 @@
 
     <script type="text/javascript">
     $(document).ready(function(){
-    
-        $("#restroom_search").submit(function(event) {
+        $("#restroom_search").keyup(function(event) {
+            delay(function(){
             event.preventDefault();
             //REMOVE FOR LIVESEARCH
             $("#toilet-listings").empty();
@@ -53,7 +53,7 @@
                     name__icontains: $("#search").val()
 
                 }});
-            return false;
+            return false;}, 600);
         });
     
     });
