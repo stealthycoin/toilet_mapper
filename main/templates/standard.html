@@ -72,17 +72,18 @@
       });
       j.done(function(d){ console.log(d); window.location = "/"; });
     });
-  
+  });
+</script>
+{% endif %}
+<script type='text/javascript'>
   current_pos(function(pos){
     console.log("CURRENT POS");
     console.log(pos);
     window.current_lat = pos.coords.latitude;
     window.current_lng = pos.coords.longitude;
   });
-  });
 </script>
-{% endif %}
-
+{
 {% block endhead %}{% endblock %}
 {% endblock %}
 
