@@ -37,25 +37,29 @@
 
     <script type="text/javascript">
     $(document).ready(function(){
-    
-        $("#restroom_search").submit(function(event) {
-            event.preventDefault();
-            //REMOVE FOR LIVESEARCH
+        $("#restroom_search").bind("keyup keypress", function(event) {
+            var code = event.keyCode || event.which;
+            //if the key is "enter" do the following
+            if (code == 13){ 
+                //prevent default form submission with enter
+                event.preventDefault();
+                delay(do_search, 50);
+            //if the key is anything but "enter" do the following
+            }else{
+                delay(do_search, 200);
+            }
+        });
+
+    function do_search(){
             $("#toilet-listings").empty();
-            //This jankey, function is just to reset some globals that are
-            //currently breaking multiple calls to loadToiletListings. 
-            //This probably can be removed in the future.
             searchReset();
-            
-            
             loadToiletListings('toilet-listings', 10, {
                 filters:{
                     name__icontains: $("#search").val()
-
                 }});
             return false;
-        });
-    
+        }
+
     });
     </script>
 {% endblock %}

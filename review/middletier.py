@@ -38,39 +38,7 @@ def add(request):
 
     return HttpResponse(package_error(response,error), status=status)
 
-
-#thingies for getting reviews
-def get(request):
-    error = ''
-    response = ''
-    status = 200
-    
-    if request.method == 'POST':
-        print request
-        data = request.POST
-        review_set = Review.objects.filter(toilet=data['toilet_id'])
-        count = len(list(review_set))
-        
-        total = 0.0
-        if count != 0:
-            for review in review_set:
-                total += review.rank #need to change this
-
-            total /= count
-        else:
-            total = -1
-
-        review_set = review_set[int(data['start']):int(data['end'])] #cut out the part requested  wanted            
-        d = {'count' : count, 'total' : total, 'review_set' : json.loads(serialize(review_set)) }
-        response = json.dumps(d)
-
-        
-    else:
-        error += 'No POST data in request\n'
-        status = 415
-        
-    return HttpResponse(package_error(response,error),status=status)
-    
+   
 
 #upvote downvote system
 @transaction.commit_on_success
@@ -79,7 +47,8 @@ def vote(request, new_vote):
     error = ''
     status = 201
     if not request.user.is_authenticated():
-        error = 'wtf bro log in'
+        error = 'Must be logged in'
+        status = 403
     elif request.method == 'POST':
         data = request.POST
         r = Review.objects.get(pk=data['review_pk'])

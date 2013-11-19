@@ -15,6 +15,3 @@ def single_toilet_view(req, pk):
     return render(req, "single_toilet_view.html", c)
 
 
-def list_toilet_view(req):
-
-    return render(req, "list_toilet_view.html")
