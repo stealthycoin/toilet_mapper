@@ -134,11 +134,17 @@ def get_obj(request, name):
         end = request.POST.get('end')
         if end != None: end = int(end)
 
+        #sortby
+        sortby = request.POST.get('sortby')
+
         filters = json.loads(request.POST.get('filters'))
         #map over all of the filter objects to amke sure they aren't expensive queries
         filters = {k: security_check(k,v) for k, v in filters.items()}
         #convert the string from name into an object, apply all of the filters to the object
         qs = str_to_class(name).objects.all().filter(**filters)
+        #optional sorting
+        if sortby:
+            qs = qs.order_by(sortby)
         
         #Special case for sorting toilets by distance
         if request.POST.get('current_lat') != None:

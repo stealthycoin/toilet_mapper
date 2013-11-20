@@ -18,7 +18,7 @@
         $("#from-link").click();
         //Loads or reloads the reviews from the server
         window.loadReviews = function(){
-            tapi({noun: "review", verb: "retrieve", data: { filters : {toilet_id: toilet_id}, start : 0, end : 10},
+            tapi({noun: "review", verb: "retrieve", data: { sortby: "-rank", filters : {toilet_id: toilet_id}, start : 0, end : 10},
                   callback: function(d){
                       $('#reviews').html('');
                       $('.num_reviews').html(toilet_num_reviews +' Reviews');
