@@ -53,6 +53,10 @@
     function do_search(){
             $("#toilet-listings").empty();
             searchReset();
+            if(($("#search").val()).length === 0){
+                homeToiletListings();
+                return false;
+            }
             loadToiletListings('toilet-listings', 10, {
                 filters:{
                     name__icontains: $("#search").val()
