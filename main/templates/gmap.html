@@ -30,10 +30,7 @@
     } 
 </style>
    
-
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=true"></script>
 <script src='{{ STATIC_URL }}js/markerclusterer.js'></script>
-<script src='{{ STATIC_URL }}js/jquery.ui.map.js'></script>
 
 <script>
 // global variables.
@@ -50,8 +47,10 @@ var flagsilver = '{{ STATIC_URL }}images/flagsilver.png';
 var flagred = '{{ STATIC_URL }}images/flagred.png';
 var flagyellow = '{{ STATIC_URL }}images/flagyellow.png';
 var flagwhite = '{{ STATIC_URL }}images/flagwhite.png';
-var flags = new Array(flagwhite, flagred, flagbrown, 
-                      flagyellow, flagsilver, flaggreen);
+var flags = new Array(flagwhite, flagred, flagbrown, flagyellow, flagsilver, flaggreen);
+var legendVisible = false;
+// *** this is the global infoWindow ***** \\ 
+var infowindow = new google.maps.InfoWindow ({map:map});
 
 // data, icons, and styles for the lengend
 var icons = {
@@ -88,7 +87,7 @@ var icons = {
       str: 'Medium Group of Toilets'
    },
    whitetoilet: {
-      icon: '{{ STATIC_URL }}images/toiletvanilla.png',
+      icon: '{{ STATIC_URL }}images/toiletbrown.png',
       str: 'Small Group of Toilets'
    },
    currentlocation: {
@@ -100,10 +99,10 @@ var icons = {
 // styles for the cluster.
 var clusterStyle = { 
    styles: [{
-     url: '../static/images/toiletvanilla.png',
+     url: '../static/images/toiletbrown.png',
      height: 35,
      width: 35,
-     textColor: '#ff00ff',
+     textColor: '#ffffff',
      textSize: 10
    }, {
      url: '{{ STATIC_URL }}images/toiletsilver.png',
@@ -123,65 +122,75 @@ var clusterStyle = {
 
 };
 
-// this function creates the marker clusters
-// also it sets up the infoWindow content for each marker.
-// NOTE: there is only 1 infoWindow that gets reused. DO NOT ADD MORE
-function createMarkerClusters() {
-    if (cluster) {
-        cluster.clearMarkers();
-    }
-    var markerlist = [];
-    // modify this query if the data gets larger than 10k
-    var jq = tapi({noun: 'toilet', verb: 'retrieve'});
-    jq.done(function(data)  {
-      $.each(data, function (i, t) {  
-        var latLng = new google.maps.LatLng(t.fields.lat, t.fields.lng);
-	var inView = '<a href=/toilet/' + t.pk + '><b>' + 
-	             t.fields.name + '</b></a>' 
-		     + '<table><tr><td>Number of Ratings: ' + 
-                     t.fields.numberOfReviews  + '</td></tr>' 
-		     + '<tr><td> Rating: ' + 
-         	     t.fields.rating + '</td></tr></table>';
-        var marker = new google.maps.Marker({
-          position: latLng,
-          draggable: false,
-	  icon: flags[t.fields.rating],
-        });
-	google.maps.event.addListener(marker, 'click', function (){
-	   infowindow.setContent(inView);
-	   infowindow.open(map, marker);
-	});
-	markerlist.push(marker);
-      });
-    cluster = new MarkerClusterer(map, markerlist, clusterStyle);
-    });
-}
 
 // this function initalizes the map and calls the other functions.
-var legendVisible = false;
 function initialize() {
     var options = {
         zoom:12,
-        mapTypeId:google.maps.MapTypeId.ROADMAP
+        mapTypeId:google.maps.MapTypeId.ROADMAP,
     };
     map = new google.maps.Map(document.getElementById("gMap"), options);
+
+    //  event listener that will close the current info window if open
     google.maps.event.addListener(map, "click", function () {
         infowindow.close();
     });
+
     // get current location and drop marker for the current location.
     if (navigator.geolocation) {
-	navigator.geolocation.getCurrentPosition(function(position) {
+     navigator.geolocation.getCurrentPosition(function(position) {
           initialLocation = new google.maps.LatLng(position.coords.latitude, 
                                                    position.coords.longitude);
-	  map.setCenter(initialLocation);
+	       map.setCenter(initialLocation);
           createCurrentLocationMarker(initialLocation);
-	  createMarkerClusters();
+          google.maps.event.addListener(map, 'idle', createMarkerClusters);
         }, function () {
           handleGeolocation(true);
         });
     } else {
         handleGeolocation(false);
     }
+    createLegend();
+}
+
+
+// this function creates the marker clusters
+// also it sets up the infoWindow content for each marker.
+// NOTE: there is only 1 infoWindow that gets reused. DO NOT ADD MORE
+function createMarkerClusters() {
+    var bounds = map.getBounds();
+    if (cluster) {
+        cluster.clearMarkers();
+    }
+    var markerlist = [];
+    // modify this query if the data gets larger than 10k
+    var jq = tapi({noun: 'toilet', verb: 'retrieve', data:{filters:{lat__lt:bounds.fa.b, lat__gt:bounds.fa.d, 
+                                                                    lng__gt:bounds.ga.b, lng__lt:bounds.ga.d}}});
+    jq.done(function(data)  {
+      $.each(data, function (i, t) {  
+        var latLng = new google.maps.LatLng(t.fields.lat, t.fields.lng);
+	     var inView = '<a href=/toilet/' + t.pk + '><b>' + 
+	             t.fields.name + '</b></a>' 
+		     + '<table><tr><td>Number of Ratings: ' + 
+                     t.fields.numberOfReviews  + '</td></tr>' 
+		     + '<tr><td> Rating: ' + 
+              (Math.round(t.fields.rating*100)/100) + '</td></tr></table>';
+        var marker = new google.maps.Marker({
+          position: latLng,
+          draggable: false,
+	       icon: flags[t.fields.rating],
+        });
+	     google.maps.event.addListener(marker, 'click', function (){
+	       infowindow.setContent(inView);
+	       infowindow.open(map, marker);
+	     });
+	     markerlist.push(marker);
+      });
+    cluster = new MarkerClusterer(map, markerlist, clusterStyle);
+    });
+}
+
+function createLegend() {
     // add lengend to the map
     createLegendElements($('#legend')[0],$('#showL')[0]);
     map.controls[google.maps.ControlPosition.RIGHT_TOP].push($('#legend')[0]);
@@ -232,30 +241,22 @@ function handleGeolocation(supportFlag) {
 // this function makes the current location marker
 // and adds the appropriate listeners by calling other functions.
 function createCurrentLocationMarker(gps) {
-    var image = '{{ STATIC_URL }}images/currentlocation.png';
     var marker = new google.maps.Marker({
        position: gps,
        animation: google.maps.Animation.DROP,
        title: "Your Current Location",
-       icon: image
+       icon: '{{ STATIC_URL }}images/currentlocation.png'
     });
+
     // add markers to the map
-    showCurrentLocationWindow(marker);
+    google.maps.event.addListener(marker, "click", function() {
+        infowindow.setContent('Current Location');
+	     infowindow.open(map, marker);
+    });
     marker.setMap(map);
 }
 
-// *** this is the global infoWindow ***** \\ 
-var infowindow = new google.maps.InfoWindow ({
-    map:map,
-});
 
-// adds action to the current location marker.
-function showCurrentLocationWindow(marker) {
-    google.maps.event.addListener(marker, "click", function() {
-        infowindow.setContent('Current Location');
-	infowindow.open(map, marker);
-    });
-}
 
 // this function is currently useless i believe but im leaving it 
 // just incase.
