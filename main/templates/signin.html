@@ -8,7 +8,7 @@
   function login_response(j){
     j.done(function(data){  
      if(data.hasOwnProperty("error")) form_error('login-form', data.error);
-     else window.location = "/nearby";
+     else window.location = "/";
     });
     j.fail(function(data, d1, d2){
     });

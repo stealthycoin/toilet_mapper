@@ -109,10 +109,11 @@ function pos_to_address(position, address) {
 }
 
 function current_address(address, failure) {
-    if(window.current_lat !== undefined
-       && window.current_lng !== undefined)
-        return pos_to_address({ coords: {latitude: window.current_lat
-                                         ,longitude: window.current_lng
+    var lat = get_position_cookie_lat();
+    var lng = get_position_cookie_lng();
+    if(lat !== undefined && lng !== undefined)
+        return pos_to_address({ coords: {latitude: lat
+                                         ,longitude: lng
                                         }}, address);
 
   // If the browser supports the Geolocation API
@@ -121,31 +122,6 @@ function current_address(address, failure) {
     
     current_pos(function(p){ pos_to_address(p, address); });
     
-/*  navigator.geolocation.getCurrentPosition(function(position) {
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode(
-      {
-        "location": new google.maps.LatLng(position.coords.latitude, 
-                                          position.coords.longitude)
-      },
-      function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          //in case of success return the address
-          address(results[0].formatted_address);
-        }
-        else
-          failure("Unable to retrieve your address");
-      }
-    );
-  }, 
-    function(positionError){
-      failure(positionError.message);
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10 * 1000 // 10 seconds
-    }
-  );*/
 }
 
 function loadMap(){
