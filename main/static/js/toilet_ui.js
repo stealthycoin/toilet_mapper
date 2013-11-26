@@ -77,11 +77,13 @@ loadTemplate("/static/handlebars/toilet.html", "toilet");
 function loadToiletListings(div_id, i, filter) {
     //i was originally being appended when adding, silly JS thought it was a string...
     var i = Number(i);
+    var cookie_lat = get_position_cookie_lat();
+    var cookie_lng = get_position_cookie_lng();
     i = i || 10;
 
     if (toiletsLoading) return;
     //Keep trying until the toilet template has been loaded
-    if (!isTemplateLoaded("toilet") || window.current_lat === undefined) {
+    if (!isTemplateLoaded("toilet") || cookie_lat === "") {
         setTimeout("loadToiletListings('" + div_id + "', '" + i + "', " + JSON.stringify(filter) + " );", 50);
         return;
     }
@@ -100,8 +102,8 @@ function loadToiletListings(div_id, i, filter) {
             console.log("Callbaaaack");
             function calcDistance(d){
                 if(d.distance !== undefined) return d.distance;
-                d.distance = distance_from_current(window.current_lat,
-                                                   window.current_lng,
+                d.distance = distance_from_current(cookie_lat,
+                                                   cookie_lng,
                                                    d.fields.lat,
                                                    d.fields.lng);
                 return d.distance;
