@@ -9,6 +9,8 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        var cookie_lat = get_position_cookie_lat();
+        var cookie_lng = get_position_cookie_lng();
         registerMapForm(); 
         /** Load and populate the reviews **/
         var toilet_id = {{ t.pk }};
@@ -42,7 +44,10 @@
                   }});
         } //function loadReviews
         loadReviews();
-
+        $('#distance').html(distance_from_current(cookie_lat,
+                                 cookie_lng,
+                                 {{t.lat}},
+                                 {{t.lng}}));
         //Bind the bathroom rating form so it submits correctly
         tapi_auto_form('rate-bathroom-form', 
                        {  noun: "review"
@@ -199,7 +204,7 @@ function bind_flagvote_buttons () {
     <div class='col-md-2 col-sm-3 col-xs-4'>
         
     
-      <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span>1.2 miles</span>
+      <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span><span id='distance'></span></span>
     </div>
   </div><!-- row -->
   <div class='row'>
