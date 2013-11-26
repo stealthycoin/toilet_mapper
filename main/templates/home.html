@@ -1,86 +1,79 @@
 {% extends "standard.html" %}
 
 {% block endhead %}
+<script type="text/javascript">
+  function homeToiletListings(){
+      var cookie_lat = get_position_cookie_lat();
+      var cookie_lng = get_position_cookie_lng();
+      if(cookie_lat === ""
+         || cookie_lng === ""){
+          setTimeout("homeToiletListings()", 50);
+          return;
+      }
+      var sb = squareBounds(cookie_lat, cookie_lng, 10);
+      var xmin, xmax, ymin, ymax;
 
-    <script> 
-    
-    function homeToiletListings(){
-        var cookie_lat = get_position_cookie_lat();
-        var cookie_lng = get_position_cookie_lng();
-        if(cookie_lat === undefined
-           || cookie_lng === undefined){
-            setTimeout("homeToiletListings()", 50);
-            return;
-        }
-        var sb = squareBounds(cookie_lat, cookie_lng, 10);
-        var xmin, xmax, ymin, ymax;
+      var smallLeft = (sb.x_left < sb.x_right);
+      xmin = smallLeft ? sb_x.left : sb.x_right;
+      xmax = smallLeft ? sb.x_right : sb.x_left;
 
-        var smallLeft = (sb.x_left < sb.x_right);
-        xmin = smallLeft ? sb_x.left : sb.x_right;
-        xmax = smallLeft ? sb.x_right : sb.x_left;
+      var smallBottom = (sb.y_bottom < sb.y_top);
+      ymin = smallBottom ? sb_y.bottom : sb.y_top;
+      ymax = smallBottom ? sb.y_top : sb.y_bottom;
 
-        var smallBottom = (sb.y_bottom < sb.y_top);
-        ymin = smallBottom ? sb_y.bottom : sb.y_top;
-        ymax = smallBottom ? sb.y_top : sb.y_bottom;
-
-        loadToiletListings('toilet-listings', 10
-                           , {
-                               current_lat: cookie_lat
-                               ,current_lng: cookie_lng
-                               ,filters: {
-                                   lat__gt: xmin
-                                   ,lat__lt: xmax
-                                   ,lng__gt: ymin
-                                   ,lng__lt: ymax
-                               }});
-    }
+      loadToiletListings('toilet-listings', 10
+                         , {
+                             current_lat: cookie_lat
+                             ,current_lng: cookie_lng
+                             ,filters: {
+                                 lat__gt: xmin
+                                 ,lat__lt: xmax
+                                 ,lng__gt: ymin
+                                 ,lng__lt: ymax
+                             }});
+  }
   homeToiletListings();
 </script>
 
-    <script type="text/javascript">
-    $(document).ready(function(){
-        $("#restroom_search").bind("keyup keypress", function(event) {
-            var code = event.keyCode || event.which;
-            //if the key is "enter" do the following
-            if (code == 13){ 
-                //prevent default form submission with enter
-                event.preventDefault();
-                delay(do_search, 50);
-            //if the key is anything but "enter" do the following
-            }else{
-                delay(do_search, 200);
-            }
-        });
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#restroom_search").bind("keyup keypress", function(event) {
+      var code = event.keyCode || event.which;
+      //if the key is "enter" do the following
+      if (code == 13){ 
+        //prevent default form submission with enter
+        event.preventDefault();
+        delay(do_search, 50);
+      //if the key is anything but "enter" do the following
+      }else{
+        delay(do_search, 200);
+      }
+    });
 
     function do_search(){
-            $("#toilet-listings").empty();
-            searchReset();
-            loadToiletListings('toilet-listings', 10, {
-                filters:{
-                    name__icontains: $("#search").val()
-                }});
-            return false;
-        }
+      $("#toilet-listings").empty();
+      searchReset();
+      loadToiletListings('toilet-listings', 10, {
+          filters:{
+              name__icontains: $("#search").val()
+          }});
+      return false;
+    }
 
-    });
-    </script>
+  });
+</script>
 {% endblock %}
 
 {% block content %}
-
 <div class='container'>
   <h1>Welcome to Toilet Mapper</h1>
-
-<div id=searcher>
+  <div id=searcher>
     <form id="restroom_search" name="restroom_search">
         <input id="search" type="text" required="required" placeholder="Search for a restroom" size="30"/>
     </form>
-</div>
-
+  </div>
   <ul id='toilet-listings' class='nav nav-pills nav-stacked col-lg-9 col-md-9 col-sm-9 col-xs-12'>
-
   </ul>
-
 </div>
 
 {% endblock %}
