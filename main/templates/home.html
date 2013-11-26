@@ -5,12 +5,14 @@
     <script> 
     
     function homeToiletListings(){
-        if(window.current_lat === undefined
-           || window.current_lng === undefined){
+        var cookie_lat = get_position_cookie_lat();
+        var cookie_lng = get_position_cookie_lng();
+        if(cookie_lat === undefined
+           || cookie_lng === undefined){
             setTimeout("homeToiletListings()", 50);
             return;
         }
-        var sb = squareBounds(window.current_lat, window.current_lng, 10);
+        var sb = squareBounds(cookie_lat, cookie_lng, 10);
         var xmin, xmax, ymin, ymax;
 
         var smallLeft = (sb.x_left < sb.x_right);
@@ -23,8 +25,8 @@
 
         loadToiletListings('toilet-listings', 10
                            , {
-                               current_lat: window.current_lat
-                               ,current_lng: window.current_lng
+                               current_lat: cookie_lat
+                               ,current_lng: cookie_lng
                                ,filters: {
                                    lat__gt: xmin
                                    ,lat__lt: xmax

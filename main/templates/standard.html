@@ -53,6 +53,9 @@
 <!-- our Map Utils -->
 <script src='/static/js/mapUtils.js'></script>
 
+<!-- Cookie API -->
+<script src='/static/js/cookie.js'></script>
+
 <!-- Google Maps API -->
 <script type="text/javascript"
     src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
@@ -76,12 +79,17 @@
 </script>
 {% endif %}
 <script type='text/javascript'>
-  current_pos(function(pos){
-    console.log("CURRENT POS");
-    console.log(pos);
-    window.current_lat = pos.coords.latitude;
-    window.current_lng = pos.coords.longitude;
-  });
+  //make so we can change the existing cookie
+  allCookies = document.cookie;
+  if(get_position_cookie_lat() === "" ||
+                  get_position_cookie_lat() === "")
+  {
+    current_pos(function(pos){
+      console.log("CURRENT POS");
+      console.log(pos);
+      set_position_cookie(pos.coords.latitude, pos.coords.longitude);
+    });
+  }
 </script>
 {% block endhead %}{% endblock %}
 {% endblock %}
