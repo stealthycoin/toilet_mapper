@@ -21,6 +21,11 @@ function getTemplate(varname) {
     return window.templateStatus[varname];
 }
 
+function toggle_panel(panelButton){
+
+    panelButton.find('.panel-button-icon').toggleClass("icon-chevron-down");
+    panelButton.find('.panel-button-icon').toggleClass("icon-chevron-up");
+}
 /** Panelly UI stuff */
 function bind_panels() {
     $('.panel-button').each(function () {
@@ -31,9 +36,8 @@ function bind_panels() {
                         scrollTop: $(this).offset().top - 100
                     }, 500);
                 }
-                $(this).next().toggle();
-                $(this).find('.panel-button-icon').toggleClass("icon-chevron-down");
-                $(this).find('.panel-button-icon').toggleClass("icon-chevron-up");
+		toggle_panel($(this));
+		$(this).next().toggle();
             });
             $(this).data('panelbound', true);
         }

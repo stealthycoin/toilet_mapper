@@ -124,6 +124,8 @@
 		tapi({noun:"flag", verb:"upvote"
 		      , data:{toilet_pk: {{t.pk}}, flag_pk: $(this).attr("data-pk")}
 		      , callback: function(){ load_flag_rankings(); in_progress = false; }});
+		toggle_panel($(this).parent().prev());
+		$(this).parent().slideUp();
 		return false;
 	    });
 	}
