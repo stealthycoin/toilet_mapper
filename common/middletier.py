@@ -6,6 +6,7 @@ import sys
 from math import radians, sin, asin, cos, acos, atan, atan2, sqrt
 from toilet.models import Toilet, Flag, FlagRanking
 from review.models import Review
+from main.models import AdditionalUserInfo
 
 #turns post data into a json object
 def post_to_dict(post):
@@ -49,7 +50,7 @@ def create_user(request):
     error = ''
     response = ''
     status = 201
-
+    
     if request.method == 'POST':
         data = request.POST
         try:
@@ -59,6 +60,8 @@ def create_user(request):
         except ObjectDoesNotExist:#if it fails, we can create that user
             user = User.objects.create_user(data['username'],data['email'],data['password']) 
             user.save()
+            userAdd = AdditionalUserInfo(user,"1"==data['male'],"1"==data['female'])
+            userAdd.save()
             response = '"' + data['username'] + ' created."'
     else:
         error += 'No POST data in request\n'
