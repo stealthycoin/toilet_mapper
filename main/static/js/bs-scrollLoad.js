@@ -48,11 +48,14 @@ bsScrollLoad = function(){
     var lastLoad = 0;
     var lastHeightRecondense = 0;
     var recondensing = false;
+    
+    //These variables will be set inside init
     var cb;
     var ct; 
     var queryCallback;
     var numToLoad;
     var queryFn;
+    var attemptLoad;
 
     function init(containerID_, templateID
 			      , queryFn_, numToLoad_, settings){
@@ -193,11 +196,10 @@ bsScrollLoad = function(){
 
 
 	//Initial
-	queryFn(queryCallback, 0, numToLoad);
-
+	//queryFn(queryCallback, 0, numToLoad);
 	
 	var lastEnd = -1; 
-	function attemptLoad(){
+	function _attemptLoad(){
 	    var end = numLoaded + numToLoad;
 	    if(end == lastEnd) return; //no more to load
 
@@ -231,6 +233,7 @@ bsScrollLoad = function(){
 	    }
 	    else {  }
 	}
+	attemptLoad = _attemptLoad;
 	$(document).ready(function(){ attemptLoad() });
 	$(window).scroll(attemptLoad);
     }
@@ -248,9 +251,13 @@ bsScrollLoad = function(){
     function changeQueryFn(newFn){
 	queryFn = newFn;
     }
+    
+    function changeNumToLoad(n){ numToLoad = n; }
 
     return { init: init 
-	   , reset: reset
-	   , changeQueryFn: changeQueryFn
+	     , reset: reset
+	     , changeQueryFn: changeQueryFn
+	     , changeNumToLoad: changeNumToLoad
+	     , attemptLoad: attemptLoad
 	   }
 }

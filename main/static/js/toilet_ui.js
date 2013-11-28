@@ -147,6 +147,40 @@ function getToiletListings(filter, sortFn){
     }
 }
 
+/** Reviews **/
+function formatReviewData(rD){
+    reviewData = rD;
+    reviewData.fields.stars = generateStars(reviewData.fields.rank);
+    reviewData.fields.date = reviewData.fields.date.slice(0, 10);
+    reviewData.fields.pk = reviewData.pk;
+    reviewData.fields.content = filter_content(reviewData.fields.content);
+    return reviewData.fields;
+}
+function getReviews (sortby, filters, bindFn){
+    var topReview = {rank: 0, content: ''};
+    return function(queryCallback, start, end){
+	tapi({noun: "review", verb: "retrieve"
+	      , data: { sortby: sortby, filters : filters
+			, start : start, end : end},
+              callback: function(data){
+		  console.log("GetReviews data: ", start, end, data);
+		  for(o in data){
+		      console.log("GetReviews item: ", data[o], data.length);
+                      if(topReview.rank < data[o].fields.rank){
+			  topReview = data[o].fields;
+                      }
+                      console.log(data[o].fields.user);
+		      data[o] = formatReviewData(data[o]);
+		  }
+		  $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
+
+		  if(bindFn !== undefined) bindFn(); 
+		  queryCallback(data);
+              }});
+    }
+}
+
+
 /** Live Searching **/
 
 //Timer to be used for livesearching. Prevent constant queries
