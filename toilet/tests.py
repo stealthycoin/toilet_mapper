@@ -29,24 +29,28 @@ class FlagTests(TestCase):
         self.flag.explanation = "this is a test flag"
         self.flag.save()
         
+    #get flags all flags
     def test_get_flags(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({})}).content)[0]
         self.assertEqual(response['pk'], self.flag.pk)
-
+        
+    #Get rankings of the flag
     def test_get_rankings(self):
         flagRanking = FlagRanking(flag=self.flag, toilet = self.toilet, up_down_vote = 0)
         flagRanking.save()
         response = json.loads(self.client.post('/api/FlagRanking/get/', {'filters' : json.dumps({'toilet' : self.toilet.pk}) }).content)[0]
         self.assertEqual(response['fields']['up_down_vote'], 0)
         self.assertEqual(response['fields']['toilet'], self.toilet.pk)
-
+        
+    #Upvoe a flag for the gien toilet
     def test_upvote_flag(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
         self.assertEqual(response['fields']['flag'], self.flag.pk)
         self.assertEqual(response['fields']['up_down_vote'], 1)
-
+        
+    #Try to upvote the same flag on the same toilet twice
     def test_upvote_twice(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
@@ -54,11 +58,13 @@ class FlagTests(TestCase):
         self.assertEqual(response['fields']['up_down_vote'], 1)
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
         self.assertEqual(response['fields']['up_down_vote'], 1)
-
+        
+    #Try to upvote any flag while not logged in
     def test_upvote_not_logged_in(self):
         response = self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk})
         self.assertEqual(response.status_code, 403)
-
+        
+    #Test downvote 
     def test_downvote(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         flagRanking = FlagRanking(flag = self.flag, toilet = self.toilet, up_down_vote = 1)
@@ -68,7 +74,8 @@ class FlagTests(TestCase):
         response = json.loads(self.client.post('/api/flag/downvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
         self.assertEqual(response['fields']['flag'], self.flag.pk)
         self.assertEqual(response['fields']['up_down_vote'], 0)
-
+        
+    #get flags when there are no flags
     def test_get_empty_flag_set(self):
         self.flag.delete()
         self.client.login(username=self.user.username, password ='bqz_qux')
@@ -80,14 +87,15 @@ class ToiletTestCreate(TestCase):
         self.client = Client()
         self.user = User.objects.create_user('test_foo', 'foo@bar.com','bqz_qux')
         self.user.save()
-
+    #Create new tilet
     def test_put_toilet(self):
         self.client.login(username=self.user.username, password = 'bqz_qux')
         response = self.client.post('/api/toilet/create/', {'name' : 'test' , 'lat': 1, 'long' : 1})
         toilets = Toilet.objects.get(name='test')
         responsedict = json.loads(response.content)
         self.assertEqual(toilets.pk, responsedict[0]['pk'], "toilet created not equal to toilet returned")
- 
+        
+    #Createw a new toilet while not logged in
     def test_put_toilet_not_logged_in(self):
         self.client.user = None
         response = self.client.post('/api/toilet/create/', {'data' : 'djdjdjkekle' })
@@ -107,15 +115,17 @@ class ToiletTestGet(TestCase):
         self.client = Client()
         self.user = User.objects.create_user('test_foo', 'foo@bar.com','bqz_qux')
         self.user.save()
-
+        
+    #Get tilets byt their id when the id does not exists
     def test_get_toilet_by_id_does_not_exist(self):
         response = self.client.post('/api/Toilet/get/', { 'filters' : json.dumps({'id' : 666}), 'start' : 0, 'end' : 10}) 
         self.assertEqual(json.loads(response.content), [])
-
+        
+    #get toilet using a bad filter object (toilet has no attribute foo)
     def test_get_toilet_by_bad_filter(self):
         response = self.client.post('/api/Toilet/get/', { 'filters' : json.dumps({'foo' : 666}), 'start' : 0, 'end' : 10}) 
         self.assertEqual(response.status_code, 400) 
-  
+   #get all of the toilets created by a certain user
     def test_get_toilet_by_user(self): 
         toilet = Toilet()
         toilet.name = "New toilet"
@@ -134,7 +144,8 @@ class ToiletTestGet(TestCase):
         self.assertEqual(len(pk_list), 2)
         self.assertIn(toilet.pk, pk_list)
         self.assertIn(second_toilet.pk, pk_list)
-
+        
+    #get all of the toilets created by a certain user where that user does not exists
     def test_get_toilet_by_user_not_exists(self):
         toilet = Toilet()
         toilet.name = "New toilet"
@@ -151,7 +162,7 @@ class ToiletTestGet(TestCase):
         #this should probably be a 404 error 
         self.assertEqual(response_list, [])
                
-
+    #get a toilet by the i of the toilet
     def test_get_toilet_by_id(self):
         toilet = Toilet()
         toilet.name = "test"
