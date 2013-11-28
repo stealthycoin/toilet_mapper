@@ -246,7 +246,7 @@
         <input type="hidden" id="lat" value="{{t.lat}}" />
         <input type="hidden" id="lng" value="{{t.lng}}" />
         <input type="hidden" id="toilet_name" value="{{t.name}}" />
-    </form>
+    </form>1
 </div>
 <div id="map-canvas"> 
     <div id="map" style="width: 340px; height: 400px; float: left;"></div> 
@@ -318,7 +318,7 @@
 </script>
 {% endverbatim %}
 
-<div class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-ifc'></div>
+<div {% if not user.is_authenticated %}style='display: none;'{% endif %}class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-ifc'></div>
 
 
 
