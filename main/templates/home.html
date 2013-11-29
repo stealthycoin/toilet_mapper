@@ -59,6 +59,10 @@ $(document).ready(function(){ homeToiletListings() });
 
 	  $("#toilet-listings").empty();
 	  searchReset();
+      if(($("#search").val()).length === 0){
+        homeToiletListings();
+        return false;
+      }
 	  var filter = { name__icontains: $("#search").val() };
 	  var sortFn = toiletSortByDistance(cookie_lat, cookie_lng);
 	  var toiletListingsFn = getToiletListings(filter, sortFn);
