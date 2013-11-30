@@ -7,3 +7,6 @@ class AdditionalUserInfo(models.Model):
     male = models.BooleanField()
     female = models.BooleanField()
 
+
+    def __unicode__(self):
+        return u"%s" % self.user
