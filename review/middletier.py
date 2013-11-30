@@ -1,11 +1,30 @@
 from models import Review, Vote
 from toilet.models import Toilet
+from main.models import AdditionalUserInfo
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+
+
+#report a review for spam or some other reason
+def report(request):
+    error = ''
+    response = ''
+    status = 200
+    if request.method == 'POST':
+        review = Review.objects.get(pk=request.POST['pk'])
+        print review.user
+        info = AdditionalUserInfo.objects.get(user=review.user)
+        info.spamCount += 1
+        info.save()
+        response = "'Reported spam'"
+    else:
+        error += 'No POST data in request.\n'
+        status = 415
+    return HttpResponse(package_error(response,error),status=status)
 
 #this adds a review using the post data
 def add(request):
