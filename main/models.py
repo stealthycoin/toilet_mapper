@@ -6,7 +6,8 @@ class AdditionalUserInfo(models.Model):
 
     male = models.BooleanField()
     female = models.BooleanField()
-
+    
+    spamCount = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u"%s" % self.user
