@@ -58,9 +58,12 @@ def create_user(request):
             error = 'A user with that name already exists.'
             status = 200
         except ObjectDoesNotExist:#if it fails, we can create that user
-            user = User.objects.create_user(data['username'],data['email'],data['password']) 
+            print ("Making male %s female %s" % (data['male'], data['female']))
+            user = User.objects.create_user(data['username'],data['email'],data['password'])
             user.save()
-            userAdd = AdditionalUserInfo(user,"1"==data['male'],"1"==data['female'])
+            userAdd = AdditionalUserInfo(user=user,\
+                                         male=("1"==data['male']),\
+                                         female=("1"==data['female']))
             userAdd.save()
             response = '"' + data['username'] + ' created."'
     else:
