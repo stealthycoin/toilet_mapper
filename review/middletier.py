@@ -1,6 +1,6 @@
 from models import Review, Vote
 from toilet.models import Toilet
-from main.models import AdditionalUserInfo
+from main.models import AdditionalUserInfo, Report
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
@@ -20,7 +20,8 @@ def report(request):
         info = AdditionalUserInfo.objects.get(user=review.user)
         info.spamCount += 1
         info.save()
-        response = "'Reported spam'"
+        Report(user=request.user, review=review).save()
+        response = "Reported spam"
     else:
         error += 'No POST data in request.\n'
         status = 415
