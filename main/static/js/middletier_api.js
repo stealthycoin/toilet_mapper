@@ -80,7 +80,8 @@ var internal_mapping = {
         "retrieve"         : simple_handler("/api/Review/get/", ["filters"]),
         "create"           : simple_handler("/api/review/create/"),
         "upvote"           : simple_handler("/api/review/upvote/"),
-        "downvote"         : simple_handler("/api/review/downvote/")
+        "downvote"         : simple_handler("/api/review/downvote/"),
+	"report"           : simple_handler("/api/review/report/")
     },
     "user": {
         "login"            : simple_handler("/api/user/login/"),

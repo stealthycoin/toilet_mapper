@@ -26,6 +26,7 @@ urlpatterns = patterns('',
                        url(r'^api/review/create/$', 'review.middletier.add', name='api_review_create'),
                        url(r'^api/review/upvote/$', 'review.middletier.upvote', name='api_review_upvote'),
                        url(r'^api/review/downvote/$', 'review.middletier.downvote', name='api_review_downvote'),
+                       url(r'^api/review/report/$', 'review.middletier.report', name='report_review'),
 
                        # User API
                        url(r'^api/user/login/$', 'common.middletier.login', name='signin'), 
