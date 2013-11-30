@@ -3,7 +3,8 @@ from toilet.models import Toilet
 from django.contrib.auth.models import User
 
 class Review (models.Model):
-    def __unicode__(self): return u'%s'%self.user
+    def __unicode__(self):
+        return u'%s by %s' % (self.toilet, self.user)
 
     def setattrs(self,dictionary):
         for k, v in dictionary.items():
