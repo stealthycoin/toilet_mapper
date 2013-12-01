@@ -39,7 +39,7 @@ class putNewReviewTest(TestCase):
     def test_put_no_toilet(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
       response = self.client.post('/api/review/create/', {'toilet' : 666, 'rank' : 5, 'content' : 'This is a dumb test'})
-      self.assertEqual(response.status_code, 404)
+      self.assertEqual(response.status_code, 400)
 
     @unittest.skip("Not sure what we should do in this case")
     def test_missing_attributes(self):
@@ -124,7 +124,7 @@ class UpDownVoteTest(TestCase):
     def test_up_vote_no_review(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
       response = self.client.post('/api/review/upvote/', {'review_pk': 666})
-      self.assertEqual(response.status_code, 404)
+      self.assertEqual(response.status_code, 400)
     #downvote a review
     def test_down_vote(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
