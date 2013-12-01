@@ -200,9 +200,9 @@ def get_obj(request, name):
                     else: return distanceCmp(t1, t2, True);
                 return -1 if t1.rating > t2.rating else 1
 
-                qs = list(qs)
-                if sortby == "-rating": qs.sort(cmp=ratingCmp)
-                else: qs.sort(cmp=distanceCmp)
+            qs = list(qs)
+            if sortby == "-rating": qs.sort(cmp=ratingCmp)
+            else: qs.sort(cmp=distanceCmp)
                     
 
         return HttpResponse(serializers.serialize('json', qs[start:end]))
