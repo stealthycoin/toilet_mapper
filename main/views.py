@@ -35,7 +35,7 @@ def profile(request, user):
     try:
         info = AdditionalUserInfo.objects.get(user=p)
     except AdditionalUserInfo.DoesNotExist:
-        info = AdditionaluserInfo(male=False,female=False)
+        info = AdditionalUserInfo(user=p,male=False,female=False)
         info.save()
     c = RequestContext(request, {"p": p, "info": info, "can_edit": p == request.user})
     return render(request, 'profile.html', c)
