@@ -10,8 +10,6 @@
 
 
 function loadToilets(sort, distance){
-    console.log("loadToilets called with", sort, distance);
-
     var cookie_lat = get_position_cookie_lat();
     var cookie_lng = get_position_cookie_lng();
     if(cookie_lat === "" || cookie_lng === ""){
@@ -20,11 +18,13 @@ function loadToilets(sort, distance){
     }
 
     var filter = toiletFilterByDistance(cookie_lat, cookie_lng, distance);
-    var sortFn = toiletSortByDistance(cookie_lat, cookie_lng);
+    var sorts = toiletSorts(cookie_lat, cookie_lng);
+    var sortFn = sorts.distance;
     if(sort === 'rating'){
 	filter.sortby = '-rating'; //- for descending
-	sortFn = toiletSortByRating(cookie_lat, cookie_lng);
+	sortFn = sorts.rating;
     }
+
     var toiletListingsFn = getToiletListings(filter, sortFn);
     
     //As the user scrolls down, bsScroll will call toiletListingsFn
@@ -91,7 +91,7 @@ $(document).ready(customToiletQuery);
         return false;
       }
 	  var filter = { name__icontains: $("#search").val() };
-	  var sortFn = toiletSortByDistance(cookie_lat, cookie_lng);
+	  var sortFn = toiletSorts(cookie_lat, cookie_lng).distance;
 	  var toiletListingsFn = getToiletListings(filter, sortFn);
 	  function callback(toilets){
 	      for(i = 0; i < toilets.length; i++){

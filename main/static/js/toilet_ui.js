@@ -94,42 +94,44 @@ function toiletFilterByDistance(lat, lng, dist){
     };
 }
 
-//Returns a sorting comparison function that will sort toilets by 
-// distance from (lat, lng). Also sets .distance property for each toilet
-function toiletSortByDistance(lat, lng){
-    function dist(d){
-	if(d.distance !== undefined) return d.distance;
-	d.distance = distance_from_current(lat,
-					   lng,
-					   d.fields.lat,
-					   d.fields.lng);
-	return d.distance;
-    }
-    return function(data){
-	data.sort(function(d1, d2){
-            if(dist(d1) === dist(d2)) return 0;
-            return dist(d1) < dist(d2) ? -1 : 1;
-	});
-	return data; 
+
+//Calculates distances for toilets retrieved from server
+function calcDistances(lat, lng, data){
+    for(o in data){
+	var d = data[o];
+	data[o].distance = distance_from_current(lat, lng, d.fields.lat, d.fields.lng);   
     }
 }
 
-function toiletSortByRating(lat, lng){
-    return function(data){
-	//We still need to compute distances for all toilets
-	for(o in data){
-	    var d = data[o];
-	    d.distance = distance_from_current(lat,
-					       lng,
-					       d.fields.lat,
-					       d.fields.lng);   
+//Returns sorting comparison functions that will sort toilets by 
+// distance or rating. Ties are broken by sorting by the other parameter.
+function toiletSorts(lat, lng){
+    var sorts = {
+	"distance" : function(d1, d2, fin){
+	    if(d1.distance === d2.distance){
+		if(fin) return 0; 
+		else return sorts["rating"](d1, d2, true);
+	    }
+	    return d1.distance < d2.distance ? -1 : 1;   
 	}
-	data.sort(function(d1, d2){
-            if(d1.rating === d2.rating) return 0;
-            return d1.rating < d2.rating ? -1 : 1;
-	});
-	return data; 
+	,"rating" : function (d1, d2, fin){
+	    if(d1.rating === d2.rating){
+		if(fin) return 0;
+		else return sorts["distance"](d1, d2, true);
+	    }
+	    return d1.rating < d2.rating ? -1 : 1;    
+	}
     }
+    
+    function sortByParam(p){
+	return function(data){ 
+	    calcDistances(lat, lng, data);
+	    console.log("DATA", data);
+	    data.sort(sorts[p]); 
+	    return data; 
+	}	
+    }
+    return { distance: sortByParam("distance"), rating: sortByParam("rating") };
 }
 
 //Returns a function that will retrieve toilets from the server. 
