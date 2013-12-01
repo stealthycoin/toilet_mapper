@@ -1,4 +1,8 @@
 from django.contrib import admin
-from models import AdditionalUserInfo
+from models import AdditionalUserInfo, Report
 
-admin.site.register(AdditionalUserInfo)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'spamCount')
+
+admin.site.register(AdditionalUserInfo, UserAdmin)
+admin.site.register(Report)

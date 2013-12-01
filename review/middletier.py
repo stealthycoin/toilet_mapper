@@ -1,11 +1,60 @@
 from models import Review, Vote
 from toilet.models import Toilet
+from main.models import AdditionalUserInfo, Report
 import json
 from common.middletier import post_to_dict, serialize, currentTime, package_error
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+
+
+#remove a review
+def remove(request):
+    error = ''
+    response = ''
+    status = 200
+    if request.method == 'POST':
+        print request.POST
+        review = Review.objects.get(pk=request.POST['pk'])
+        toilet = review.toilet
+        total = toilet.rating * toilet.numberOfReviews
+        total -= review.rank
+        toilet.numberOfReviews -= 1
+        if toilet.numberOfReviews == 0:
+            total = 0
+        else:
+            total /= toilet.numberOfReviews
+        toilet.rating = total
+        toilet.save()
+        vote_set = Vote.objects.filter(review=review)
+        for vote in vote_set:
+            vote.delete()
+            
+        review.delete()
+        response = json.dumps('deleted review ' + str(request.POST['pk']))
+    else:
+        error += "No POST data in request.\n"
+        error = 415
+    return HttpResponse(package_error(response,error),status=status)
+
+
+#report a review for spam or some other reason
+def report(request):
+    error = ''
+    response = ''
+    status = 200
+    if request.method == 'POST':
+        review = Review.objects.get(pk=request.POST['pk'])
+        info = AdditionalUserInfo.objects.get(user=review.user)
+        info.spamCount += 1
+        info.save()
+        Report(user=request.user, review=review).save()
+        response = json.dumps("Reported spam")
+    else:
+        error += 'No POST data in request.\n'
+        status = 415
+    return HttpResponse(package_error(response,error),status=status)
 
 #this adds a review using the post data
 def add(request):
