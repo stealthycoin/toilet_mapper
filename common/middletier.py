@@ -178,20 +178,32 @@ def get_obj(request, name):
         #convert the string from name into an object, apply all of the filters to the object
         qs = str_to_class(name).objects.all().filter(**filters)
         #optional sorting
-        if sortby:
-            qs = qs.order_by(sortby)
+        if sortby: qs = qs.order_by(sortby)
         
         #Special case for sorting toilets by distance
-            if sortby != "-rating" and request.POST.get('current_lat') != None:
-                current_lat = float(request.POST.get('current_lat'))
-                current_lng = float(request.POST.get('current_lng'))
-                def distanceCmp(t1, t2):
-                    d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
-                    d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
-                    if d1 == d2: return 0
-                    return -1 if d1 < d2 else 1
+        if request.POST.get('current_lat') != None:
+            current_lat = float(request.POST.get('current_lat'))
+            current_lng = float(request.POST.get('current_lng'))
+            
+            # These comparison functions use eachother to break ties
+            #  which is why they pass an optional `final` argument.
+            def distanceCmp(t1, t2, final=False):
+                d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
+                d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
+                if d1 == d2: 
+                    if(final == True): return 0
+                    else: return ratingCmp(t1, t2, True);
+                return -1 if d1 < d2 else 1
+            def ratingCmp(t1, t2, final=False):
+                if d1 == d2: 
+                    if(final == True): return 0
+                    else: return distanceCmp(t1, t2, True);
+                return -1 if d1 > d2 else 1
+
                 qs = list(qs)
-                qs.sort(cmp=distanceCmp)
+                if sortby == "-rating": qs.sort(cmp=ratingCmp)
+                else: qs.sort(cmp=distanceCmp)
+                    
 
         return HttpResponse(serializers.serialize('json', qs[start:end]))
 
