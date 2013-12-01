@@ -22,11 +22,13 @@ Add Flags Equivalence Classes:
 Retrieve Flags Equivalence Classes:
  -EQ 1: Flag with name = name exists
  -EQ 2: Flag with name = name does not exist
+ -EQ 3: Flag with name = null
  
 Add Restroom Equivalence Classes:
  -EQ 1: Restroom Created = Restroom Returned
  -EQ 2: Creating toilet when user is not signed in
  -EQ 3: Toilet Created with |name| < 5
+ THESE ARE FRONT END TESTS:
  -EQ 4: Cannot retrieve coordinates for current location
  -EQ 5: Address does not exists
  
@@ -47,12 +49,22 @@ class FlagTests(TestCase):
         self.flag.explanation = "this is a test flag"
         self.flag.save()
         
-    #get flags all flags
+    #get flags all flags, EQ3
     def test_get_flags(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({})}).content)[0]
         self.assertEqual(response['pk'], self.flag.pk)
-        
+
+    #get flag by name EQ1
+    def test_get_flag_by_name(self):
+        response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({'name' : self.flag.name})}).content)[0]
+        self.assertEqual(response['pk'], self.flag.pk)
+    #EQ2
+    def test_get_flag_name_does_not_exist(self):
+        response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({'name' : 'foo bar'})}).content)
+        #There are no flags with name foo bar
+        self.assertEqual(len(response), 0)
+
     #Get rankings of the flag
     def test_get_rankings(self):
         flagRanking = FlagRanking(flag=self.flag, toilet = self.toilet, up_down_vote = 0)
@@ -105,7 +117,7 @@ class ToiletTestCreate(TestCase):
         self.client = Client()
         self.user = User.objects.create_user('test_foo', 'foo@bar.com','bqz_qux')
         self.user.save()
-    #Create new tilet
+    #Create new toilet
     def test_put_toilet(self):
         self.client.login(username=self.user.username, password = 'bqz_qux')
         response = self.client.post('/api/toilet/create/', {'name' : 'test' , 'lat': 1, 'long' : 1})
@@ -117,16 +129,7 @@ class ToiletTestCreate(TestCase):
     def test_put_toilet_not_logged_in(self):
         self.client.user = None
         response = self.client.post('/api/toilet/create/', {'data' : 'djdjdjkekle' })
-        self.assertEqual(response.status_code, 401) 
-
-    @unittest.skip("not sure if this is the right test case yet")
-    def test_put_toilet_logged_in_bad_data(self):
-        self.client.user = self.user
-        self.client.login(username=self.user.username, password = 'bqz_qux')
-        response = self.client.post('/api/toilet/create/', {'data' : 'djdjdjkekle' })
-        #this may not actually be true, we should decide what to do in this case
-        #there is no name specified but it still works
-        self.assertEqual(response.status_code,404)
+        self.assertEqual(response.status_code, 401)  
 
 class ToiletTestGet(TestCase):
     def setUp(self):
