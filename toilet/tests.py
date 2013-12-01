@@ -23,6 +23,13 @@ Retrieve Flags Equivalence Classes:
  -EQ 1: Flag with name = name exists
  -EQ 2: Flag with name = name does not exist
  -EQ 3: Flag with name = null
+
+ UpVote/DownVote Flag Equivalence Classes:
+ -EQ 1 toilet = existing toilet, flag_pk = existing flag, Number of times voting= 1, user logged in
+ -EQ 2 toilet = non-existing toilet, flag_pk = existing flag, Number of times voting = 1, user logged in
+ -EQ 3 toilet = existing toilet, flag_pk = non existing flag, number of times voting = 1, user logged in
+ -EQ 4 toilet = existing toilet, flag_pk = existing flag, number of times voting = 2, user logged in
+ -EQ 5 toilet = existing toilet, flag_pk = existing flag, Number of times voting= 1, user not logged in
  
 Add Restroom Equivalence Classes:
  -EQ 1: Restroom Created = Restroom Returned
@@ -32,7 +39,6 @@ Add Restroom Equivalence Classes:
  -EQ 4: Cannot retrieve coordinates for current location
  -EQ 5: Address does not exists
  
-
 """
 class FlagTests(TestCase):
     def setUp(self):
@@ -73,14 +79,27 @@ class FlagTests(TestCase):
         self.assertEqual(response['fields']['up_down_vote'], 0)
         self.assertEqual(response['fields']['toilet'], self.toilet.pk)
         
-    #Upvoe a flag for the gien toilet
+    #Upvote a flag for the given toilet, EQ1
     def test_upvote_flag(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
         self.assertEqual(response['fields']['flag'], self.flag.pk)
         self.assertEqual(response['fields']['up_down_vote'], 1)
-        
-    #Try to upvote the same flag on the same toilet twice
+
+    #upvote a flag for a toilet that does not exist, EQ2
+    def test_upvote_flag_no_toilet(self):
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        response = self.client.post('/api/flag/upvote/', {'toilet_pk' : 666, 'flag_pk' : self.flag.pk})
+        #bad request 
+        self.assertEqual(response.status_code, 400)
+    #upvote a flag that does not exist, EQ3
+    def test_upvote_flag_no_flag(self):
+        self.client.login(username=self.user.username, password ='bqz_qux')
+        response = self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : 666})
+        #bad request 
+        self.assertEqual(response.status_code, 400)
+
+    #Try to upvote the same flag on the same toilet twice, EQ4
     def test_upvote_twice(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
@@ -89,7 +108,7 @@ class FlagTests(TestCase):
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
         self.assertEqual(response['fields']['up_down_vote'], 1)
         
-    #Try to upvote any flag while not logged in
+    #Try to upvote any flag while not logged in EQ5
     def test_upvote_not_logged_in(self):
         response = self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk})
         self.assertEqual(response.status_code, 403)
