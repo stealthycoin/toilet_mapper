@@ -7,15 +7,24 @@
 
 <script type="text/javascript">
 
-function homeToiletListings(){
+
+
+function loadToilets(sort, distance){
     var cookie_lat = get_position_cookie_lat();
     var cookie_lng = get_position_cookie_lng();
     if(cookie_lat === "" || cookie_lng === ""){
-        setTimeout("loadHomeToiletListings()", 50);
+        setTimeout(function(){ loadToilets(sort, distance); }, 50);
         return;
     }
-    var filter = toiletFilterByDistance(cookie_lat, cookie_lng, 5);
-    var sortFn = toiletSortByDistance(cookie_lat, cookie_lng);
+
+    var filter = toiletFilterByDistance(cookie_lat, cookie_lng, distance);
+    var sorts = toiletSorts(cookie_lat, cookie_lng);
+    var sortFn = sorts.distance;
+    if(sort === 'rating'){
+	filter.sortby = '-rating'; //- for descending
+	sortFn = sorts.rating;
+    }
+
     var toiletListingsFn = getToiletListings(filter, sortFn);
     
     //As the user scrolls down, bsScroll will call toiletListingsFn
@@ -26,7 +35,25 @@ function homeToiletListings(){
     bsScroll.init("#toilet-listings", "#toilet-listing-template"
 		     , toiletListingsFn, 10);
 }
-$(document).ready(function(){ homeToiletListings() });
+
+function customToiletQuery(){
+	loadToilets($("#sortBy .active").attr('data-sort'), $('#distance .active').attr('data-distance'));
+}
+function bindCustomQueryInterface(){
+    $('#sortBy button').click(function(){
+	$('#sortBy button').removeClass('active');
+	$(this).addClass('active');
+	customToiletQuery();
+    });
+    $('#distance button').click(function(){
+	$('#distance button').removeClass('active');
+	$(this).addClass('active');
+	customToiletQuery();
+    });
+}
+
+$(document).ready(bindCustomQueryInterface);
+$(document).ready(customToiletQuery);
 </script>
 
 <script type="text/javascript">
@@ -39,7 +66,7 @@ $(document).ready(function(){ homeToiletListings() });
 		event.preventDefault();
 		delay(do_search, 50);
 		//if the key is anything but "enter" do the following
-	    }else{
+	    } else{
 		delay(do_search, 200);
 	    }
 	});
@@ -47,7 +74,7 @@ $(document).ready(function(){ homeToiletListings() });
       var t = Handlebars.compile($("#toilet-listing-template").html());
       function do_search(){
 	  if($('#search').val() == ""){
-	      homeToiletListings();
+	      customToiletQuery();
 	      return; 
 	  }
 	  var cookie_lat = get_position_cookie_lat();
@@ -64,7 +91,7 @@ $(document).ready(function(){ homeToiletListings() });
         return false;
       }
 	  var filter = { name__icontains: $("#search").val() };
-	  var sortFn = toiletSortByDistance(cookie_lat, cookie_lng);
+	  var sortFn = toiletSorts(cookie_lat, cookie_lng).distance;
 	  var toiletListingsFn = getToiletListings(filter, sortFn);
 	  function callback(toilets){
 	      for(i = 0; i < toilets.length; i++){
@@ -76,17 +103,39 @@ $(document).ready(function(){ homeToiletListings() });
       }
 
   });
+
+
+
 </script>
 {% endblock %}
 
 {% block content %}
 <div class='container'>
   <h1>Welcome to Toilet Mapper</h1>
-  <div id=searcher>
-    <form id="restroom_search" name="restroom_search">
-        <input id="search" type="text" required="required" placeholder="Search for a restroom" size="30"/>
-    </form>
+  <div id='searcher'>
+    
+    <div class='row col-lg-6 col-md-6 col-sm-8 col-xs-12'  style='margin-bottom: 5px'>
+      <form id="restroom_search" name="restroom_search">
+        <input class ='form-control' id="search" type="text" required="required" placeholder="Search for a restroom by name" size="30" />
+      </form>
+    </div>
   </div>
+  <div class='clearfix'></div>
+  
+  <div id='queryControls' class='row col-lg-12 col-md-12 col-xs-12 btn-toolbar' style='margin-bottom: 5px'>
+    <div id='sortBy' class="btn-group">
+      <button type="button" data-sort="distance" class="btn btn-default active">Sort By Distance</button>
+      <button type="button" data-sort="rating" class="btn btn-default">Sort By Rating</button>
+    </div>
+    <div id='distance' class="btn-group">
+      <button type="button" data-distance='1' class="btn btn-default">1 mi</button>
+      <button type="button" data-distance='3' class="btn btn-default">3 mi</button>
+      <button type="button" data-distance='5' class="btn btn-default active">5 mi</button>
+      <button type="button" data-distance='10' class="btn btn-default">10 mi</button>
+      <button type="button" data-distance='20' class="btn btn-default">20 mi</button>
+    </div>
+  </div>
+
   <ul id='toilet-listings' class='nav nav-pills nav-stacked col-lg-9 col-md-9 col-sm-9 col-xs-12'></ul>
     <div class='clearfix'></div>
 </div>
