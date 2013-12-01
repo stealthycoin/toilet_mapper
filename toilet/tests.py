@@ -141,7 +141,7 @@ class ToiletTestGet(TestCase):
         
     #get toilet using a bad filter object (toilet has no attribute foo)
     def test_get_toilet_by_bad_filter(self):
-        response = self.client.post('/api/Toilet/get/', { 'filters' : json.dumps({'foo' : 666}), 'start' : 0, 'end' : 10}) 
+        response = self.client.post('/api/Toilet/get/', { 'filters' : {'foo' : 666}, 'start' : 0, 'end' : 10}) 
         self.assertEqual(response.status_code, 400) 
    #get all of the toilets created by a certain user
     def test_get_toilet_by_user(self): 
