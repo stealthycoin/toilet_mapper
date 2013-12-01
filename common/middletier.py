@@ -71,6 +71,18 @@ def create_user(request):
         status = 415
     return HttpResponse(package_error(response,error),status=status)
 
+#edit an existing user
+#no catching because middleware should do that
+def edit(request):
+    error = ''
+    response = ''
+    status = 201
+    
+    print request.POST
+    
+    return HttpResponse(json.dumps("duuuude"))
+    
+        
 
 #logs in an existing user
 def login(request):

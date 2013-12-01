@@ -4,7 +4,7 @@ from django.template import Context
 from toilet.views import single_toilet_view as stv
 from main.forms import AddRestroomForm
 from django.contrib.auth.models import User
-
+from models import AdditionalUserInfo
 
 def home(request):
     return render(request, 'home.html')
@@ -32,7 +32,8 @@ def gmap(request):
 def profile(request, user):
     print User.objects.get(username__exact=user)
     p = User.objects.get(username__exact=user)
-    c = Context({ "p": p})
+    info = AdditionalUserInfo.objects.get(user=p)
+    c = Context({"p": p, "info": info, "can_edit": p == request.user})
     return render(request, 'profile.html', c)
     
 
