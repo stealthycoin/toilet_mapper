@@ -81,7 +81,7 @@ def edit(request):
 
     if request.user.check_password(data['oldpassword']):
         u = request.user
-        if len(User.objects.filter(username=data['username'])) > 0:
+        if request.user.username != data['username'] and len(User.objects.filter(username=data['username'])) > 0:
             return HttpResponse(json.dumps("Already taken"))
         u.username = data['username']
         if len(data['newpassword']) > 0:
@@ -90,8 +90,9 @@ def edit(request):
         u.save()
 
         info = AdditionalUserInfo.objects.get(user=u)
-        info.male = "1" == data['male']
-        info.female = "1" == data['female']
+        print data
+        info.male = ("1" == data['male'])
+        info.female = ("1" == data['female'])
         info.save()
     else:
         return HttpResponse(json.dumps("Wrong password"))

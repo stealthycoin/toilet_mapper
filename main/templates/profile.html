@@ -22,6 +22,17 @@
 
   $(document).ready(function() {
       tapi_auto_form('edit', {noun: "user", verb: "edit"}, change_response);
+
+      $("#male-toggle").click(function (data) { 
+	  var v = parseInt($("#male-toggle").attr("value"));
+	  v = (v + 1) % 2;
+	  $("#male-toggle").attr("value", v);
+      });
+      $("#female-toggle").click(function (data) {
+	  var v = parseInt($("#female-toggle").attr("value"));
+	  v = (v + 1) % 2;
+	  $("#female-toggle").attr("value", v);
+      });
   });
 </script>
 {% endblock %}
@@ -78,8 +89,8 @@
 	<label>Gender</label>
 	<div class="clearfix"></div>
 	<div class="btn-group">
-	  <button id="male-toggle" type="button" name="male" class="btn btn-default{% if info.male %} active{% endif %}" data-toggle="button" value="0">Dude</button>
-	  <button id="female-toggle" type="button" name="female" class="btn btn-default{% if info.female %} active{% endif %}" data-toggle="button" value="0">Dudette</button>
+	  <button id="male-toggle" type="button" name="male" class="btn btn-default{% if info.male %} active{% endif %}" data-toggle="button" value="{%if info.male%}1{%else%}0{%endif%}">Dude</button>
+	  <button id="female-toggle" type="button" name="female" class="btn btn-default{% if info.female %} active{% endif %}" data-toggle="button" value="{%if info.female%}1{%else%}0{%endif%}">Dudette</button>
 	</div>
 	
 	
