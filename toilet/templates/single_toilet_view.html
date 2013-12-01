@@ -1,4 +1,3 @@
-
 {% extends "standard.html" %}
 {% block endhead %}
     <style type="text/css">
@@ -27,11 +26,19 @@
 <script src="/static/js/bs-scrollLoad.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+        
+       /* This is the tooltipsy tooltip library
+        * look at main/static/js/tooltipsy.min.js for more info
+        * This tooltip library can be used anywhere standard.html is
+        * extended. tooltipsy.com
+        */
+        $('#flagIconButton').tooltipsy();
+
         var cookie_lat = get_position_cookie_lat();
         var cookie_lng = get_position_cookie_lng();
         registerMapForm(); 
 
-	/** Set appropriate values in the toilet description **/
+    	/** Set appropriate values in the toilet description **/
         var toilet_id = {{ t.pk }};
         var toilet_rating = {{t.rating}};
         var toilet_num_reviews = {{t.numberOfReviews}};
@@ -216,7 +223,7 @@
     <div class='col-md-2 col-sm-3 col-xs-4'>
         
     
-      <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span><span id='distance'></span></span>
+      <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span><span id='distance'></span> mi</span>
     </div>
   </div><!-- row -->
   <div class='row'>
@@ -241,8 +248,7 @@
 
       <div class='overflow: hidden; display: block; float: left; padding-left: 15px;'>
         <div class='flagName'>{{fields.name}}</div>
-        <div class='flagIconButton'><i class='icon-info'></i></div>
-        <!--<div class='col-lg-1 explanation' style='display: none;'>{{fields.explanation}}</div>-->
+        <div class='flagIconButton' title="{{fields.explanation}}"><i class='icon-info'></i></div>
       </div>
     </div>
 </script>
@@ -266,7 +272,7 @@
         <input type="hidden" id="lat" value="{{t.lat}}" />
         <input type="hidden" id="lng" value="{{t.lng}}" />
         <input type="hidden" id="toilet_name" value="{{t.name}}" />
-    </form>1
+    </form>
 </div>
 <div id="map-canvas"> 
     <div id="map" style="width: 340px; height: 400px; float: left;"></div> 

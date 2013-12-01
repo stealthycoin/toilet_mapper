@@ -9,7 +9,7 @@
      else {
         var j = tapi({noun: "user", verb: "login", data: 
           {"username": $("[name=username]").val(), "password":  $("[name=password]").val()}});
-//        j.done(function(){setTimeout('window.location = "/"', 500); });
+        j.done(function(){setTimeout('window.location = "/"', 500); });
      }
     });
   }
