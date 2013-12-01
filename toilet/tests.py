@@ -14,6 +14,16 @@ import json
 import datetime
 import unittest
 
+"""
+Add Flags Equivilance Classes:
+ -EQ 1: name is unique
+ -EQ 2: Another flag already has this name
+
+Retrieve Flags Equivilance Classes:
+ -EQ 1: Flag with name = name exists
+ -EQ 2: Flag with name = name does not exist
+
+"""
 class FlagTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('test_flag', 'foo@bar.com','bqz_qux')
