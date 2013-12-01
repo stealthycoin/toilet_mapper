@@ -114,6 +114,23 @@ function toiletSortByDistance(lat, lng){
     }
 }
 
+function toiletSortByRating(lat, lng){
+    return function(data){
+	//We still need to compute distances for all toilets
+	for(o in data){
+	    var d = data[o];
+	    d.distance = distance_from_current(lat,
+					       lng,
+					       d.fields.lat,
+					       d.fields.lng);   
+	}
+	data.sort(function(d1, d2){
+            if(d1.rating === d2.rating) return 0;
+            return d1.rating < d2.rating ? -1 : 1;
+	});
+	return data; 
+    }
+}
 
 //Returns a function that will retrieve toilets from the server. 
 //  (Compatible with bsScrollLoad)
