@@ -1,6 +1,6 @@
 from toilet.models import Toilet
 from django.shortcuts import render
-from django.template import Context
+from django.template import Context, RequestContext
 from toilet.views import single_toilet_view as stv
 from main.forms import AddRestroomForm
 from django.contrib.auth.models import User
@@ -33,7 +33,7 @@ def profile(request, user):
     print User.objects.get(username__exact=user)
     p = User.objects.get(username__exact=user)
     info = AdditionalUserInfo.objects.get(user=p)
-    c = Context({"p": p, "info": info, "can_edit": p == request.user})
+    c = RequestContext(request, {"p": p, "info": info, "can_edit": p == request.user})
     return render(request, 'profile.html', c)
     
 

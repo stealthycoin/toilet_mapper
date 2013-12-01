@@ -3,14 +3,26 @@
 {% block endhead %}
 <script type="text/javascript"> 
 
-  loadToiletListings('toilet-listings',10, {filters:{creator:{{p.pk}}}}); 
+//  loadToiletListings('toilet-listings',10, {filters:{creator:{{p.pk}}}}); 
 
 
   function change_response(j) {
-  
+      j.done(function(data) {
+	  if (data === "Wrong password") {
+	      alert("Wrong password.");
+	  }
+	  else if (data === "Already taken") {
+	      alert("That name is already taken.");
+	  }
+	  else {
+	      window.location="/profile/"+data;
+	  }
+      });
   }
 
-  tapi_auto_form('edit', {noun: "user", verb: "edit"}, change_response);
+  $(document).ready(function() {
+      tapi_auto_form('edit', {noun: "user", verb: "edit"}, change_response);
+  });
 </script>
 {% endblock %}
 
@@ -28,7 +40,7 @@
     </div>
     {% if can_edit %}
     <div class="container col-lg-5 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-      <form id='edit' class="form-horizontal " method="post" data-validate="parsley">
+      <form id='edit' class="form-horizontal " method="post" data-validate="parsley"> {% csrf_token %}
 	<h2 style="text-align:center" class="form-heading">Update profile information</h2>
 	<!-- Username input -->
 	<div class="control-group">
@@ -50,7 +62,7 @@
 	<div class="control-group">
           <label class="control-label" for="passwordinput">Old Password</label>
           <div class="controls">
-            <input id="passwordinput" data-required="true" data-minlength="6" name="password" type="password" placeholder="" class="form-control input-xlarge" required="">
+            <input id="oldpasswordinput" data-required="true" name="oldpassword" type="password" placeholder="" class="form-control input-xlarge" required="">
           </div>
 	</div>
 
@@ -58,7 +70,7 @@
 	<div class="control-group">
           <label class="control-label" for="passwordinput">New Password</label>
           <div class="controls">
-            <input id="passwordinput" data-minlength="6" name="password" type="password" placeholder="" class="form-control input-xlarge">
+            <input id="newpasswordinput" data-minlength="6" name="newpassword" type="password" placeholder="" class="form-control input-xlarge">
           </div>
 	</div>
 
