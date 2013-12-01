@@ -87,7 +87,8 @@ var internal_mapping = {
     "user": {
         "login"            : simple_handler("/api/user/login/"),
         "logout"           : simple_handler("/api/user/logout/"),
-        "create"           : simple_handler("/api/user/create/")
+        "create"           : simple_handler("/api/user/create/"),
+        "edit"           : simple_handler("/api/user/edit/")
     },
     "flag": {
         "retrieve_rankings": simple_handler("/api/FlagRanking/get/", ["filters"]),
