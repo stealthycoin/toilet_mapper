@@ -15,13 +15,21 @@ import datetime
 import unittest
 
 """
-Add Flags Equivilance Classes:
+Add Flags Equivalence Classes:
  -EQ 1: name is unique
  -EQ 2: Another flag already has this name
 
-Retrieve Flags Equivilance Classes:
+Retrieve Flags Equivalence Classes:
  -EQ 1: Flag with name = name exists
  -EQ 2: Flag with name = name does not exist
+ 
+Add Restroom Equivalence Classes:
+ -EQ 1: Restroom Created = Restroom Returned
+ -EQ 2: Creating toilet when user is not signed in
+ -EQ 3: Toilet Created with |name| < 5
+ -EQ 4: Cannot retrieve coordinates for current location
+ -EQ 5: Address does not exists
+ 
 
 """
 class FlagTests(TestCase):
