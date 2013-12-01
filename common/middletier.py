@@ -195,10 +195,10 @@ def get_obj(request, name):
                     else: return ratingCmp(t1, t2, True);
                 return -1 if d1 < d2 else 1
             def ratingCmp(t1, t2, final=False):
-                if d1 == d2: 
+                if t1.rating == t2.rating: 
                     if(final == True): return 0
                     else: return distanceCmp(t1, t2, True);
-                return -1 if d1 > d2 else 1
+                return -1 if t1.rating > t2.rating else 1
 
                 qs = list(qs)
                 if sortby == "-rating": qs.sort(cmp=ratingCmp)
