@@ -80,7 +80,9 @@ var internal_mapping = {
         "retrieve"         : simple_handler("/api/Review/get/", ["filters"]),
         "create"           : simple_handler("/api/review/create/"),
         "upvote"           : simple_handler("/api/review/upvote/"),
-        "downvote"         : simple_handler("/api/review/downvote/")
+        "downvote"         : simple_handler("/api/review/downvote/"),
+	"report"           : simple_handler("/api/review/report/"),
+	"remove"           : simple_handler("/api/review/remove/")
     },
     "user": {
         "login"            : simple_handler("/api/user/login/"),
@@ -104,6 +106,7 @@ var internal_mapping = {
         alert("Server error: " + errorThrown);
     }
 
+//unused callback function instead paramas.callback is used (confusing)
     function tapi(params, callback) {
         if (!params.noun) {
             tapi_error("Request made with no noun.");

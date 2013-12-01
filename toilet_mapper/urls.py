@@ -26,11 +26,13 @@ urlpatterns = patterns('',
                        url(r'^api/review/create/$', 'review.middletier.add', name='api_review_create'),
                        url(r'^api/review/upvote/$', 'review.middletier.upvote', name='api_review_upvote'),
                        url(r'^api/review/downvote/$', 'review.middletier.downvote', name='api_review_downvote'),
+                       url(r'^api/review/report/$', 'review.middletier.report', name='report_review'),
+                       url(r'^api/review/remove/$', 'review.middletier.remove', name='remove_review'),
 
                        # User API
                        url(r'^api/user/login/$', 'common.middletier.login', name='signin'), 
                        url(r'^api/user/logout/$', 'common.middletier.logout', name='signin'), 
-                       url(r'^api/user/create/$', 'common.middletier.create_user', name='signin'), 
+                       url(r'^api/user/create/$', 'common.middletier.create_user', name='signin'),
 
                        # Flag API
                        url(r'^api/flag/upvote/$', 'toilet.middletier.flag_upvote', name='api_flag_upvote'),

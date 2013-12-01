@@ -5,6 +5,24 @@
        #map-canvas { height: 400px; width:58% }
        #form_posit { height: 100%; width:58% }
     </style>
+
+<script type="text/javascript">
+  function reportSpam(id) {
+      tapi({noun:"review", verb:"report", data:{pk: id} });
+  }
+</script>
+
+{% if is_mod %}
+<script type="text/javascript">
+  //mod only functions
+  function deleteReview(id) {
+      tapi({noun:"review", verb:"remove", data:{pk: id}, callback:
+	    function(data) {
+		$("#review-"+id).remove();
+	    }});
+  }
+</script>
+{% endif %}
   
 <script src="/static/js/bs-scrollLoad.js"></script>
 <script type="text/javascript">
@@ -347,8 +365,14 @@
 	  <div class='col-lg-4 col-md-3 col-sm-3'>
 	    {{ date }}
 	  </div>
-	  <div class='col-lg-4 col-md-3 col-sm-3'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos </div>
-
+	  <div id="spam-button" class='col-lg-4 col-md-3 col-sm-3'><a href="javascript:void(0)" onClick="reportSpam({{pk}});">Report Spam</a></div>
+{% endverbatim %}
+{% if is_mod %}
+{% verbatim %}
+	  <div id="delete-button" class='col-lg-4 col-md-3 col-sm-3'><a href="javascript:void(0)" onClick="deleteReview({{pk}});">Delete</a></div>	  
+{% endverbatim %}
+{% endif %}
+{% verbatim %}
 	</div>
       </div>
 	<div class='col-md-10 col-sm-9 col-xs-12'>
