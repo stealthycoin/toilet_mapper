@@ -115,6 +115,8 @@ function toiletSorts(lat, lng){
 	    return d1.distance < d2.distance ? -1 : 1;   
 	}
 	,"rating" : function (d1, d2, fin){
+	    d1.rating = parseInt(d1.rating); 
+	    d2.rating = parseInt(d2.rating);
 	    if(d1.rating === d2.rating){
 		if(fin) return 0;
 		else return sorts["distance"](d1, d2, true);

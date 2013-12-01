@@ -182,16 +182,16 @@ def get_obj(request, name):
             qs = qs.order_by(sortby)
         
         #Special case for sorting toilets by distance
-        if request.POST.get('current_lat') != None:
-            current_lat = float(request.POST.get('current_lat'))
-            current_lng = float(request.POST.get('current_lng'))
-            def distanceCmp(t1, t2):
-                d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
-                d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
-                if d1 == d2: return 0
-                return -1 if d1 < d2 else 1
-            qs = list(qs)
-            qs.sort(cmp=distanceCmp)
+            if sortby != "-rating" and request.POST.get('current_lat') != None:
+                current_lat = float(request.POST.get('current_lat'))
+                current_lng = float(request.POST.get('current_lng'))
+                def distanceCmp(t1, t2):
+                    d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
+                    d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
+                    if d1 == d2: return 0
+                    return -1 if d1 < d2 else 1
+                qs = list(qs)
+                qs.sort(cmp=distanceCmp)
 
         return HttpResponse(serializers.serialize('json', qs[start:end]))
 
