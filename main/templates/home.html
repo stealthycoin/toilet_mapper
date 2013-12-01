@@ -54,27 +54,6 @@ function bindCustomQueryInterface(){
 
 $(document).ready(bindCustomQueryInterface);
 $(document).ready(customToiletQuery);
-/*
-function homeToiletListings(){
-    var cookie_lat = get_position_cookie_lat();
-    var cookie_lng = get_position_cookie_lng();
-    if(cookie_lat === "" || cookie_lng === ""){
-        setTimeout("loadHomeToiletListings()", 50);
-        return;
-    }
-    var filter = toiletFilterByDistance(cookie_lat, cookie_lng, 5);
-    var sortFn = toiletSortByDistance(cookie_lat, cookie_lng);
-    var toiletListingsFn = getToiletListings(filter, sortFn);
-    
-    //As the user scrolls down, bsScroll will call toiletListingsFn
-    // to retrieve toilets from the server. bsScroll will then
-    // render the toilets using the #toilet-listing-template handlebars template,
-    // and append the toilets to #autoScrollList for us.
-    var bsScroll = bsScrollLoad();
-    bsScroll.init("#toilet-listings", "#toilet-listing-template"
-		     , toiletListingsFn, 10);
-}
-$(document).ready(function(){ homeToiletListings() });*/
 </script>
 
 <script type="text/javascript">
