@@ -32,7 +32,11 @@ def gmap(request):
 def profile(request, user):
     print User.objects.get(username__exact=user)
     p = User.objects.get(username__exact=user)
-    info = AdditionalUserInfo.objects.get(user=p)
+    try:
+        info = AdditionalUserInfo.objects.get(user=p)
+    except AdditionalUserInfo.DoesNotExist:
+        info = AdditionaluserInfo(male=False,female=False)
+        info.save()
     c = RequestContext(request, {"p": p, "info": info, "can_edit": p == request.user})
     return render(request, 'profile.html', c)
     
