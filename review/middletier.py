@@ -50,7 +50,7 @@ def report(request):
         info.spamCount += 1
         info.save()
         Report(user=request.user, review=review).save()
-        response = "Reported spam"
+        response = json.dumps("Reported spam")
     else:
         error += 'No POST data in request.\n'
         status = 415
