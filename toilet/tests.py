@@ -4,7 +4,6 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
@@ -13,8 +12,24 @@ from parseS2P import main
 import json
 import datetime
 import unittest
-
+"""
+Flag Tests: Equivlence Classes
+1. User can create a flag on a specific toilet and save it to the db.
+2. All flags for a site can be loaded when a given page is loaded.
+3. All flags are rated for a given restroom.
+4. Upvoting a flag, increases the rating of a flag.
+5. Upvoting a flag twice by the same user only increases its rating by 1.
+6. Downvoting a flag, decreases the rating of a flag.
+7. Downvoting twice by the same user only decreases by one rating.
+8. User must be logged in to create a flag.
+9. User must be logged in to upvote or downvote a flag.
+"""
+""" notes for ace
+eq class 7 and eq class 8 still need testing code.
+also not sure what the last test is so i didnt make a class for it.
+"""
 class FlagTests(TestCase):
+    #covers eq class #1
     def setUp(self):
         self.user = User.objects.create_user('test_flag', 'foo@bar.com','bqz_qux')
         self.user.save()
@@ -30,12 +45,14 @@ class FlagTests(TestCase):
         self.flag.save()
         
     #get flags all flags
+    #covers eq class #2
     def test_get_flags(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/Flag/get/', {'filters' : json.dumps({})}).content)[0]
         self.assertEqual(response['pk'], self.flag.pk)
         
     #Get rankings of the flag
+    #covers eq class #3
     def test_get_rankings(self):
         flagRanking = FlagRanking(flag=self.flag, toilet = self.toilet, up_down_vote = 0)
         flagRanking.save()
@@ -44,6 +61,7 @@ class FlagTests(TestCase):
         self.assertEqual(response['fields']['toilet'], self.toilet.pk)
         
     #Upvoe a flag for the gien toilet
+    #covers eq class #4
     def test_upvote_flag(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
@@ -51,6 +69,7 @@ class FlagTests(TestCase):
         self.assertEqual(response['fields']['up_down_vote'], 1)
         
     #Try to upvote the same flag on the same toilet twice
+    #covers eq class #5
     def test_upvote_twice(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         response = json.loads(self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk}).content)[0]
@@ -60,11 +79,13 @@ class FlagTests(TestCase):
         self.assertEqual(response['fields']['up_down_vote'], 1)
         
     #Try to upvote any flag while not logged in
+    # covers eq class #9
     def test_upvote_not_logged_in(self):
         response = self.client.post('/api/flag/upvote/', {'toilet_pk' : self.toilet.pk, 'flag_pk' : self.flag.pk})
         self.assertEqual(response.status_code, 403)
         
     #Test downvote 
+    #covers eq class #6
     def test_downvote(self):
         self.client.login(username=self.user.username, password ='bqz_qux')
         flagRanking = FlagRanking(flag = self.flag, toilet = self.toilet, up_down_vote = 1)
