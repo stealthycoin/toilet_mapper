@@ -199,8 +199,9 @@ function getReviews (sortby, filters, bindFn){
 		  }
 		  $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
 
-		  if(bindFn !== undefined) bindFn(); 
+
 		  queryCallback(data);
+		  if(bindFn !== undefined) bindFn(); 
               }});
     }
 }
