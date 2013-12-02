@@ -1,62 +1,72 @@
-
 {% extends "standard.html" %}
 {% block endhead %}
     <style type="text/css">
        #map-canvas { height: 400px; width:58% }
        #form_posit { height: 100%; width:58% }
     </style>
-  
 
 <script type="text/javascript">
+  function reportSpam(id) {
+      tapi({noun:"review", verb:"report", data:{pk: id} });
+  }
+</script>
+
+{% if is_mod %}
+<script type="text/javascript">
+  //mod only functions
+  function deleteReview(id) {
+      tapi({noun:"review", verb:"remove", data:{pk: id}, callback:
+	    function(data) {
+		$("#review-"+id).remove();
+	    }});
+  }
+</script>
+{% endif %}
+  
+<script src="/static/js/bs-scrollLoad.js"></script>
+<script type="text/javascript">
     $(document).ready(function(){
+        
+       /* This is the tooltipsy tooltip library
+        * look at main/static/js/tooltipsy.min.js for more info
+        * This tooltip library can be used anywhere standard.html is
+        * extended. tooltipsy.com
+        */
+        $('#flagIconButton').tooltipsy();
+
         var cookie_lat = get_position_cookie_lat();
         var cookie_lng = get_position_cookie_lng();
         registerMapForm(); 
-        /** Load and populate the reviews **/
+
+    	/** Set appropriate values in the toilet description **/
         var toilet_id = {{ t.pk }};
         var toilet_rating = {{t.rating}};
         var toilet_num_reviews = {{t.numberOfReviews}};
-        var template = Handlebars.compile($('#review-template').html());
-        $("#from-link").click();
-        //Loads or reloads the reviews from the server
-        window.loadReviews = function(){
-            tapi({noun: "review", verb: "retrieve", data: { sortby: "-rank", filters : {toilet_id: toilet_id}, start : 0, end : 10},
-                  callback: function(d){
-                      $('#reviews').html('');
-                      $('.num_reviews').html(toilet_num_reviews +' Reviews');
-                      $('#review-rating').html(generateStars(toilet_rating));
-
-                      var data = d;
-                      var topReview = {rank: 0, content: ''};
-                      for(o in data){
-                          if(topReview.rank < data[o].fields.rank){
-                              topReview = data[o].fields;
-                          }
-                          console.log(data[o].fields.user);
-                          data[o].fields.stars = generateStars(data[o].fields.rank);
-                          data[o].fields.date = data[o].fields.date.slice(0, 10);
-                          data[o].fields.pk = data[o].pk;
-                          data[o].fields.content = filter_content(data[o].fields.content);
-                          $('#reviews').append(template(data[o].fields));
-                      }
-                      $('#review-top-comment').html('"' + topReview.content.slice(0, 50) +'..."');		     
-                      bind_vote_buttons();
-                  }});
-        } //function loadReviews
-        loadReviews();
+        $('.num_reviews').html(toilet_num_reviews +' Reviews');
+        $('#review-rating').html(generateStars(toilet_rating));
         $('#distance').html(distance_from_current(cookie_lat,
                                  cookie_lng,
                                  {{t.lat}},
                                  {{t.lng}}));
+
+
+        $("#from-link").click(); //Don't know what the purpose of this is. 
+
+        /** Load and populate the reviews **/
+	var reviewListingsFn = getReviews("-rank", {toilet_id: toilet_id}
+					  , bind_vote_buttons);
+	var bsReviewScroll = bsScrollLoad();
+	bsReviewScroll.init("#reviews", "#review-template"
+		      , reviewListingsFn, 10);
+
         //Bind the bathroom rating form so it submits correctly
         tapi_auto_form('rate-bathroom-form', 
                        {  noun: "review"
                           , verb: "create"
                           , callback :function(data){
                               $('#leaveReview').slideUp();
-                              //TODO: Get the new rating from the toilet and update the srars 
-                              //$('#review-rating').html(generateStars());
-                              loadReviews();
+			      $('#reviews').prepend(review_template(formatReviewData(data[0]))).hide().slideDown();
+			      bind_vote_buttons('#review-'+data[0].pk);
                           }});
 
         /** Load and populate Flags Interface **/
@@ -100,68 +110,77 @@
                    }
                    load_flag_rankings();
                }});
+
+	var review_template = Handlebars.compile($("#review-template").html());
+	function bind_vote_buttons (sel) {
+	    sel = sel || ""
+	    var in_progress = false;
+	    function vote(clicked_node, current_vote){
+		if(in_progress === true){ return; }
+		in_progress = true;
+		var i = parseInt(clicked_node.parents('.review')
+				 .find('.review_up_down_rank').html());
+		clicked_node.parents('.review').find('.review_up_down_rank')
+		    .html(i + current_vote);
+		var str = "up";
+		if(current_vote === -1){ str = "down"; }
+		tapi({noun:"review", verb:str+"vote"
+		      , data:{review_pk: clicked_node.attr("data-pk")}
+		      , callback: function(data){ 
+			  $('#review-'+data[0].pk).after(
+			      review_template(formatReviewData(data[0]))).remove();
+			  bind_vote_buttons('#review-'+data[0].pk);
+			  in_progress = false; }}); 
+		return false;
+	    }
+	    $(sel+' .upvote_button').click(function(e){
+		e.preventDefault();
+		vote($(this), 1);
+	    });
+	    $(sel+' .downvote_button').click(function(e){
+		e.preventDefault(); 
+		vote($(this), -1);
+	    });
+	}
+
+	function bind_flag_buttons(){
+	    $('a.flag_listing').click(function(e){
+		e.preventDefault();
+		tapi({noun:"flag", verb:"upvote"
+		      , data:{toilet_pk: {{t.pk}}, flag_pk: $(this).attr("data-pk")}
+		      , callback: function(){ load_flag_rankings(); in_progress = false; }});
+		toggle_panel($(this).parent().prev());
+		$(this).parent().slideUp();
+		return false;
+	    });
+	}
+	function bind_flagvote_buttons () {
+	    var in_progress = false;
+	    function vote(clicked_node, current_vote){
+		if(in_progress === true){ return; }
+		in_progress = true;
+		var i = parseInt(clicked_node.parents('.flag')
+				 .find('.flag_up_down_rank').html());
+		clicked_node.parents('.flag').find('.flag_up_down_rank')
+		    .html(i + current_vote);
+		var str = "up";
+		if(current_vote === -1){ str = "down"; }
+		tapi({noun:"flag", verb:str+"vote"
+		      , data:{toilet_pk: {{t.pk}}, flag_pk: clicked_node.attr("data-pk")}
+		      , callback: function(){ load_flag_rankings(); in_progress = false; }});
+		return false;
+	    }
+	    $('.flag_upvote_button').click(function(e){
+		e.preventDefault();
+		vote($(this), 1);
+	    });
+	    $('.flag_downvote_button').click(function(e){
+		e.preventDefault(); 
+		vote($(this), -1);
+	    });
+	}
     });
 
-function bind_vote_buttons () {
-    var in_progress = false;
-    function vote(clicked_node, current_vote){
-        if(in_progress === true){ return; }
-        in_progress = true;
-        var i = parseInt(clicked_node.parents('.review')
-                         .find('.review_up_down_rank').html());
-        clicked_node.parents('.review').find('.review_up_down_rank')
-            .html(i + current_vote);
-        var str = "up";
-        if(current_vote === -1){ str = "down"; }
-        tapi({noun:"review", verb:str+"vote"
-              , data:{review_pk: clicked_node.attr("data-pk")}
-              , callback: function(){ loadReviews(); in_progress = false; }}); 
-        return false;
-    }
-    $('.upvote_button').click(function(e){
-        e.preventDefault();
-        vote($(this), 1);
-    });
-    $('.downvote_button').click(function(e){
-        e.preventDefault(); 
-        vote($(this), -1);
-    });
-}
-
-function bind_flag_buttons(){
-    $('a.flag_listing').click(function(e){
-        e.preventDefault();
-         tapi({noun:"flag", verb:"upvote"
-              , data:{toilet_pk: {{t.pk}}, flag_pk: $(this).attr("data-pk")}
-               , callback: function(){ load_flag_rankings(); in_progress = false; }});
-        return false;
-    });
-}
-function bind_flagvote_buttons () {
-    var in_progress = false;
-    function vote(clicked_node, current_vote){
-        if(in_progress === true){ return; }
-        in_progress = true;
-        var i = parseInt(clicked_node.parents('.flag')
-                         .find('.flag_up_down_rank').html());
-        clicked_node.parents('.flag').find('.flag_up_down_rank')
-            .html(i + current_vote);
-        var str = "up";
-        if(current_vote === -1){ str = "down"; }
-        tapi({noun:"flag", verb:str+"vote"
-              , data:{toilet_pk: {{t.pk}}, flag_pk: clicked_node.attr("data-pk")}
-              , callback: function(){ load_flag_rankings(); in_progress = false; }});
-        return false;
-    }
-    $('.flag_upvote_button').click(function(e){
-        e.preventDefault();
-        vote($(this), 1);
-    });
-    $('.flag_downvote_button').click(function(e){
-        e.preventDefault(); 
-        vote($(this), -1);
-    });
-}
 </script>
 
 {% endblock %}
@@ -204,7 +223,7 @@ function bind_flagvote_buttons () {
     <div class='col-md-2 col-sm-3 col-xs-4'>
         
     
-      <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span><span id='distance'></span></span>
+      <span class='badge'><span class='icon-map-marker' style='margin-right: 5px;'></span><span id='distance'></span> mi</span>
     </div>
   </div><!-- row -->
   <div class='row'>
@@ -229,8 +248,7 @@ function bind_flagvote_buttons () {
 
       <div class='overflow: hidden; display: block; float: left; padding-left: 15px;'>
         <div class='flagName'>{{fields.name}}</div>
-        <div class='flagIconButton'><i class='icon-info'></i></div>
-        <!--<div class='col-lg-1 explanation' style='display: none;'>{{fields.explanation}}</div>-->
+        <div class='flagIconButton' title="{{fields.explanation}}"><i class='icon-info'></i></div>
       </div>
     </div>
 </script>
@@ -326,13 +344,13 @@ function bind_flagvote_buttons () {
 </script>
 {% endverbatim %}
 
-<div class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-ifc'></div>
+<div {% if not user.is_authenticated %}style='display: none;'{% endif %}class='col-lg-7 col-md-8 col-sm-10 col-xs-12 row' id='flag-ifc'></div>
 
 
 
 {% verbatim %}
 <script id="review-template" type="text/x-handlebars-template">
-  <div class='review col-lg-7 col-md-8 col-sm-10 col-xs-12'>
+  <div id='review-{{pk}}' class='review col-lg-7 col-md-8 col-sm-10 col-xs-12'>
     <div style='clear: both; overflow: hidden;'>
       <div class='col-xs-2 col-sm-1 col-md-1'>
 	<div style='text-align: center;'><a href='' style='color:#aaaaaa; display: block;' class='icon-arrow-up upvote_button' data-pk='{{pk}}'></a></div>
@@ -353,8 +371,14 @@ function bind_flagvote_buttons () {
 	  <div class='col-lg-4 col-md-3 col-sm-3'>
 	    {{ date }}
 	  </div>
-	  <div class='col-lg-4 col-md-3 col-sm-3'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos </div>
-
+	  <div id="spam-button" class='col-lg-4 col-md-3 col-sm-3'><a href="javascript:void(0)" onClick="reportSpam({{pk}});">Report Spam</a></div>
+{% endverbatim %}
+{% if is_mod %}
+{% verbatim %}
+	  <div id="delete-button" class='col-lg-4 col-md-3 col-sm-3'><a href="javascript:void(0)" onClick="deleteReview({{pk}});">Delete</a></div>	  
+{% endverbatim %}
+{% endif %}
+{% verbatim %}
 	</div>
       </div>
 	<div class='col-md-10 col-sm-9 col-xs-12'>

@@ -13,8 +13,23 @@
      }
     });
   }
-  
+
   tapi_auto_form('signup', {noun: "user", verb: "create"}, signup_response);
+  
+  
+  $(function () {
+      $("#male-toggle").click(function (data) { 
+	  var v = parseInt($("#male-toggle").attr("value"));
+	  v = (v + 1) % 2;
+	  $("#male-toggle").attr("value", v);
+      });
+      $("#female-toggle").click(function (data) {
+	  var v = parseInt($("#female-toggle").attr("value"));
+	  v = (v + 1) % 2;
+	  $("#female-toggle").attr("value", v);
+      });
+  });
+  
 </script>
 {% endblock %}
 
@@ -22,7 +37,7 @@
   <div class="container col-lg-5 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
     <form id='signup' class="form-horizontal " method="post" data-validate="parsley">
       <h2 style="text-align:center" class="form-heading">Create A User Account</h2>
-      <!-- Username input-->
+      <!-- Username input -->
       <div class="control-group">
         <label class="control-label" for="usernameIn">Username</label>
         <div class="controls">
@@ -30,7 +45,7 @@
         </div>
       </div>
 
-	  <!-- Email Address input-->
+	  <!-- Email Address input -->
 	  <div class="control-group">
             <label class="control-label" for="emailinput">Email</label>
             <div class="controls">
@@ -38,7 +53,7 @@
             </div>
 	  </div>
 
-	  <!-- Password input-->
+	  <!-- Password input -->
 	  <div class="control-group">
             <label class="control-label" for="passwordinput">Password</label>
             <div class="controls">
@@ -46,6 +61,16 @@
             </div>
 	  </div>
 
+	  <!-- Gender Input -->
+
+	  <label>Gender</label>
+	  <div class="clearfix"></div>
+	  <div class="btn-group">
+	    <button id="male-toggle" type="button" name="male" class="btn btn-default" data-toggle="button" value="0">Dude</button>
+	    <button id="female-toggle" type="button" name="female" class="btn btn-default" data-toggle="button" value="0">Dudette</button>
+	  </div>
+	    
+	  
 	  <!-- Button -->
 	  <div class="control-group">
             <label class="control-label" for="singlebutton"></label>

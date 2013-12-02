@@ -1,11 +1,12 @@
-import json
+import json, datetime, sys
 from django.core import serializers
 from django.utils.timezone import utc
-import datetime
-import sys
 from math import radians, sin, asin, cos, acos, atan, atan2, sqrt
 from toilet.models import Toilet, Flag, FlagRanking
 from review.models import Review
+from main.models import AdditionalUserInfo
+from django.contrib.auth.models import check_password
+from django.shortcuts import redirect
 
 #turns post data into a json object
 def post_to_dict(post):
@@ -49,7 +50,7 @@ def create_user(request):
     error = ''
     response = ''
     status = 201
-
+    
     if request.method == 'POST':
         data = request.POST
         try:
@@ -57,14 +58,48 @@ def create_user(request):
             error = 'A user with that name already exists.'
             status = 200
         except ObjectDoesNotExist:#if it fails, we can create that user
-            user = User.objects.create_user(data['username'],data['email'],data['password']) 
+            user = User.objects.create_user(data['username'],data['email'],data['password'])
             user.save()
+            userAdd = AdditionalUserInfo(user=user,\
+                                         male=("1"==data['male']),\
+                                         female=("1"==data['female']))
+            userAdd.save()
             response = '"' + data['username'] + ' created."'
     else:
         error += 'No POST data in request\n'
         status = 415
     return HttpResponse(package_error(response,error),status=status)
 
+#edit an existing user
+#no catching because middleware should do that
+def edit(request):
+    error = ''
+    response = ''
+    status = 201
+    
+    data = request.POST
+
+    if request.user.check_password(data['oldpassword']):
+        u = request.user
+        if request.user.username != data['username'] and len(User.objects.filter(username=data['username'])) > 0:
+            return HttpResponse(json.dumps("Already taken"))
+        u.username = data['username']
+        if len(data['newpassword']) > 0:
+            u.set_password(data['newpassword'])
+        u.email = data['email']
+        u.save()
+
+        info = AdditionalUserInfo.objects.get(user=u)
+        print data
+        info.male = ("1" == data['male'])
+        info.female = ("1" == data['female'])
+        info.save()
+    else:
+        return HttpResponse(json.dumps("Wrong password"))
+
+    return HttpResponse(json.dumps(data['username']))
+    
+        
 
 #logs in an existing user
 def login(request):
@@ -143,20 +178,32 @@ def get_obj(request, name):
         #convert the string from name into an object, apply all of the filters to the object
         qs = str_to_class(name).objects.all().filter(**filters)
         #optional sorting
-        if sortby:
-            qs = qs.order_by(sortby)
+        if sortby: qs = qs.order_by(sortby)
         
         #Special case for sorting toilets by distance
         if request.POST.get('current_lat') != None:
             current_lat = float(request.POST.get('current_lat'))
             current_lng = float(request.POST.get('current_lng'))
-            def distanceCmp(t1, t2):
+            
+            # These comparison functions use eachother to break ties
+            #  which is why they pass an optional `final` argument.
+            def distanceCmp(t1, t2, final=False):
                 d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
                 d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
-                if d1 == d2: return 0
+                if d1 == d2: 
+                    if(final == True): return 0
+                    else: return ratingCmp(t1, t2, True);
                 return -1 if d1 < d2 else 1
+            def ratingCmp(t1, t2, final=False):
+                if t1.rating == t2.rating: 
+                    if(final == True): return 0
+                    else: return distanceCmp(t1, t2, True);
+                return -1 if t1.rating > t2.rating else 1
+
             qs = list(qs)
-            qs.sort(cmp=distanceCmp)
+            if sortby == "-rating": qs.sort(cmp=ratingCmp)
+            else: qs.sort(cmp=distanceCmp)
+                    
 
         return HttpResponse(serializers.serialize('json', qs[start:end]))
 

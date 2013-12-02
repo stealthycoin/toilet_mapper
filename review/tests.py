@@ -14,6 +14,22 @@ import datetime
 import unittest
 import random
 
+"""
+Add Review Equivalence Classes:
+- EQ 1: Restroom Exists, User Logged in, Len >= 5, 1 <= Rank <=5, New Review
+- EQ 2: Restroom Does Not Exist, User Logged in, len >= 5, 1 <= Rank <=5, New Review
+- EQ 3: Restroom Exists, User not logged in, len >= 5, 1 <= Rank <= 5, New Review
+- EQ 4: Restroom Exists, User Logged in, Len < 5, 1 <= Rank <= 5, New Review
+- EQ 5: Restroom Exists, user Logged in, Len >= 5, Rank >5 or Rank < 1, New Review
+- EQ 6: Restroom Exists, User Logged in, len >= 5, 1 <= Rank <= 5, User has already created review
+
+Retrieve Review Equivalence Classes:
+- EQ 1: Restroom exists
+- EQ 2: Restroom does not exist
+- EQ 3: User exists
+- EQ 4: User does not exists
+"""
+
 
 from django.test import TestCase
 class putNewReviewTest(TestCase):
@@ -24,7 +40,7 @@ class putNewReviewTest(TestCase):
       self.toilet = Toilet(date = datetime.datetime.now() ,
                             creator = self.user, name = "test_toilet")
       self.toilet.save()
-    #Add a new review with rank 3 to test toilet
+    #Add a new review with rank 3 to test toilet, EQ1 
     def test_put_new_review(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
       response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 3, 'content' : 'This is a dumb test'})
@@ -35,27 +51,41 @@ class putNewReviewTest(TestCase):
       #make sure that the rating updated
       self.assertEqual(Toilet.objects.get(pk=self.toilet.id).rating, 3)
       
-   #add review to a toilet that does not exists
+   #add review to a toilet that does not exists, EQ2
     def test_put_no_toilet(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
       response = self.client.post('/api/review/create/', {'toilet' : 666, 'rank' : 5, 'content' : 'This is a dumb test'})
-      self.assertEqual(response.status_code, 404)
+      self.assertEqual(response.status_code, 400)
 
-    @unittest.skip("Not sure what we should do in this case")
-    def test_missing_attributes(self):
+    #add review not logged in, EQ3
+    def test_put_not_logged_in(self):
+      response = self.client.post('/api/review/create/', {'toilet' : self.toilet.pk, 'rank' : 5, 'content' : 'This is a dumb test'})
+      self.assertEqual(response.status_code, 403) 
+
+    #add review content is to short, EQ4
+    def test_put_to_short(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
+      response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 3, 'content' : ''})
+      self.assertEqual(response.status_code, 400)
+
+    # add review rank is invalid, EQ5
+    def test_put_invalid_rank(self):
+      self.client.login(username=self.user.username, password = 'bqz_qux')
+      response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 7, 'content' : 'This is a dumb test'})
+      self.assertEqual(response.status_code, 400)
       
-    #Try to post a review twice on the same toilet
+    #Try to post a review twice on the same toilet, EQ6
     def test_post_review_twice(self):
       self.client.login(username=self.user.username, password = 'bqz_qux')
       self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 5, 'content' : 'This is a dumb test'})
       response = self.client.post('/api/review/create/', {'toilet' : self.toilet.id , 'rank' : 5, 'content' : 'This is a dumb test'})
       self.assertEqual(response.status_code, 403)
+
     #post many reviews on the same toilet (from different users)
     def test_post_review_many(self): 
       rating_sum = 0
       #generate randomw ratings for the reviews
-      ratings = [random.randint(0,5) for x in xrange(10)] 
+      ratings = [random.randint(1,5) for x in xrange(10)] 
       #for each rating, create user and add the review check for the right average on toilet ratings
       for counter, rating in enumerate(ratings):
          rating_sum += rating
@@ -124,7 +154,7 @@ class UpDownVoteTest(TestCase):
     def test_up_vote_no_review(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
       response = self.client.post('/api/review/upvote/', {'review_pk': 666})
-      self.assertEqual(response.status_code, 404)
+      self.assertEqual(response.status_code, 400)
     #downvote a review
     def test_down_vote(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
@@ -172,7 +202,7 @@ class GetReviewTest(TestCase):
                                up_down_rank = 1)
       self.review_two_two.save()
       
-    #get all reviews by user
+    #get all reviews by user EQ3
     def test_get_review_user(self):
       response = self.client.post('/api/Review/get/', { 'start' : 0, 'end' : 10, 'filters' : json.dumps({'user' : self.user.id}) })
       responselist = json.loads(response.content)
@@ -181,7 +211,7 @@ class GetReviewTest(TestCase):
       for review in responselist:
           self.assertEqual(review['fields']['user'], self.user.id)
           
-    #get all reviews by toilet id
+    #get all reviews by toilet id EQ1
     def test_get_review_by_toilet(self):
       response = self.client.post('/api/Review/get/', { 'start' : 0, 'end' : 10, 'filters' : json.dumps({'toilet' : self.toilet.id})})
       responselist = json.loads(response.content)
@@ -190,16 +220,14 @@ class GetReviewTest(TestCase):
       for review in responselist:
           self.assertEqual(review['fields']['toilet'], self.toilet.id)
           
-    #get all reviews by a toilet that does not exist
+    #get all reviews by a toilet that does not exist EQ2
     def test_get_review_by_non_exist_toilet(self):
       response = self.client.post('/api/Review/get/', { 'start' : 0, 'end' : 10, 'filters' : json.dumps({'toilet' : 666})})
-      #not sure if we should return 404 or not
       self.assertEqual(json.loads(response.content), [])
       
-    #get all reviews by user tht doesn't exists
+    #get all reviews by user tht doesn't exists EQ4
     def test_get_review_by_not_existant_user(self):
       response = self.client.post('/api/Review/get/', { 'start' : 0, 'end' : 10, 'filters' : json.dumps({'user' : 666}) }) 
-      #not sure if we should return 404 or not
       self.assertEqual(json.loads(response.content), [])
 
 
