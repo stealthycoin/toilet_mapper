@@ -14,6 +14,13 @@ import datetime
 import unittest
 import random
 
+"""
+Up/Down Vote Reviews Equivalence Classes:
+ -EQ 1: review = existing review, review_pk = existing review
+ -EQ 2: review = non-existing review, review_pk = existing review
+ -EQ 3: review = existing review, review_pk = non existing review
+
+"""
 
 from django.test import TestCase
 class putNewReviewTest(TestCase):
