@@ -17,10 +17,9 @@ import random
 """
 Up/Down Vote Reviews Equivalence Classes:
  -EQ 1: review_pk = existing review, Number of times voting = 1, user logged in
- -EQ 2: review_pk = existing review, Number of times voting = 1, user logged in
- -EQ 3: review_pk = non existing review, Number of times voting = 1, user logged in
- -EQ 4: review_pk = existing review, Number of times voting = 2, user logged in
- -EQ 5: review_pk = existing review, Number of times voting = 1, user not logged in
+ -EQ 2: review_pk = non existing review, Number of times voting = 1, user logged in
+ -EQ 3: review_pk = existing review, Number of times voting = 2, user logged in
+ -EQ 4: review_pk = existing review, Number of times voting = 1, user not logged in
 
 """
 
@@ -97,14 +96,14 @@ class UpDownVoteTest(TestCase):
                                up_down_rank = 0)
       self.review_two_one.save()
       
-    #Upvote review 
+    #Upvote review EQ1 
     def test_up_vote_review(self):
       self.client.login(username=self.user.username, password='bqz_qux')
       response = json.loads(self.client.post('/api/review/upvote/', {'review_pk': self.review_one_one.pk}).content)[0]
       updatedreview = Review.objects.get(pk=self.review_one_one.pk)
       self.assertEqual(updatedreview.up_down_rank, 1)
     
-    #Try to upvote a review twice, only add the upvote once
+    #Try to upvote a review twice, only add the upvote once EQ4
     def test_up_vote_twice(self):
       vote = Vote(review=self.review_one_one, user = self.user_two, vote = 1) 
       vote.save()
@@ -114,12 +113,12 @@ class UpDownVoteTest(TestCase):
       response = json.loads(self.client.post('/api/review/upvote/', {'review_pk': self.review_one_one.pk}).content)[0]
       self.assertEqual(response['fields']['up_down_rank'],1)
 
-    #Try to upvote when not logged in
+    #Try to upvote when not logged in EQ4
     def test_up_vote_not_logged_in(self):
       response = self.client.post('/api/review/upvote/', {'review_pk': self.review_one_one.pk})
       self.assertEqual(response.status_code, 403)
 
-    #upvote without review information
+    #upvote without review information EQ2
     def test_up_vote_no_data(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
       response = self.client.post('/api/review/upvote/' )
@@ -129,18 +128,18 @@ class UpDownVoteTest(TestCase):
       self.client.login(username=self.user_two.username, password='bqz_qux')
       response = self.client.get('/api/review/upvote/' )
       self.assertEqual(response.status_code, 415)
-    #upvote a review that doesn't exist
+    #upvote a review that doesn't exist EQ2
     def test_up_vote_no_review(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
       response = self.client.post('/api/review/upvote/', {'review_pk': 666})
       self.assertEqual(response.status_code, 400)
-    #downvote a review
+    #downvote a review EQ1
     def test_down_vote(self):
       self.client.login(username=self.user_two.username, password='bqz_qux')
       response = json.loads(self.client.post('/api/review/downvote/', {'review_pk' : self.review_one_one.pk}).content)[0]
       self.assertEqual(response['fields']['up_down_rank'], -1)
       
-    #Test down vote and upvote on same review 
+    #Test down vote and upvote on same review EQ3
     def test_down_after_up_vote(self):
       vote = Vote(review=self.review_one_one, user = self.user_two, vote = 1) 
       vote.save()
