@@ -16,9 +16,11 @@ import random
 
 """
 Up/Down Vote Reviews Equivalence Classes:
- -EQ 1: review = existing review, review_pk = existing review
- -EQ 2: review = non-existing review, review_pk = existing review
- -EQ 3: review = existing review, review_pk = non existing review
+ -EQ 1: review_pk = existing review, Number of times voting = 1, user logged in
+ -EQ 2: review_pk = existing review, Number of times voting = 1, user logged in
+ -EQ 3: review_pk = non existing review, Number of times voting = 1, user logged in
+ -EQ 4: review_pk = existing review, Number of times voting = 2, user logged in
+ -EQ 5: review_pk = existing review, Number of times voting = 1, user not logged in
 
 """
 
