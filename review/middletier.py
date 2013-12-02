@@ -61,7 +61,10 @@ def add(request):
     error = ''
     response = ''
     status = 201
-    if request.method == 'POST':
+    if not request.user.is_authenticated():
+       status = 403
+       error += "Must be logged in to do that"
+    elif request.method == 'POST':
         data = request.POST.copy()        
         #We shouldn't be allowed to review a restroom twice
         if len(Review.objects.filter(user=request.user).filter(toilet=data['toilet'])) == 0:
@@ -74,6 +77,8 @@ def add(request):
             data['user'] = request.user
             data['up_down_rank'] = 0;
             r.setattrs(data)
+            #validation
+            r.full_clean()
             r.save()
             
 
