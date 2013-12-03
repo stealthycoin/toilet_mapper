@@ -30,6 +30,9 @@ Add Restroom Equivalence Classes:
  -EQ 4: Cannot retrieve coordinates for current location
  -EQ 5: Address does not exists
  
+Retrieve Restroom Equivalence Classes:
+- EQ 1: Restroom exists
+- EQ 2: Restroom does not exist
 
 """
 class FlagTests(TestCase):
