@@ -15,23 +15,23 @@ import datetime
 import unittest
 
 """
-Add Flags Equivalence Classes:
+Add Flags Equivalence Classes (Morgan):
  -EQ 1: name is unique
  -EQ 2: Another flag already has this name
 
-Retrieve Flags Equivalence Classes:
+Retrieve Flags Equivalence Classes (Morgan):
  -EQ 1: Flag with name = name exists
  -EQ 2: Flag with name = name does not exist
  -EQ 3: Flag with name = null
 
- UpVote/DownVote Flag Equivalence Classes:
+ UpVote/DownVote Flag Equivalence Classes (Michael):
  -EQ 1 toilet = existing toilet, flag_pk = existing flag, Number of times voting= 1, user logged in
  -EQ 2 toilet = non-existing toilet, flag_pk = existing flag, Number of times voting = 1, user logged in
  -EQ 3 toilet = existing toilet, flag_pk = non existing flag, number of times voting = 1, user logged in
  -EQ 4 toilet = existing toilet, flag_pk = existing flag, number of times voting = 2, user logged in
  -EQ 5 toilet = existing toilet, flag_pk = existing flag, Number of times voting= 1, user not logged in
  
-Add Restroom Equivalence Classes:
+Add Restroom Equivalence Classes (Liad):
  -EQ 1: Restroom Created = Restroom Returned
  -EQ 2: Creating toilet when user is not signed in
  -EQ 3: Toilet Created with |name| < 5
@@ -42,9 +42,10 @@ Add Restroom Equivalence Classes:
 Retrieve Review Equivalence Classes (John):
 - EQ 1: Restroom exists
 - EQ 2: Restroom does not exist
+- EQ 3: Restroom Creator does not exist
+- EQ 4: Restroom Creator exists
 """
  
-"""
 class FlagTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('test_flag', 'foo@bar.com','bqz_qux')
