@@ -15,7 +15,7 @@ import unittest
 import random
 
 """
-Add Review Equivalence Classes:
+Add Review Equivalence Classes (Ace):
 - EQ 1: Restroom Exists, User Logged in, Len >= 5, 1 <= Rank <=5, New Review
 - EQ 2: Restroom Does Not Exist, User Logged in, len >= 5, 1 <= Rank <=5, New Review
 - EQ 3: Restroom Exists, User not logged in, len >= 5, 1 <= Rank <= 5, New Review
@@ -23,11 +23,19 @@ Add Review Equivalence Classes:
 - EQ 5: Restroom Exists, user Logged in, Len >= 5, Rank >5 or Rank < 1, New Review
 - EQ 6: Restroom Exists, User Logged in, len >= 5, 1 <= Rank <= 5, User has already created review
 
-Retrieve Review Equivalence Classes:
+Retrieve Review Equivalence Classes (Ace):
 - EQ 1: Restroom exists
 - EQ 2: Restroom does not exist
 - EQ 3: User exists
 - EQ 4: User does not exists
+
+Up/Down Vote Reviews Equivalence Classes (Jeremey):
+  -EQ 1: review_pk = existing review, Number of times voting = 1, user logged in
+  -EQ 2: review_pk = non existing review, Number of times voting = 1, user logged in
+  -EQ 3: review_pk = existing review, Number of times voting = 2, user logged in
+  -EQ 4: review_pk = existing review, Number of times voting = 1, user not logged in
+ +
+
 """
 
 
