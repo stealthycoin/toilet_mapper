@@ -5,6 +5,7 @@ from toilet.views import single_toilet_view as stv
 from main.forms import AddRestroomForm
 from django.contrib.auth.models import User
 from models import AdditionalUserInfo
+from common.middletier import distance
 
 def home(request):
     return render(request, 'home.html')
@@ -40,4 +41,25 @@ def profile(request, user):
     c = RequestContext(request, {"p": p, "info": info, "can_edit": p == request.user})
     return render(request, 'profile.html', c)
     
+def emergency(req):
+    qs = Toilet.objects.all()
+    current_lat = float(req.COOKIES.get('lat'))
+    current_lng = float(req.COOKIES.get('lng'))
+    # These comparisson functions use eachother to break ties
+    #  which is why they pass an optional `final` argument.
+    def distanceCmp(t1, t2, final=False):
+        d1 = distance(current_lat, current_lng, t1.lat, t1.lng)
+        d2 = distance(current_lat, current_lng, t2.lat, t2.lng)
+        if d1 == d2: 
+            if(final == True): return 0
+            else: return ratingCmp(t1, t2, True);
+        return -1 if d1 < d2 else 1
+    def ratingCmp(t1, t2, final=False):
+        if t1.rating == t2.rating: 
+            if(final == True): return 0
+            else: return distanceCmp(t1, t2, True);
+        return -1 if t1.rating > t2.rating else 1
 
+    qs = list(qs)
+    qs.sort(cmp=distanceCmp)
+    return stv(req, qs[0].pk);
