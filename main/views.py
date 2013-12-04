@@ -5,7 +5,7 @@ from toilet.views import single_toilet_view as stv
 from main.forms import AddRestroomForm
 from django.contrib.auth.models import User
 from models import AdditionalUserInfo
-from common.middletier import distance
+from common.middletier import distance, squareBounds
 
 def home(request):
     return render(request, 'home.html')
@@ -41,10 +41,23 @@ def profile(request, user):
     c = RequestContext(request, {"p": p, "info": info, "can_edit": p == request.user})
     return render(request, 'profile.html', c)
     
+
+
 def emergency(req):
-    qs = Toilet.objects.all()
     current_lat = float(req.COOKIES.get('lat'))
     current_lng = float(req.COOKIES.get('lng'))
+
+    sq0 = squareBounds(current_lat, current_lng, 10)
+    sq = sq0.copy()
+    sq["x_left"] = min( sq0["x_left"], sq0["x_right"])
+    sq["x_right"] = max( sq0["x_left"], sq0["x_right"])
+    sq["y_bottom"] = min( sq0["y_bottom"], sq0["y_top"])
+    sq["y_top"] = max( sq0["y_bottom"], sq0["y_top"])
+    filters = {"lat__gt": sq["x_left"],"lat__lt": sq["x_right"], "lng__gt":sq["y_bottom"], "lng__lt":sq["y_top"]}
+    qs = Toilet.objects.all().filter(**filters)
+    if len(qs) == 0: 
+        return render(req, 'emergency_notfound.html')
+
     # These comparisson functions use eachother to break ties
     #  which is why they pass an optional `final` argument.
     def distanceCmp(t1, t2, final=False):

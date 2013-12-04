@@ -7,7 +7,7 @@ from review.models import Review
 from main.models import AdditionalUserInfo
 from django.contrib.auth.models import check_password
 from django.shortcuts import redirect
-
+import math
 #turns post data into a json object
 def post_to_dict(post):
     return remove_json_characters(dict(post))
@@ -146,6 +146,31 @@ def str_to_class(str):
 # We need to actually add in all of the large expesnive queries here        
 def security_check(k, v):
     return v
+
+
+def destPoint(latDeg, lonDeg, bearingDeg, distance):
+    brng = math.pi / 180 * bearingDeg
+    lat1 = math.pi / 180 * latDeg
+    lon1 = math.pi / 180 * lonDeg
+    R = 3956.6 
+    aD = distance / R 
+    lat2 = math.asin( math.sin(lat1)*math.cos(aD) + math.cos(lat1)*math.sin(aD)*math.cos(brng))
+    lon2 = lon1 + math.atan2(math.sin(brng)*math.sin(aD)*math.cos(lat1), math.cos(aD)-math.sin(lat1)*math.sin(lat2))
+    return { "lat": 180 * lat2 / math.pi, "lon": 180 * lon2 / math.pi }
+
+
+#eturns the corner points of a square of width squareWidth
+# centered on (lat, lon)
+def squareBounds(lat, lon, squareWidth):
+    dp0 = destPoint(lat, lon, 0, squareWidth/2)
+    dp90 = destPoint(lat, lon, 90, squareWidth/2)
+    dp180 = destPoint(lat, lon, 180, squareWidth/2)
+    dp270 = destPoint(lat, lon, 270, squareWidth/2)
+    return { 
+        "x_left": dp0["lat"] \
+         , "x_right": dp180["lat"] \
+         , "y_top": dp270["lon"] \
+         , "y_bottom": dp90["lon"] }
 
 # Distance between two (lat, long) coordinates
 #  Expects lat, long values in degrees
