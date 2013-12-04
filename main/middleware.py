@@ -9,7 +9,8 @@ class InvalidPostError(Exception):
 
 
 class Middleware():    
-     def process_exception(self, request, e):
+    pass
+"""     def process_exception(self, request, e):
          if isinstance(e, FieldError) or isinstance(e, AttributeError):
              response = str(e)
              status = 400 
@@ -28,3 +29,4 @@ class Middleware():
          else:
              raise e
          return HttpResponse(response, status=status)
+"""
