@@ -15,7 +15,7 @@ urlpatterns = patterns('',
                        #url(r'^profile$', 'main.views.profile', name='user_profile'),
                        url(r'^profile/(\w+)$', 'main.views.profile', name='user_profile'),
                        url(r'^addrestroom/$', 'main.views.add_restroom', name='add_restroom'),
-                       
+                       url(r'^emergency/$', 'main.views.emergency', name='emergency'),
                        # API Section
                        url(r'api/(.*)/get/', 'common.middletier.get_obj', name='gets whatever'),
 
