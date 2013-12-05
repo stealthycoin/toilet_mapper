@@ -164,7 +164,7 @@ function createMarkerClusters() {
     }
     var markerlist = [];
     // modify this query if the data gets larger than 10k
-    var jq = tapi({noun: 'toilet', verb: 'retrieve', data:{filters:{lat__lt:bounds.fa.b, lat__gt:bounds.fa.d, 
+    var jq = tapi({noun: 'toilet', verb: 'retrieve', data:{filters:{lat__lt:bounds.ia.d, lat__gt:bounds.ia.b, 
                                                                     lng__gt:bounds.ga.b, lng__lt:bounds.ga.d}}});
     jq.done(function(data)  {
       $.each(data, function (i, t) {  
