@@ -44,6 +44,7 @@ def profile(request, user):
 
 
 def emergency(req):
+    A = B
     current_lat = float(req.COOKIES.get('lat'))
     current_lng = float(req.COOKIES.get('lng'))
 
