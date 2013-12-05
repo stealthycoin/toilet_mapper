@@ -126,7 +126,7 @@ var clusterStyle = {
 // this function initalizes the map and calls the other functions.
 function initialize() {
     var options = {
-        zoom: 16,
+        zoom:12,
         mapTypeId:google.maps.MapTypeId.ROADMAP,
     };
     map = new google.maps.Map(document.getElementById("gMap"), options);
@@ -143,7 +143,8 @@ function initialize() {
                                                    position.coords.longitude);
 	       map.setCenter(initialLocation);
           createCurrentLocationMarker(initialLocation);
-          google.maps.event.addListener(map, 'idle', createMarkerClusters);
+          createMarkerClusters();
+          //google.maps.event.addListener(map, 'idle', createMarkerClusters);
         }, function () {
           handleGeolocation(true);
         });
@@ -164,8 +165,9 @@ function createMarkerClusters() {
     }
     var markerlist = [];
     // modify this query if the data gets larger than 10k
-    var jq = tapi({noun: 'toilet', verb: 'retrieve', data:{filters:{lat__lt:bounds.fa.b, lat__gt:bounds.fa.d, 
-                                                                    lng__gt:bounds.ga.b, lng__lt:bounds.ga.d}}});
+    var jq = tapi({noun: 'toilet', verb: 'retrieve'}); 
+    //var jq = tapi({noun: 'toilet', verb: 'retrieve', data:{filters:{lat__lt:bounds.ia.d, lat__gt:bounds.ia.b, 
+      //                                                              lng__gt:bounds.ga.d, lng__lt:bounds.ga.b}}});
     jq.done(function(data)  {
       $.each(data, function (i, t) {  
         var latLng = new google.maps.LatLng(t.fields.lat, t.fields.lng);
