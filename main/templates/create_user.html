@@ -3,33 +3,32 @@
 {% block endhead %}
 
 <script type='text/javascript'>
-  function signup_response(j){
-    j.done(function(data){
-     if(data.hasOwnProperty("error")) form_error('signup', data.error);
-     else {
-        var j = tapi({noun: "user", verb: "login", data: 
-          {"username": $("[name=username]").val(), "password":  $("[name=password]").val()}});
-        j.done(function(){setTimeout('window.location = "/"', 500); });
-     }
-    });
+function signup_response(j){
+ j.done(function(data){
+  if(data.hasOwnProperty("error")) form_error('signup', data.error);
+  else {
+     var j = tapi({noun: "user", verb: "login", data: 
+       {"username": $("[name=username]").val(), "password":  $("[name=password]").val()}});
+     j.done(function(){setTimeout('window.location = "/"', 500); });
   }
+ });
+}
 
-  tapi_auto_form('signup', {noun: "user", verb: "create"}, signup_response);
-  
-  
-  $(function () {
-      $("#male-toggle").click(function (data) { 
-	  var v = parseInt($("#male-toggle").attr("value"));
-	  v = (v + 1) % 2;
-	  $("#male-toggle").attr("value", v);
-      });
-      $("#female-toggle").click(function (data) {
-	  var v = parseInt($("#female-toggle").attr("value"));
-	  v = (v + 1) % 2;
-	  $("#female-toggle").attr("value", v);
-      });
-  });
-  
+tapi_auto_form('signup', {noun: "user", verb: "create"}, signup_response);
+
+
+$(function () {
+   $("#male-toggle").click(function (data) { 
+var v = parseInt($("#male-toggle").attr("value"));
+v = (v + 1) % 2;
+$("#male-toggle").attr("value", v);
+   });
+   $("#female-toggle").click(function (data) {
+var v = parseInt($("#female-toggle").attr("value"));
+v = (v + 1) % 2;
+$("#female-toggle").attr("value", v);
+   });
+});
 </script>
 {% endblock %}
 
@@ -58,6 +57,10 @@
             <label class="control-label" for="passwordinput">Password</label>
             <div class="controls">
               <input id="passwordinput" data-required="true" data-minlength="6" name="password" type="password" placeholder="" class="form-control input-xlarge" required="">
+            </div>
+            <label class="control-label" for="verify_password">Verify Password</label>
+            <div class="controls">
+              <input id="verify_password" data-required="true" data-minlength="6" name="verify_password" type="password" placeholder="" class="form-control input-xlarge" data-equalto="#passwordinput" required="true" data-error-message="This value should be EXACTLY  the same as your password">
             </div>
 	  </div>
 
