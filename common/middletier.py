@@ -8,6 +8,8 @@ from main.models import AdditionalUserInfo
 from django.contrib.auth.models import check_password
 from django.shortcuts import redirect
 import math
+
+from django.views.decorators.csrf import csrf_exempt
 #turns post data into a json object
 def post_to_dict(post):
     return remove_json_characters(dict(post))
@@ -102,6 +104,7 @@ def edit(request):
         
 
 #logs in an existing user
+@csrf_exempt
 def login(request):
     error = ''
     response = ''
