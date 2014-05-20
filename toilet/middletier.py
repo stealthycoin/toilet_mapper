@@ -5,7 +5,7 @@ from common.middletier import post_to_dict, serialize, currentTime, package_erro
 from django.http import HttpResponse
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
-
+from main.models import AdditionalUserInfo
 
 #just using for debugging
 import sys
@@ -27,6 +27,9 @@ def add(request):
             t = Toilet()
             data['date'] = currentTime()
             data['creator'] = request.user
+            info = AdditionalUserInfo.objects.get(user=request.user)
+            data['male'] = info.male
+            data['female'] = info.female
             t.setattrs(data)
             t.save()
 

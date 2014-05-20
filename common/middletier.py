@@ -197,7 +197,26 @@ def get_obj(request, name):
         #sortby
         sortby = request.POST.get('sortby')
 
+        #configure the user's gender settings
+        if request.user.is_authenticated():
+            userInfo = AdditionalUserInfo.objects.get(user=request.user)
+            male = userInfo.male
+            female = userInfo.female
+        else:
+            # if they are not logged in we just get all
+            # toilets regardless of gender
+            male = True
+            female = True
+        
+
         filters = json.loads(request.POST.get('filters'))
+        if str_to_class(name) == 'Toilet':
+            #if we have both or neither marked we search for all genders
+            #if we have just one gender marked we filter on that gender being true
+            if male and not female:
+                filters['male'] = True
+            elif female and not male:
+                filters['female'] = True
         #map over all of the filter objects to amke sure they aren't expensive queries
         filters = {k: security_check(k,v) for k, v in filters.items()}
         #convert the string from name into an object, apply all of the filters to the object

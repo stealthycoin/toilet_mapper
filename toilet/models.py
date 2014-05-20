@@ -15,6 +15,8 @@ class Toilet (models.Model):
         self.rating = numerator/self.numberOfReviews 
         self.save()
 
+    male = models.BooleanField(blank=True)
+    female = models.BooleanField(blank=True)
     date = models.DateTimeField()
     creator = models.ForeignKey(User)
     name = models.CharField(max_length = 64)
