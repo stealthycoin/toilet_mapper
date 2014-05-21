@@ -8,32 +8,14 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'AdditionalUserInfo'
-        db.create_table(u'main_additionaluserinfo', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('male', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('female', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('spamCount', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'main', ['AdditionalUserInfo'])
 
-        # Adding model 'Report'
-        db.create_table(u'main_report', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('review', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['review.Review'])),
-        ))
-        db.send_create_signal(u'main', ['Report'])
-
+        # Changing field 'Toilet.name'
+        db.alter_column(u'toilet_toilet', 'name', self.gf('django.db.models.fields.CharField')(max_length=128))
 
     def backwards(self, orm):
-        # Deleting model 'AdditionalUserInfo'
-        db.delete_table(u'main_additionaluserinfo')
 
-        # Deleting model 'Report'
-        db.delete_table(u'main_report')
-
+        # Changing field 'Toilet.name'
+        db.alter_column(u'toilet_toilet', 'name', self.gf('django.db.models.fields.CharField')(max_length=64))
 
     models = {
         u'auth.group': {
@@ -72,29 +54,26 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        u'main.additionaluserinfo': {
-            'Meta': {'object_name': 'AdditionalUserInfo'},
-            'female': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+        u'toilet.flag': {
+            'Meta': {'object_name': 'Flag'},
+            'explanation': ('django.db.models.fields.TextField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'male': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'spamCount': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'name': ('django.db.models.fields.TextField', [], {'unique': 'True'})
         },
-        u'main.report': {
-            'Meta': {'object_name': 'Report'},
+        u'toilet.flagranking': {
+            'Meta': {'object_name': 'FlagRanking'},
+            'flag': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Flag']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'review': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['review.Review']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
-        },
-        u'review.review': {
-            'Meta': {'object_name': 'Review'},
-            'content': ('django.db.models.fields.TextField', [], {}),
-            'date': ('django.db.models.fields.DateTimeField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'rank': ('django.db.models.fields.SmallIntegerField', [], {}),
             'toilet': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Toilet']"}),
-            'up_down_rank': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'review_creator'", 'to': u"orm['auth.User']"})
+            'up_down_vote': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True'})
+        },
+        u'toilet.flagvote': {
+            'Meta': {'object_name': 'FlagVote'},
+            'flag': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Flag']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'toilet': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Toilet']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'vote': ('django.db.models.fields.SmallIntegerField', [], {})
         },
         u'toilet.toilet': {
             'Meta': {'object_name': 'Toilet'},
@@ -105,10 +84,10 @@ class Migration(SchemaMigration):
             'lat': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '6'}),
             'lng': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '6'}),
             'male': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'numberOfReviews': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'rating': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '11', 'decimal_places': '10'})
         }
     }
 
-    complete_apps = ['main']
+    complete_apps = ['toilet']

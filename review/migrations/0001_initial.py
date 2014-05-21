@@ -14,15 +14,28 @@ class Migration(SchemaMigration):
             ('toilet', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['toilet.Toilet'])),
             ('content', self.gf('django.db.models.fields.TextField')()),
             ('rank', self.gf('django.db.models.fields.SmallIntegerField')()),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('up_down_rank', self.gf('django.db.models.fields.SmallIntegerField')(null=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='review_creator', to=orm['auth.User'])),
             ('date', self.gf('django.db.models.fields.DateTimeField')()),
         ))
         db.send_create_signal(u'review', ['Review'])
+
+        # Adding model 'Vote'
+        db.create_table(u'review_vote', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('review', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['review.Review'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('vote', self.gf('django.db.models.fields.SmallIntegerField')()),
+        ))
+        db.send_create_signal(u'review', ['Vote'])
 
 
     def backwards(self, orm):
         # Deleting model 'Review'
         db.delete_table(u'review_review')
+
+        # Deleting model 'Vote'
+        db.delete_table(u'review_vote')
 
 
     models = {
@@ -69,14 +82,28 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'rank': ('django.db.models.fields.SmallIntegerField', [], {}),
             'toilet': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Toilet']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'up_down_rank': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'review_creator'", 'to': u"orm['auth.User']"})
+        },
+        u'review.vote': {
+            'Meta': {'object_name': 'Vote'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'review': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['review.Review']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'vote': ('django.db.models.fields.SmallIntegerField', [], {})
         },
         u'toilet.toilet': {
             'Meta': {'object_name': 'Toilet'},
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'date': ('django.db.models.fields.DateTimeField', [], {}),
+            'female': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'})
+            'lat': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '6'}),
+            'lng': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '6'}),
+            'male': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'numberOfReviews': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'rating': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '11', 'decimal_places': '10'})
         }
     }
 
