@@ -216,7 +216,7 @@
     <div id="review-rating" class='col-md-4 col-sm-4 col-xs-12 star-ratings' >
     </div>
     <div class='col-md-2 col-sm-3 col-xs-12 num_reviews'></div>
-    <div class='col-md-2 visible-lg visible-md visible-sm'><span class='icon-camera-retro' style='margin-right: 5px'></span>4 photos</div>
+    <div class='col-md-2 visible-lg visible-md visible-sm'>{% if male %}<span class='icon-male' style='margin-right: 5px'></span>{% endif %}{% if female %}<span class='icon-female' style='margin-left: 5px'></span>{% endif %}</div>
   </div><!--row-->
   <div class='row'>
     <div class='col-md-6 col-sm-7 col-xs-12'><p>Added By: <a href='/profile/{{t.creator}}'>{{t.creator}}</p></a></div>
