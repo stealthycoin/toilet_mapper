@@ -160,6 +160,8 @@ function getToiletListings(filter, sortFn){
                     params.name = data[o].fields.name;
                     params.num_reviews = data[o].fields.numberOfReviews;
 		    params.distance = data[o].distance + " mi";
+		    params.male = data[o].fields.male;
+		    params.female = data[o].fields.female;
 		    data[o] = params;
 		}
 		queryCallback(data);

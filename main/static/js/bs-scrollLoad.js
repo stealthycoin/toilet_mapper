@@ -91,6 +91,12 @@ bsScrollLoad = function(){
 				     , bottom: undefined
 				     , visible: false
 				   }
+		//we need to show both genders if our toilet says it is neither
+		var temp = items[i];
+		var m = temp.male || (!temp.male && !temp.female);
+		var f = temp.female || (!temp.male && !temp.female);
+		items[i].male = m;
+		items[i].female = f;
 		c.append(t(items[i]));
 	    }
 

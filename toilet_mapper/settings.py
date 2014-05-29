@@ -2,7 +2,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = '/home/toilet/toilet_mapper/'
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

@@ -1,0 +1,168 @@
+body {
+    background-color: #DCDCDC;
+    height: 100%;
+    margin: 0;
+    padding-top: 51px;
+}
+
+html {
+    height: 100%;
+}
+
+h2 { margin-top: 10px; }
+
+/* Form Errors */
+ul.parsley-error-list { margin: 0px; list-style: none; padding: 0px; }
+ul.parsley-error-list li, .error { 
+    margin-top: 5px; 
+    margin-bottom: 5px; 
+    padding: 5px; 
+    font-size: 0.8em; 
+    background-color: #F2DEDE;
+    color: #B94A48; 
+    border-radius: 5px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+}
+
+/* Toilet Listings CSS */
+.listing a {
+    color: #333333; 
+    overflow: hidden;
+    padding: 0px; 
+}
+#toilet-listings .listing a:hover {
+    background-color: transparent;
+}
+.nav-pills > li.listing > a {
+    padding: 0px; 
+
+}
+
+/* Reviews CSS */
+.review, .listing {
+    padding: 12px 10px 10px 10px; 
+    border: 1px solid #aeaeae;
+    border-right: 1px solid #efefef;
+    border-top: 1px solid #efefef;
+    margin-bottom: 5px; 
+}
+.star-ratings {
+    text-align: left;
+    color: #FF9900;
+}
+.panel-button { 
+    font-weight: bold;  
+    color: black;
+    display: block; 
+    text-align: center; 
+}
+
+.upvote_button:hover, .downvote_button:hover,
+  .flag_upvote_button:hover, .flag_downvote_button:hover
+ {
+    display: block;
+    background-color:#dddddd; 
+    text-decoration: none; 
+    border-radius: 5px; 
+    -moz-border-radius: 5px; 
+    -webkit-border-radius: 5px; 
+}
+
+.panel-button:hover { text-decoration: none; }
+
+#leaveReview {
+    clear: both;
+    overflow: hidden; 
+    margin-top: 5px; 
+    position:relative; left: 15px;
+    padding: 0px; 
+}
+
+.leaveReview label {
+    font-size: 1.2em;
+}
+
+.leaveReview .rateit { margin-top: 9px; }
+
+#flag-rankings {
+    display: none; 
+    clear: both;
+    margin: 5px 0px 5px 0px;
+    border: 1px solid #aaaaaa;
+    border-radius: 5px;
+    padding: 0px; 
+    padding-bottom: 2px; 
+}
+
+#flag-rankings h3 {
+    background-color:#efefef;
+    margin: 0px; 
+    border-radius: 5px 5px 0px 0px; 
+    padding: 5px; 
+}
+
+#flag-rankings .row {
+    margin: 0px;
+    border-bottom: 1px solid #efefef;
+    padding: 0px; 
+}
+
+#flag-rankings .flag_upvote_button, #flag-rankings .flag_downvote_button {
+    border-radius: 0px;
+    border-left : 1px solid #efefef;
+    border-right : 1px solid #efefef;
+}
+
+.flag_up_down_rank {
+    padding: 4px 0px 3px 0px;
+    text-align: center;
+    margin: 0px; 
+    color: #aaaaaa;
+    float: left; 
+    font-weight: bold;
+    width: 30px; 
+    max-width: 30px;
+    min-width: 30px;
+}
+
+.flagName {
+    float: left;
+    padding: 4px 0px 0px 15px;
+}
+
+.flagIconButton {
+    float: right;
+    color:#aaaaaa;
+    padding: 4px 5px 0px 5px;
+}
+
+#flag-rankings h3 { color :#aaaaaa; font-size: 1.1em; 
+                    text-transform:uppercase; font-weight: bold; }
+
+#flag-ifc .flag_listing {
+    border-bottom:1px solid #efefef;
+    overflow: hidden;
+    margin-bottom: 3px;
+    width: 100%; 
+    border: 1px solid #efefef;
+    font-size: 1.0em;
+    margin: 0px; 
+    padding:10px;
+    border-radius: 0px;
+    display: block;
+    color:#555555;
+}
+
+#flag-ifc .panel-body { padding: 0px; }
+#flag-ifc .panel { margin-bottom: 0px; }
+
+.flag_vote, .flag_name, .flag_explanation { float: left; display: block; margin-right: 5px; }
+
+.flag_explanation { font-size: 0.8em; color : #aaaaaa; }
+
+#flag-ifc { margin: 5px 0px; padding: 0px;  }
+
+
+
+

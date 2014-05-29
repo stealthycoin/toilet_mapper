@@ -30,7 +30,7 @@ def main(args):
       except UnicodeDecodeError:
         continue
       pooper = Toilet()
-      attrs = { 'name' : line[atrbMap['name']], 'lat' : line[atrbMap['lat']], 'lng' : line[atrbMap['lon']], 'numberOfReviews' : 0 , 'rating' : 0.00000, 'creator' : peepee, 'date' : datetime.datetime.now() } 
+      attrs = { 'name' : line[atrbMap['name']], 'lat' : line[atrbMap['lat']], 'lng' : line[atrbMap['lon']], 'numberOfReviews' : 0 , 'rating' : 0.00000, 'creator' : peepee, 'date' : datetime.datetime.now(), 'male': True, 'female': True } 
       pooper.setattrs(attrs)
       pooper.save()
       

@@ -11,16 +11,58 @@ class Migration(SchemaMigration):
         # Adding model 'Toilet'
         db.create_table(u'toilet_toilet', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('male', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('female', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('date', self.gf('django.db.models.fields.DateTimeField')()),
             ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=64)),
+            ('numberOfReviews', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('rating', self.gf('django.db.models.fields.DecimalField')(default=5.0, max_digits=11, decimal_places=10)),
+            ('lat', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=10, decimal_places=6)),
+            ('lng', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=10, decimal_places=6)),
         ))
         db.send_create_signal(u'toilet', ['Toilet'])
+
+        # Adding model 'Flag'
+        db.create_table(u'toilet_flag', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.TextField')(unique=True)),
+            ('explanation', self.gf('django.db.models.fields.TextField')()),
+        ))
+        db.send_create_signal(u'toilet', ['Flag'])
+
+        # Adding model 'FlagRanking'
+        db.create_table(u'toilet_flagranking', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('flag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['toilet.Flag'])),
+            ('toilet', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['toilet.Toilet'])),
+            ('up_down_vote', self.gf('django.db.models.fields.SmallIntegerField')(null=True)),
+        ))
+        db.send_create_signal(u'toilet', ['FlagRanking'])
+
+        # Adding model 'FlagVote'
+        db.create_table(u'toilet_flagvote', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('flag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['toilet.Flag'])),
+            ('toilet', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['toilet.Toilet'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('vote', self.gf('django.db.models.fields.SmallIntegerField')()),
+        ))
+        db.send_create_signal(u'toilet', ['FlagVote'])
 
 
     def backwards(self, orm):
         # Deleting model 'Toilet'
         db.delete_table(u'toilet_toilet')
+
+        # Deleting model 'Flag'
+        db.delete_table(u'toilet_flag')
+
+        # Deleting model 'FlagRanking'
+        db.delete_table(u'toilet_flagranking')
+
+        # Deleting model 'FlagVote'
+        db.delete_table(u'toilet_flagvote')
 
 
     models = {
@@ -60,12 +102,39 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'toilet.flag': {
+            'Meta': {'object_name': 'Flag'},
+            'explanation': ('django.db.models.fields.TextField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.TextField', [], {'unique': 'True'})
+        },
+        u'toilet.flagranking': {
+            'Meta': {'object_name': 'FlagRanking'},
+            'flag': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Flag']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'toilet': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Toilet']"}),
+            'up_down_vote': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True'})
+        },
+        u'toilet.flagvote': {
+            'Meta': {'object_name': 'FlagVote'},
+            'flag': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Flag']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'toilet': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['toilet.Toilet']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'vote': ('django.db.models.fields.SmallIntegerField', [], {})
+        },
         u'toilet.toilet': {
             'Meta': {'object_name': 'Toilet'},
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'date': ('django.db.models.fields.DateTimeField', [], {}),
+            'female': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'})
+            'lat': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '6'}),
+            'lng': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '6'}),
+            'male': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'numberOfReviews': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'rating': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '11', 'decimal_places': '10'})
         }
     }
 
