@@ -210,7 +210,8 @@ def get_obj(request, name):
         
 
         filters = json.loads(request.POST.get('filters'))
-        if str_to_class(name) == 'Toilet':
+
+        if name == 'Toilet':
             #if we have both or neither marked we search for all genders
             #if we have just one gender marked we filter on that gender being true
             if male and not female:

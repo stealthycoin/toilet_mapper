@@ -28,8 +28,12 @@ def add(request):
             data['date'] = currentTime()
             data['creator'] = request.user
             info = AdditionalUserInfo.objects.get(user=request.user)
-            data['male'] = info.male
-            data['female'] = info.female
+            if info.male == False and info.female == False:
+                data['male'] = True
+                data['male'] = True
+            else:
+                data['male'] = info.male
+                data['female'] = info.female
             t.setattrs(data)
             t.save()
 
